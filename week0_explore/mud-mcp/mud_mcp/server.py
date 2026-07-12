@@ -16,6 +16,7 @@ import re
 
 from mcp.server.fastmcp import FastMCP
 
+from . import session as session_mod
 from .session import LoginError, MudSession, SessionError
 
 mcp = FastMCP("mud")

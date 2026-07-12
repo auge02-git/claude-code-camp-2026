@@ -13,7 +13,7 @@ into weekly stages, each its own top-level directory:
 - `docs/plans/` — empty, reserved for planning docs.
 - `.boukensha/` — empty, reserved (likely the future agent's home).
 
-Everything below is under `week0_explore/`, which has four independent sub-projects wired
+Everything below is under `week0_explore/`, which has five independent sub-projects wired
 together by a data pipeline:
 
 ```
@@ -29,8 +29,10 @@ preview/web/scripts/build-data.mjs  (aggregates into id-keyed bundles)
         ▼
 preview/web/public/data/*.json  ──▶  preview/web (React/Vite SPA, read-only viewer)
 
-mud_manager/ (Ruby gem) — telnet session + typed command primitives, for a future
-  agent to drive the MUD (not yet wired to anything; used standalone via examples/).
+mud_manager/ (Ruby gem)   — telnet session + typed command primitives, standalone (examples/).
+mud-mcp/ (Python, uv)      — MCP server exposing telnet control of the MUD as tools; a port of
+  mud_manager's session logic. This IS the wired agent path — registered in root .mcp.json,
+  so Claude Code drives the live MUD via mud_* tools (mud_connect/login/send/read).
 ```
 
 `bin/convert-world` (at `week0_explore/bin/convert-world`) is the glue: it runs the Python
@@ -102,6 +104,24 @@ Two pieces, deliberately separated:
 Comments in `primitives.rb` reference `FINDINGS/_synthesis/player-command-surface.md` as the
 source of truth for the command surface — that path doesn't exist in this repo yet.
 
+### mud-mcp/ — MCP server for driving the live MUD (Python, uv, FastMCP)
+
+```sh
+cd week0_explore/mud-mcp
+uv sync                              # install deps into .venv
+uv run python scripts/smoke_test.py  # drive the server over stdio against the live MUD
+uv run python -m mud_mcp.server      # run the server directly (stdio)
+```
+
+Registered in the **root** `.mcp.json` at project scope, so Claude Code auto-starts it via
+`uv run --directory week0_explore/mud-mcp mud-mcp` and gets `mud_connect`, `mud_login`,
+`mud_send`, `mud_read`, `mud_status`, `mud_disconnect` tools. Requires the MUD server running
+(`infrastructure/` up on `localhost:4000`). `mud_mcp/session.py` is a Python port of
+`mud_manager`'s `session.rb` (telnet/IAC stripping, CircleMUD login dance); `mud_login` only
+logs in **existing** characters — new-character creation (name/class/gender menus) is not
+handled, so create a character once manually (`telnet localhost 4000`, see `HOW_TO_PLAY.md`)
+before using it. `mud_login` falls back to `MUD_NAME`/`MUD_PASSWORD` env vars.
+
 ### preview/web/ — read-only world viewer (React + Vite + TypeScript)
 
 ```sh
@@ -128,6 +148,7 @@ inn — without it, quitting and reconnecting resets you to the starting room.
 
 ## Working across sub-projects
 
-There is no root-level build/test command — each of the four sub-projects (`infrastructure`,
-`circlemud-world-parser`, `mud_manager`, `preview/web`) has its own toolchain (Docker, uv,
-RubyGems, npm respectively) and must be entered via `cd` before running its commands.
+There is no root-level build/test command — each of the five sub-projects (`infrastructure`,
+`circlemud-world-parser`, `mud_manager`, `mud-mcp`, `preview/web`) has its own toolchain
+(Docker; uv; RubyGems; uv; npm respectively) and must be entered via `cd` before running its
+commands.

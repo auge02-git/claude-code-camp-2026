@@ -9,10 +9,41 @@ async chatter that arrived in the meantime.
 
 from __future__ import annotations
 
+import json
+import os
 import re
 import socket
 import threading
 import time
+from pathlib import Path
+
+# Credentials file. Read once when this module is imported ("beim Starten der
+# session.py") so a session can log in without credentials being passed
+# explicitly. Location is overridable via MUD_CREDENTIALS_FILE; the default sits
+# at the mud-mcp project root (next to pyproject.toml).
+CREDENTIALS_FILE = Path(
+    os.environ.get(
+        "MUD_CREDENTIALS_FILE",
+        str(Path(__file__).resolve().parent.parent / "credentials.json"),
+    )
+)
+
+
+def load_credentials(path: Path = CREDENTIALS_FILE) -> tuple[str, str]:
+    """Read ``{"username": ..., "password": ...}`` from the credentials JSON.
+
+    Returns ``("", "")`` if the file is missing or malformed — a missing file
+    is not an error, it just means credentials must be supplied another way.
+    """
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return "", ""
+    return str(data.get("username", "")), str(data.get("password", ""))
+
+
+# Loaded at import time; login() falls back to these when none are passed.
+DEFAULT_USERNAME, DEFAULT_PASSWORD = load_credentials()
 
 # Telnet protocol bytes. We don't negotiate — we consume and discard IAC
 # sequences so they don't pollute the buffer.
@@ -199,14 +230,34 @@ class MudSession:
 
     # ----- login dance -----
 
-    def login(self, username: str, password: str) -> str:
+    def login(self, username: str | None = None, password: str | None = None) -> str:
         """Walk the CircleMUD login flow for an *existing* character.
 
-        Returns the transcript collected while entering the world. Raises
-        LoginError on a wrong password. Creating a brand-new character (name
-        confirmation + class/gender menus) is intentionally not handled here.
+        Credentials default to those read from the credentials file at import
+        (``DEFAULT_USERNAME`` / ``DEFAULT_PASSWORD``) when not passed. Returns
+        the transcript collected while entering the world. Raises LoginError on
+        a wrong password or when no credentials are available. Creating a
+        brand-new character (name/class/gender menus) is intentionally not
+        handled here.
         """
-        transcript = self.read_until(re.compile(r"By what name do you wish to be known.*\?", re.I))
+        username = username or DEFAULT_USERNAME
+        password = password or DEFAULT_PASSWORD
+        if not username or not password:
+            raise LoginError(
+                "no credentials given and none found in credentials file "
+                f"({CREDENTIALS_FILE})"
+            )
+        # mud_connect already reads up to the name prompt, so by the time we get
+        # here it is usually gone from the buffer. Tolerate its absence: wait a
+        # short moment in case it is still pending, otherwise proceed straight to
+        # sending the name. (Blocking on it forever was the login bug.)
+        try:
+            transcript = self.read_until(
+                re.compile(r"By what name do you wish to be known.*\?", re.I),
+                timeout=2.0,
+            )
+        except ReadTimeout:
+            transcript = ""
         self.send_command(username)
         transcript += self.read_until(re.compile(r"Password", re.I))
         self.send_command(password)

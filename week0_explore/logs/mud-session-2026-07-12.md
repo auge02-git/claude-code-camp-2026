@@ -11,13 +11,49 @@
 
 ---
 
-## ⚠️ WICHTIGSTE WARNUNG (aus zwei Toden gelernt)
+## ⚠️ WICHTIGSTE WARNUNG (aus drei Toden bzw. Beinah-Toden gelernt)
 
-In allen **Gilden- und Wach-Räumen** steht ein 🔴 **Peacekeeper**. Er greift
-sofort **jeden** an, der in seinem Raum ein Monster (auch einen schwachen Fido)
-attackiert — *"The Peacekeeper jumps to the aid of ..."* — und tötet einen
-Level-1-Charakter in wenigen Runden. **Niemals in einem Raum mit Peacekeeper/
-Wache kämpfen.** Fidos nur in Räumen töten, in denen KEINE Wache steht.
+**Wachen (🔴 Peacekeeper UND 🔴 cityguard) helfen jedem Monster, das man in
+ihrem Raum angreift** — *"... jumps to the aid of the beastly fido!"* — und
+töten einen Level-1-Charakter in Sekunden. Zwei Fallen:
+
+1. **Gilden-/Wachräume** (z. B. Raum 3016, alle Gildenräume) haben eine
+   **stationäre** Wache → dort NIE kämpfen.
+2. **Wachen WANDERN** und können **mitten im Kampf** in einen zuvor sicheren
+   Raum kommen (so geschehen im Common Square: *"The cityguard has arrived"* →
+   Beinah-Tod bei 3 HP). Deshalb: vor jedem Angriff Raum prüfen **und** beim
+   ersten *"has arrived"* einer Wache **sofort `flee`** (nicht erst bei
+   niedrigen HP — die Puffer-Latenz verzögert `flee` um mehrere Runden!).
+
+**Sicherste Kill-Regel:** einen **einzelnen** Fido in einem **peripheren** Raum
+töten (siehe The Dump unten) — dort wandern kaum Wachen, und ohne zweiten Fido
+bleibt der Kadaver liegen (looten möglich).
+
+---
+
+## ⚡ OPTIMIERTE ROUTE — schnellster Weg zu allen Zielen (v2, erprobt)
+
+Getestet ab Respawn-Punkt **Donation Room / Temple** (nach Tod landet man hier).
+Meidet **alle** Wachräume, nutzt den peripheren **The Dump** für sicheres Essen.
+
+| # | Kommando | Zielraum | Ergebnis |
+|---|----------|----------|----------|
+| 1 | `west` | Temple Of Midgaard | (vom Donation Room) |
+| 2 | `down` | **Temple Square** | 💧 Brunnen |
+| 3 | `drink fountain` | — | ✅ **Wasser** |
+| 4 | `south` | **Market Square** | ⭐ **Marktplatz** |
+| 5 | `south` | Common Square | 3 Fidos (Korpus-Konkurrenz → hier NICHT looten) |
+| 6 | `south` | **The Dump** (peripher) | meist **1 einzelner** Fido, selten Wachen |
+| 7 | `kill fido` *(oder `kick fido`)* | — | Fido tot; **kick** wird dabei ausgeführt ✅ |
+| 8 | `get all corpse` | — | ✅ **10 Gold + Stück Fleisch** (Kadaver bleibt, da einzelner Fido) |
+| 9 | `eat meat` | — | ✅ **Essen** |
+
+**Skill `kick`** ist bereits dauerhaft gelernt (`kick (bad)`, bleibt über Tode
+hinweg erhalten) — Schritt 7 mit `kick fido` **demonstriert** ihn nur; erneutes
+`practice` ist nicht nötig (und mangels Übungssession auch nicht möglich).
+
+> Vor Schritt 7 IMMER prüfen, dass **keine Wache** im Raum ist. Kommt während
+> des Kampfs eine Wache (*"has arrived"*), **sofort `flee`**.
 
 ---
 
@@ -25,9 +61,9 @@ Wache kämpfen.** Fidos nur in Räumen töten, in denen KEINE Wache steht.
 
 | Symbol | Monster | Einschätzung | Beute / Hinweis |
 |--------|---------|--------------|-----------------|
-| 🟢 SCHWACH | **beastly fido** | ~19 HP, richtet kaum Schaden an, in ~4 Runden tot (mit Waffe, 0 Schaden genommen) | **~10 Gold + ein Stück Fleisch** (Fleisch = Essen!). Beste Gold-/Essensquelle für Neulinge. Kadaver **sofort** looten — ein anderer Fido frisst ihn sonst. |
-| 🔴 STARK | **Peacekeeper** | Tödlich: ~5–8 Schaden/Treffer, tötet Level-1 in Sekunden. Hilft JEDEM Monster, das man in seinem Raum angreift. | Nicht angreifbar. Auslöser für beide Tode. |
-| 🔴 STARK | **cityguard** | Stadtwache, stark, beschützend | Nicht angreifen. |
+| 🟢 SCHWACH | **beastly fido** | ~19 HP, richtet kaum Schaden an, in ~4–6 Runden tot (0 Schaden genommen) | **~10 Gold + ein Stück Fleisch** (Fleisch = Essen!). Beste Gold-/Essensquelle. **Nur EINZELNE Fidos looten** — bei mehreren frisst ein anderer den Kadaver in Sekunden (mehrfach passiert). Flüchtende Fidos rennen nach Süden (Kanalisation). |
+| 🔴 STARK | **Peacekeeper** | Tödlich: ~5–8 Schaden/Treffer, tötet Level-1 in Sekunden. Hilft JEDEM Monster, das man in seinem Raum angreift. | Nicht angreifbar. Stationär in Gilden-/Wachräumen. |
+| 🔴 STARK | **cityguard** | Wie Peacekeeper: hilft angegriffenen Mobs (*"jumps to the aid"*), ~7 Schaden/Treffer. **WANDERT** und kann mitten im Kampf auftauchen. | Nicht angreifen. Bei *"cityguard has arrived"* im Kampf → sofort `flee`. |
 | 🔴 STARK | **a knight** (Gildenwache 3021) | Wächter der Krieger-Gilde | Nicht angreifen. |
 | 🔴 STARK | **a sorcerer** (Magier-Gilde) | blockiert Süd-Ausgang der Magier-Gilde | Nicht angreifen. |
 | ⚪ neutral | **janitor, waiter, wizard (Shop), baker, kind soul** | NPCs/Händler, harmlos | Händler nicht angreifen. `janitor` sammelt herumliegende Items ein! |

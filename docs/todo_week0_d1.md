@@ -80,3 +80,214 @@ beim Aufstieg). Reihenfolge daher: **ausrüsten → leveln → lernen.**
 4 - **Status (Stand 2026-07-12):** 236 Exp · 10 Gold · **0 Übungssessions** · nackt (Ausrüstung bei Toden verloren)                                                                                                                                                     
 5 - **Basis:** `week0_explore/logs/mud-session-2026-07-12.md` (Route + Monster-Markierungen)                                                                                                                                                                            
 6 
+
+---
+-------------
+
+      Aus dem bisher Erkundeten und dem Wissen über die Midgaard-Zone hier konkrete Vorschläge — ohne dass ich sie jetzt selbst ausführe.                                                                                                                                   
+                                                                                                                                                                                                                                                                            
+      Weitere killbare Gegner (für Level 1, voll ausgerüstet)                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                            
+      Sicher / schwach (gute Ergänzung zu Fidos):                                                                                                                                                                                                                           
+      - green gelatinous blob — wandert ständig durch den Kern (Main Street, Inn). Bisher „unklar", aber vermutlich schwach. ⚠️ Blobs können in manchen MUDs die Ausrüstung durch Säure beschädigen — erst mit einem Kill vorsichtig testen (HP beobachten, bei Schaden     
+      abbrechen).                                                                                                                                                                                                                                                           
+      - beggar (Poor Alley) — sehr schwach, aber wenig Exp und senkt evtl. Alignment; nur als Notnagel.                                                                                                                                                                     
+                                                                                                                                                                                                                                                                            
+      Mittel / erst nach etwas Ausrüstung & Vorsicht:                                                                                                                                                                                                                       
+      - Kanalisation (d vom The Dump): rats/snakes/sewer-Mobs — mehr Exp/Kill als Fidos, aber riskanter. Nur mit Waffe, einzeln, früh flee-bereit. (Im aktuellen Plan bewusst ausgeschlossen.)                                                                              
+                                                                                                                                                                                                                                                                            
+      Nicht angreifen (tödlich): cityguard, Peacekeeper, knight, sorcerer, sowie Shop-/Gildenmeister — und der Mayor (unklar, im Zweifel meiden).                                                                                                                           
+                                                                                                                                                                                                                                                                            
+      Verbesserungen für den Loop                                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                                            
+      1. Spawn-Reihenfolge korrigieren: Der Cron-Prompt prüft 3012/Common/Dump zuerst — der ergiebigste Spawn war aber Raum 3024 (Eastern End of Poor Alley). Reihenfolge auf 3024 → Common Square → The Dump → 3012 ändern (alle vier abgrasen, statt bei leerem Raum      
+      abzubrechen).                                                                                                                                                                                                                                                         
+      2. „Circuit" statt Einzelraum: In einer Iteration eine feste Runde durch alle 4 Spawns laufen und jeden Fido unterwegs killen — deutlich effizienter als 5-Min-Abbrüche bei leerem Startraum.
+
+      Hier risikoarme Farm-Quellen jenseits der bekannten Fido-Spawns — basierend auf allem aus dieser Session:                                                                                                                                                             
+                                                                                                                                                                                                                                                                            
+      Neue, risikoarme Farm-Ideen                                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                                            
+      1. Kompletter Fido-Rundlauf statt Einzelraum                                                                                                                                                                                                                          
+      Die Fidos verteilen sich auf vier Spawns: 3024 (Eastern End of Poor Alley), Common Square, The Dump, 3012 (Main Street West). Ein fester Rundlauf durch alle vier findet fast immer irgendwo Fidos — statt bei einem leeren Startraum abzubrechen. Bekannt sicher,    
+      kein neues Risiko.                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                            
+      2. Wandernder green gelatinous blob                                                                                                                                                                                                                                   
+      Der Blob zieht ständig durch den Kern (Main Street, Inn-Bereich). Als risikoarmer Test: einen Blob in einem wachfreien Raum anschlagen, HP beobachten — bricht man bei erstem nennenswertem Schaden ab, ist das Risiko minimal. Möglicher Nachteil: Säure kann        
+      Ausrüstung angreifen, daher nur vorsichtig testen.                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                            
+      3. Poor Alley / Grubby Inn — der beggar                                                                                                                                                                                                                               
+      Sehr schwach und quasi gefahrlos. Nachteil: wenig Exp und evtl. Alignment-Verlust — eher Lückenfüller als Hauptquelle.                                                                                                                                                
+                                                                                                                                                                                                                                                                            
+      Bewusst gemieden (zu riskant für Level 1)                                                                                                                                                                                                                             
+                                                                                                                                                                                                                                                                            
+      - Kanalisation (d vom The Dump): mehr Exp, aber stärkere Mobs — nur mit Waffe, einzeln und fluchtbereit, nicht „ohne großes Risiko".
+
+---------------
+
+⏺ Write(boukensha_architecture_python.md)                                                                                                                                                                                                                                     
+⎿  Wrote 67 lines to boukensha_architecture_python.md                                                                                                                                                                                                                       
+1 # Boukensha-Agent — Architektur-Blaupause (Python-Baseline)                                                                                                                                                                                                           
+2                                                                                                                                                                                                                                                                       
+3 Quelle der Wahrheit: **`docs/plans/Claude Code Camp Agent Architecture - Baseline.json`**                                                                                                                                                                             
+4 (Lucidchart-Export). Diese Datei übersetzt die dort gezeigte **Ruby**-Architektur in                                                                                                                                                                                  
+5 die **Baseline-Vorgaben**: Implementierung in **Python** (uv), Dokumentation/Kommentare/                                                                                                                                                                              
+6 TUI-Texte auf **Deutsch**. Eigennamen (`Boukensha`, `MudManager`) und Python-idiomatische                                                                                                                                                                             
+7 (englische) Bezeichner bleiben erhalten.                                                                                                                                                                                                                              
+8                                                                                                                                                                                                                                                                       
+9 > Boukensha (冒険者) = „Abenteurer" — der Agent, der den MUD selbstständig spielt.
+
+------------
+
+Update(boukensha_architecture_python.md)                                                                                                                                                                                                                                    
+⎿  Added 15 lines, removed 4 lines                                                                                                                                                                                                                                          
+1  # Boukensha-Agent — Architektur-Blaupause (Python-Baseline)                                                                                                                                                                                                         
+2                                                                                                                                                                                                                                                                      
+3  Quelle der Wahrheit: **`docs/plans/Claude Code Camp Agent Architecture - Baseline.json`**                                                                                                                                                                           
+4 -(Lucidchart-Export). Diese Datei übersetzt die dort gezeigte **Ruby**-Architektur in                                                                                                                                                                                
+5 -die **Baseline-Vorgaben**: Implementierung in **Python** (uv), Dokumentation/Kommentare/                                                                                                                                                                            
+6 -TUI-Texte auf **Deutsch**. Eigennamen (`Boukensha`, `MudManager`) und Python-idiomatische                                                                                                                                                                           
+7 -(englische) Bezeichner bleiben erhalten.                                                                                                                                                                                                                            
+4 +(Lucidchart-Export). Diese Datei setzt die im Diagramm gezeigte Architektur als **neue,                                                                                                                                                                             
+5 +additive Python-Erweiterung** um — Baseline: Implementierung in **Python** (uv),                                                                                                                                                                                    
+6 +Dokumentation/Kommentare/TUI-Texte auf **Deutsch**. Eigennamen (`Boukensha`, `MudManager`)                                                                                                                                                                          
+7 +und Python-idiomatische (englische) Bezeichner bleiben erhalten.                                                                                                                                                                                                    
+8                                                                                                                                                                                                                                                                      
+9  > Boukensha (冒険者) = „Abenteurer" — der Agent, der den MUD selbstständig spielt.                                                                                                                                                                                  
+10                                                                                                                                                                                                                                                                      
+11 +## Leitplanken (zwingend)                                                                                                                                                                                                                                           
+12 +- **`.boukensha/` wird NICHT angefasst** — komplett unverändert.                                                                                                                                                                                                    
+13 +- **Bestehende `.rb`-Dateien werden NICHT nach Python übersetzt** und NICHT verändert                                                                                                                                                                               
+14 +  (insb. das Ruby-Gem `week0_explore/mud_manager/`). Sie bleiben so wie sie sind.                                                                                                                                                                                   
+15 +- Python-Code entsteht **nur als zusätzliche, neue Erweiterung** (die im Diagramm                                                                                                                                                                                   
+16 +  gezeigten `agent.rb`/`repl.rb`/`tui.rb` … existieren noch nicht als Dateien → sie                                                                                                                                                                                 
+17 +  werden als **neue** Python-Module angelegt, nicht als Übersetzung).                                                                                                                                                                                               
+18 +- Vorhandener **Python**-Code (`mud-mcp/mud_mcp/session.py`) wird **wiederverwendet,                                                                                                                                                                                
+19 +  nicht verändert**.                                                                                                                                                                                                                                                
+20 +- Neuer Code liegt in **`week0_explore/boukensha/`** (nicht in `.boukensha/`).                                                                                                                                                                                      
+21 +                                                                                                                                                                                                                                                                    
+22  ## Knoten → Python-Modul (aus dem JSON)                                                                                                                                                                                                                             
+23                                                                                                                                                                                                                                                                      
+24  | Baseline-Knoten (Ruby) | Python-Modul | Zweck |
+
+------------
+
+Update(boukensha_architecture_python.md)                                                                                                                                                                                                                                    
+⎿  Added 2 lines, removed 1 line                                                                                                                                                                                                                                            
+78                                                                                                                                                                                                                                                                      
+79  ## Baseline-Regeln (nur für NEUEN Code)                                                                                                                                                                                                                             
+80  - Neue Module in **Python** (uv); `log_viz` als **FastAPI** (neu, kein Ruby-Ersatz).                                                                                                                                                                                
+81 -- Deutsche Docstrings/Kommentare/TUI. LLM-Default: neuestes Claude-Modell (in `settings.yml`).                                                                                                                                                                      
+81 +- Deutsche Docstrings/Kommentare/TUI. **LLM-Default: Claude Haiku 4.5**                                                                                                                                                                                             
+82 +  (`claude-haiku-4-5-20251001`) in `settings.yml` — nicht das „neueste/Default"-Modell.                                                                                                                                                                             
+83  - Keine Änderung an bestehenden `.rb`-Dateien und an `.boukensha/`.
+
+-----------
+
+Write(00_fortsetzen_hier.md)                                                                                                                                                                                                                                                
+⎿  Wrote 60 lines to 00_fortsetzen_hier.md                                                                                                                                                                                                                                  
+1 # 00 — HIER FORTFAHREN (Einstieg für die nächste Sitzung)                                                                                                                                                                                                            
+2                                                                                                                                                                                                                                                                      
+3 Diese Datei ist der **Startpunkt**, um an genau dieser Stelle weiterzumachen.                                                                                                                                                                                        
+4 Zuerst lesen, dann bei „Nächste Schritte" ansetzen.
+
+--------
+
+/btw bitte suche weitere gegner die du killen kannst und verbessere die loop.                                                                                                                                                                                             
+/btw gehe neue Wege und versuche ohne grosses Risiko weiter Quellen zu Farmen zu finden.                                                                                                                                                                                  
+/btw bitte nutze für die nächste loop folgende vorgabe: Kanalisation freigeben (mehr Exp/Kill, ich fliehe früh bei Gefahr), oder
+
+--------
+
+Write(~/Documents/005___data/git/001_podman_runtime/claudeCodeCamp/week0_explore/boukensha/boukensha/cli.py)                                                                                                                                                                
+⎿  Wrote 49 lines to ../../week0_explore/boukensha/boukensha/cli.py                                                                                                                                                                                                         
+1 """Text-UI / Einstieg (Diagramm-Knoten ``tui.rb`` + ``> bounkensha``).                                                                                                                                                                                                
+2                                                                                                                                                                                                                                                                       
+3 Aufrufe:                                                                                                                                                                                                                                                              
+4 - ``boukensha``                → interaktive REPL                                                                                                                                                                                                                     
+5 - ``boukensha --dsl <datei>``  → skriptbaren Ablauf ausführen (siehe run_dsl)                                                                                                                                                                                         
+6 - ``boukensha --no-connect``   → nicht automatisch zum MUD verbinden (Testlauf)                                                                                                                                                                                       
+7 """                                                                                                                                                                                                                                                                   
+8                                                                                                                                                                                                                                                                       
+9 from __future__ import annotations                                                                                                                                                                                                                                    
+… +39 lines
+
+Write(~/Documents/005___data/git/001_podman_runtime/claudeCodeCamp/week0_explore/boukensha/boukensha/repl.py)                                                                                                                                                               
+⎿  Wrote 38 lines to ../../week0_explore/boukensha/boukensha/repl.py                                                                                                                                                                                                        
+1 """Interaktive Schleife (Diagramm-Knoten ``repl.rb``).                                                                                                                                                                                                                
+2                                                                                                                                                                                                                                                                       
+3 Liest Anweisungen des Nutzers, gibt sie an den Agenten (``Your Prompt``) und                                                                                                                                                                                          
+4 zeigt dessen Ausgabe. Deutschsprachig. ``rich`` ist optional (Fallback: print).                                                                                                                                                                                       
+5 """                                                                                                                                                                                                                                                                   
+6                                                                                                                                                                                                                                                                       
+7 from __future__ import annotations                                                                                                                                                                                                                                    
+8                                                                                                                                                                                                                                                                       
+9 from .agent import Agent                                                                                                                                                                                                                                              
+… +28 lines
+
+Write(~/Documents/005___data/git/001_podman_runtime/claudeCodeCamp/week0_explore/boukensha/boukensha/run_dsl.py)                                                                                                                                                            
+⎿  Wrote 28 lines to ../../week0_explore/boukensha/boukensha/run_dsl.py                                                                                                                                                                                                     
+1 """Skriptbare Abläufe (Diagramm-Knoten ``run_dsl.rb``).                                                                                                                                                                                                              
+2                                                                                                                                                                                                                                                                      
+3 Ein „Journey"-Skript ist eine einfache Textdatei: eine Anweisung pro Zeile,                                                                                                                                                                                          
+4 Leerzeilen und ``#``-Kommentare werden ignoriert. Jede Zeile wird als                                                                                                                                                                                                
+5 ``Your Prompt`` an den Agenten gegeben.                                                                                                                                                                                                                              
+6                                                                                                                                                                                                                                                                      
+7 Beispiel (``journeys/trinken_essen.txt``)::                                                                                                                                                                                                                          
+8                                                                                                                                                                                                                                                                      
+9     # Erst Wasser, dann Essen besorgen                                                                                                                                                                                                                               
+10     Geh zum Brunnen am Temple Square und trink.                                                                                                                                                                                                                      
+… +18 lines
+
+Write(~/Documents/005___data/git/001_podman_runtime/claudeCodeCamp/week0_explore/boukensha/log_viz/server.py)                                                                                                                                                               
+⎿  Wrote 67 lines to ../../week0_explore/boukensha/log_viz/server.py                                                                                                                                                                                                        
+1 """log_viz (Diagramm-Knoten ``log_viz``) — Python-Baseline: FastAPI.                                                                                                                                                                                                 
+2                                                                                                                                                                                                                                                                      
+3 Macht die JSONL-Sitzungslogs aus ``~/.boukensha/logs/<session_id>/*.jsonl``                                                                                                                                                                                          
+4 menschenlesbar. Ersetzt die im Diagramm gezeigte Sinatra-App (Ruby) durch eine                                                                                                                                                                                       
+5 **neue** Python-Variante (kein Ruby-Ersatz im Bestand).                                                                                                                                                                                                              
+6                                                                                                                                                                                                                                                                      
+7 Start (nach ``pip install '.[logviz]'`` bzw. ``uv sync --extra logviz``)::                                                                                                                                                                                           
+8                                                                                                                                                                                                                                                                      
+9     uvicorn log_viz.server:app --reload                                                                                                                                                                                                                              
+10 """                                                                                                                                                                                                                                                                  
+… +57 lines                                                                                                                                                                                                                                                              
+⎿  You've hit your session limit · resets 11pm (Europe/Berlin)
+
+-----------
+
+[week0-tests f4b6cb3] AWO: part of working on new architecture and wait of tocken reset.
+29 files changed, 1210 insertions(+), 1 deletion(-)
+create mode 100644 .DS_Store
+create mode 100644 docs/.DS_Store
+create mode 100644 docs/plans/00_fortsetzen_hier.md
+create mode 100644 docs/plans/Claude Code Camp Agent Architecture - Baseline.json
+create mode 100644 docs/plans/Claude Code Camp Agent Architecture - Baseline.png
+create mode 100644 docs/plans/Claude Code Camp Agent Architecture - Baseline.svg
+create mode 100644 docs/plans/boukensha_architecture_python.md
+create mode 100644 docs/plans/umsetzung.md
+create mode 100644 docs/plans/vorgaben.md
+create mode 100644 docs/plans/week0_dummy_level-and-skills.md
+create mode 100644 week0_explore/.DS_Store
+create mode 100644 week0_explore/boukensha/boukensha/__init__.py
+create mode 100644 week0_explore/boukensha/boukensha/agent.py
+create mode 100644 week0_explore/boukensha/boukensha/backends/__init__.py
+create mode 100644 week0_explore/boukensha/boukensha/backends/anthropic.py
+create mode 100644 week0_explore/boukensha/boukensha/cli.py
+create mode 100644 week0_explore/boukensha/boukensha/config.py
+create mode 100644 week0_explore/boukensha/boukensha/context.py
+create mode 100644 week0_explore/boukensha/boukensha/logger.py
+create mode 100644 week0_explore/boukensha/boukensha/mud.py
+create mode 100644 week0_explore/boukensha/boukensha/registry.py
+create mode 100644 week0_explore/boukensha/boukensha/repl.py
+create mode 100644 week0_explore/boukensha/boukensha/run_dsl.py
+create mode 100644 week0_explore/boukensha/boukensha/tools/__init__.py
+create mode 100644 week0_explore/boukensha/boukensha/tools/base.py
+create mode 100644 week0_explore/boukensha/boukensha/tools/mud_tools.py
+create mode 100644 week0_explore/boukensha/log_viz/server.py
+create mode 100644 week0_explore/boukensha/pyproject.toml
+
+------------
+
+Resume this session with:
+claude --resume b95dd29b-9bf8-466e-acc5-6aef9a1bbe51

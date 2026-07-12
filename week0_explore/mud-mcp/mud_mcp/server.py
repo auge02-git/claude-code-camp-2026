@@ -60,19 +60,24 @@ def mud_connect(host: str = "localhost", port: int = 4000) -> str:
 
 
 @mcp.tool()
-def mud_login(username: str, password: str) -> str:
+def mud_login(username: str = "", password: str = "") -> str:
     """Log an existing character into the world (username + password).
 
     Walks the CircleMUD login dance and enters the game. Creating a brand-new
     character is not supported here — do that once via `telnet localhost 4000`.
-    Credentials may also come from MUD_NAME / MUD_PASSWORD env vars if omitted.
+    Both arguments are optional: if omitted, credentials are taken from the
+    MUD_NAME / MUD_PASSWORD env vars, and otherwise from the credentials file
+    read when session.py started (credentials.json at the mud-mcp root).
     """
     if _session is None or not _session.is_open:
         return "ERROR: not connected — call mud_connect first."
-    username = username or os.environ.get("MUD_NAME", "")
-    password = password or os.environ.get("MUD_PASSWORD", "")
+    username = username or os.environ.get("MUD_NAME", "") or session_mod.DEFAULT_USERNAME
+    password = password or os.environ.get("MUD_PASSWORD", "") or session_mod.DEFAULT_PASSWORD
     if not username or not password:
-        return "ERROR: username and password required (or set MUD_NAME / MUD_PASSWORD)."
+        return (
+            "ERROR: no credentials — pass username/password, set MUD_NAME / "
+            "MUD_PASSWORD, or create credentials.json at the mud-mcp root."
+        )
     try:
         transcript = _session.login(username, password)
     except LoginError as e:

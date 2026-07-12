@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "mud": {
+      "command": "uv",
+      "args": ["run", "--directory", "week0_explore/mud-mcp", "mud-mcp"]
+    }
+  }
+}

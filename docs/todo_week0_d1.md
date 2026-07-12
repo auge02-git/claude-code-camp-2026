@@ -10,3 +10,9 @@ create mode 100644 week0_explore/mud-mcp/pyproject.toml
 create mode 100644 week0_explore/mud-mcp/scripts/smoke_test.py
 create mode 100644 week0_explore/mud-mcp/uv.lock
 create mode 100644 week0_explore/run_session_test.sh
+
+[week0-tests a3ddb99] AWO: update mcp to logging and markers of way for retry
+6 files changed, 318 insertions(+), 11 deletions(-)
+create mode 100644 docs/todo_week0_d1.md
+create mode 100644 week0_explore/logs/mud-session-2026-07-12.log
+create mode 100644 week0_explore/logs/mud-session-2026-07-12.md

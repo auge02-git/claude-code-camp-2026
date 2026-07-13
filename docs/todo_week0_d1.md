@@ -466,3 +466,15 @@ uv run boukensha
 
 # Resume this session with:
 claude --resume "Agent-test.2"
+
+--------------
+
+Nächster Schritt: Du kannst jetzt entweder:
+export ANTHROPIC_API_KEY=sk-ant-… setzen und den echten Agent laufen lassen.
+Oder: uv run boukensha --local-llm --no-connect wenn ein lokaler LLM-Server auf Port 1234 läuft
+
+--------------
+
+## Beobachtet:
+ohne: --model: LLM-Modell: qwen/qwen-3.5-9b
+mit: --model google/gemma-4-12b-qat: LLM-Modell: google/gemma-4-12b-qat.

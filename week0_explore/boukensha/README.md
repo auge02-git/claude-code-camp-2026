@@ -57,20 +57,27 @@ export ANTHROPIC_API_KEY=sk-ant-…
 ### Optional: lokaler LLM-Server
 
 Wenn ein **Anthropic-kompatibler** lokaler Endpoint verfügbar ist (z. B.
-`http://127.0.0.1:1234`), kann Boukensha wahlweise dagegen laufen:
+`http://127.0.0.1:1234`), kann Boukensha wahlweise dagegen laufen.
+Das Modell wird dabei ohne Override automatisch auf **`qwen/qwen-3-5-9b`** gesetzt
+(Default für `--local-llm`). Du kannst aber jedes lokale Modell explizit setzen,
+z. B. **`google/gemma-4-12b-qat`**.
 
 ```sh
 # Variante A: pro Aufruf
 uv run boukensha --local-llm --no-connect
 
+# Variante A2: lokales Modell explizit setzen
+uv run boukensha --local-llm --model google/gemma-4-12b-qat --no-connect
+
 # Variante B: dauerhaft über Umgebung
 export BOUKENSHA_LLM_BASE_URL=http://127.0.0.1:1234
+export BOUKENSHA_LLM_MODEL=qwen/qwen-3-5-9b
 uv run boukensha --no-connect
 ```
 
-Hinweis: Im lokalen Modus setzt das Backend bei fehlendem `ANTHROPIC_API_KEY`
-automatisch einen Dummy-Key (`local-dev-key`), da viele kompatible Server einen
-Header erwarten.
+Hinweise:
+- Das Backend setzt bei fehlendem `ANTHROPIC_API_KEY` automatisch einen Dummy-Key (`local-dev-key`).
+- Mit `--local-llm` werden Endpoint + lokales Default-Modell gesetzt; `--model` überschreibt das Modell.
 
 ## Inbetriebnahme
 

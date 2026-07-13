@@ -9,11 +9,15 @@ Aufrufe:
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 
 from .agent import Agent
 from .config import Config
 from .mud import MudManager
+
+LOCAL_LLM_DEFAULT_URL = "http://127.0.0.1:1234"
+LOCAL_LLM_DEFAULT_MODEL = "qwen/qwen-3-5-9b"
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -26,19 +30,51 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--local-llm",
         action="store_true",
-        help="nutzt einen lokalen Anthropic-kompatiblen LLM-Server (http://127.0.0.1:1234)",
+        help="nutzt einen lokalen Anthropic-kompatiblen LLM-Server",
+    )
+    parser.add_argument(
+        "--llm-base-url",
+        metavar="URL",
+        help="LLM-Endpoint (z. B. http://127.0.0.1:1234), überschreibt Config/Env",
+    )
+    parser.add_argument(
+        "--model",
+        metavar="NAME",
+        help="Modellname für den LLM-Aufruf (z. B. google/gemma-4-12b-qat)",
     )
     parser.add_argument(
         "--max-steps",
         type=int,
-        default=12,
-        help="max. Werkzeug-Iterationen pro Ziel (Standard 12; höher für Navigation/Suche)",
+        default=5,
+        help="max. Werkzeug-Iterationen pro Ziel (Standard 5; höher für Navigation/Suche)",
     )
     args = parser.parse_args(argv if argv is not None else sys.argv[1:])
 
     config = Config.load()
+    if args.llm_base_url:
+        config.llm_base_url = args.llm_base_url
+    if args.model:
+        config.model = args.model
+
     if args.local_llm:
-        config.llm_base_url = "http://127.0.0.1:1234"
+        config.llm_base_url = config.llm_base_url or LOCAL_LLM_DEFAULT_URL
+        # Im Local-LLM-Modus gilt ohne explizites --model der lokale Default.
+        if not args.model:
+            config.model = os.environ.get("BOUKENSHA_LLM_MODEL", LOCAL_LLM_DEFAULT_MODEL)
+
+    # Prüfe, ob ein gültiger LLM-Endpoint verfügbar ist
+    has_api_key = bool(os.environ.get("ANTHROPIC_API_KEY", "").strip())
+    has_local_endpoint = bool(config.llm_base_url)
+    if not has_api_key and not has_local_endpoint:
+        print(
+            "❌ Fehler: Kein LLM-Endpoint konfiguriert.\n"
+            "   Optionen:\n"
+            "   A) API-Key setzen: export ANTHROPIC_API_KEY=sk-ant-…\n"
+            "   B) Lokalen Server nutzen: boukensha --local-llm (benötigt http://127.0.0.1:1234)\n"
+            "   C) Endpoint über Env: export BOUKENSHA_LLM_BASE_URL=http://your.server:port",
+            file=sys.stderr,
+        )
+        return 1
 
     mud = MudManager(host=config.mud_host, port=config.mud_port)
 
@@ -53,6 +89,7 @@ def main(argv: list[str] | None = None) -> int:
 
         if config.llm_base_url:
             print(f"LLM-Endpoint: {config.llm_base_url}")
+            print(f"LLM-Modell: {config.model}")
 
         agent = Agent(config=config, mud=mud, max_steps=args.max_steps)
 

@@ -153,7 +153,16 @@ class Agent:
             self.context.add_user(tool_results)
 
         self.logger.log("output", text="(max_steps erreicht)")
-        return "(Abbruch: max_steps erreicht)"
+        # Zu viele Iterationen → wahrscheinlich Tool-Schleife oder Backend-Fehler.
+        debug_msgs = f"({len(self.context.messages)} Nachrichten, max_steps={self.max_steps})"
+        return (
+            "❌ Abbruch: Zu viele Iterationen ohne Abschluss. "
+            f"{debug_msgs}\n"
+            "   Mögliche Ursachen:\n"
+            "   • Backend gibt keine Endantwort zurück (stop_reason != 'tool_use')\n"
+            "   • Ein Tool ruft sich selbst rekursiv auf\n"
+            "   • Versuche --max-steps zu erhöhen (default: 5)"
+        )
 
     def _log_usage(self, antwort) -> None:
         """Protokolliert Token-Nutzung inkl. Cache-Treffer (Prompt-Caching)."""

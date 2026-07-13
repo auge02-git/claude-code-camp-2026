@@ -294,5 +294,79 @@ claude --resume b95dd29b-9bf8-466e-acc5-6aef9a1bbe51
 
 ------------
 
-### SVA Key um den Agent laufen lassen zu können.
-export ANTHROPIC_API_KEY="sk-GoFV3XyDZeqnyjel6ZpInQ"
+Update(~/Documents/005___data/git/001_podman_runtime/claudeCodeCamp/docs/plans/umsetzung.md)
+Added 15 lines
+log_viz/server.py         # FastAPI (neu)
+  ```
+```
+## F) Prompt-Caching (Token-Ersparnis)  ✅ eingebaut (2026-07-13)
+Datei: `week0_explore/boukensha/boukensha/backends/anthropic.py`
+- `cache_control: {"type": "ephemeral"}` an den bei jedem Loop-Schritt erneut
+  gesendeten Content-Blöcken gesetzt: **System-Prompt**, **letztes Werkzeug**
+  (cacht den ganzen Tool-Block) und **letzte User-Nachricht** (inkrementelles
+  Caching des wachsenden Verlaufs). Eingaben werden nicht mutiert; per
+  `ClaudeBackend(use_cache=False)` abschaltbar.
+- **Wichtig:** `cache_control` gehört an **Content-Blöcke**, NICHT als Top-Level-
+  Parameter von `messages.create` (den gibt es nicht). Greift erst ab Mindest-
+  Präfixlänge (Sonnet ~1024, Haiku ~2048 Tokens), sonst folgenlos ignoriert.
+- **`agent.py`**: `_log_usage()` protokolliert `input/output/cache_write/cache_read`
+  je Schritt (Cache-Wirkung im JSONL sichtbar).
+- Verifiziert: Kompiliert sauber; Transformationen getestet (Breakpoints korrekt,
+  keine Mutation der Original-Objekte).
+
+## Nicht angefasst (bewusst, laut Vorgaben)
+- `.boukensha/` (unverändert).
+- `week0_explore/mud_manager/` (Ruby-Gem, unverändert).
+
+Prompt-Caching ist eingebaut. ✅
+
+Was geändert wurde
+
+backends/anthropic.py — cache_control: {"type": "ephemeral"} an den drei Blöcken, die in der Tool-Use-Schleife bei jedem Schritt neu gesendet werden:
+
+┌────────────────────┬───────────────────────┬─────────────────────────────────────────────────┐
+│       Block        │      Breakpoint       │                     Effekt                      │
+├────────────────────┼───────────────────────┼─────────────────────────────────────────────────┤
+│ System-Prompt      │ Textblock             │ statischer System-Prompt (2070 Z.) wird gecacht │
+├────────────────────┼───────────────────────┼─────────────────────────────────────────────────┤
+│ Werkzeuge          │ letztes Tool          │ ganzer 9-Werkzeug-Block gecacht                 │
+├────────────────────┼───────────────────────┼─────────────────────────────────────────────────┤
+│ Nachrichtenverlauf │ letzte User-Nachricht │ wachsender Verlauf inkrementell gecacht         │
+└────────────────────┴───────────────────────┴─────────────────────────────────────────────────┘
+
+agent.py — _log_usage() schreibt pro Schritt input/output/cache_write/cache_read ins JSONL, damit die Ersparnis sichtbar ist (wie das usage-Print in deinem Snippet).
+
+Wichtige Korrektur zu deinem Snippet
+
+In deinem Code stand cache_control als Top-Level-Parameter von messages.create — den gibt es in der API nicht. cache_control muss an einzelne Content-Blöcke (System/Tools/Messages). Genau so ist es jetzt umgesetzt. Zusätzlich beachtet: Caching greift erst ab einer Mindest-Präfixlänge (Sonnet ~1024, Haiku ~2048 Tokens) — darunter ignoriert die API es folgenlos (kein Fehler).
+
+Verifiziert
+
+- compileall sauber.
+- Transformationen getestet: Breakpoints an den richtigen Stellen, Original-Objekte werden nicht mutiert, frühere Nachrichten bleiben unangetastet.
+- Abschaltbar via ClaudeBackend(use_cache=False).
+
+Der echte Cache-Effekt (cache_read_input_tokens > 0) zeigt sich beim ersten Live-Lauf mit gesetztem ANTHROPIC_API_KEY — sichtbar in den usage-Zeilen des Session-Logs.
+
+------------
+
+[week0-tests e7613bb] AWO: fix, agent and include caching for reused token on rerun.
+25 files changed, 1276 insertions(+), 20 deletions(-)
+create mode 100644 week0_explore/boukensha/README.md
+create mode 100644 week0_explore/boukensha/boukensha/__pycache__/__init__.cpython-313.pyc
+create mode 100644 week0_explore/boukensha/boukensha/__pycache__/agent.cpython-313.pyc
+create mode 100644 week0_explore/boukensha/boukensha/__pycache__/cli.cpython-313.pyc
+create mode 100644 week0_explore/boukensha/boukensha/__pycache__/config.cpython-313.pyc
+create mode 100644 week0_explore/boukensha/boukensha/__pycache__/context.cpython-313.pyc
+create mode 100644 week0_explore/boukensha/boukensha/__pycache__/logger.cpython-313.pyc
+create mode 100644 week0_explore/boukensha/boukensha/__pycache__/mud.cpython-313.pyc
+create mode 100644 week0_explore/boukensha/boukensha/__pycache__/registry.cpython-313.pyc
+create mode 100644 week0_explore/boukensha/boukensha/__pycache__/repl.cpython-313.pyc
+create mode 100644 week0_explore/boukensha/boukensha/__pycache__/run_dsl.cpython-313.pyc
+create mode 100644 week0_explore/boukensha/boukensha/backends/__pycache__/__init__.cpython-313.pyc
+create mode 100644 week0_explore/boukensha/boukensha/backends/__pycache__/anthropic.cpython-313.pyc
+create mode 100644 week0_explore/boukensha/boukensha/tools/__pycache__/__init__.cpython-313.pyc
+create mode 100644 week0_explore/boukensha/boukensha/tools/__pycache__/base.cpython-313.pyc
+create mode 100644 week0_explore/boukensha/boukensha/tools/__pycache__/mud_tools.cpython-313.pyc
+create mode 100644 week0_explore/boukensha/log_viz/__pycache__/server.cpython-313.pyc
+create mode 100644 week0_explore/boukensha/uv.lock

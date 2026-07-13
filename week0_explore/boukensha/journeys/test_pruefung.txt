@@ -1,0 +1,3 @@
+# Sicherer Prüf-Lauf für den Agenten (kein Kampf, keine Bewegung).
+# Zweck: Tool-Use-Schleife + Prompt-Caching + Logging verifizieren.
+Schau dich im aktuellen Raum um und prüfe anschließend deinen Status (score). Fasse dann in ein bis zwei kurzen Sätzen auf Deutsch zusammen, wo du dich befindest und wie viele Lebenspunkte, Erfahrung und Gold du hast. WICHTIG: Kämpfe NICHT und bewege dich NICHT.

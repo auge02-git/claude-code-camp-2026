@@ -23,7 +23,8 @@ except ImportError:  # pragma: no cover - yaml ist harte Abhängigkeit, aber Stu
 
 # LLM-Modell laut Vorgaben: primär Haiku 4.5, Alternative Sonnet 4.6.
 # (Bewusst NICHT das "neueste/Default"-Modell.)
-DEFAULT_MODEL = "claude-haiku-4-5-20251001"
+# Alias "claude-haiku-4-5" (= volle ID claude-haiku-4-5-20251001).
+DEFAULT_MODEL = "claude-haiku-4-5"
 ALT_MODEL = "claude-sonnet-4-6"  # Modell-ID vor Nutzung bestätigen
 
 

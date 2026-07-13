@@ -406,3 +406,19 @@ Update(week0_explore/boukensha/boukensha/mud.py)
 29 +        default=12,                                                                                                                                                                                                                                                 
 30 +        help="max. Werkzeug-Iterationen pro Ziel (Standard 12; höher für Navigation/Suche)",                                                                                                                                                                        
 31 +    ) on backend
+
+-------------
+
+So nutzt du das claude.ai-Konto konkret
+
+Hier ist claude (Claude Code) installiert, ant (Anthropic-CLI) noch nicht. Zwei Wege:
+
+# Weg A – Anthropic-CLI-OAuth-Profil (SDK liest es automatisch, kein Env nötig):
+brew install anthropics/tap/ant                                                                                                                                                                                                                                             
+ant auth login                                                                                                                                                                                                                                                              
+cd week0_explore/boukensha && uv run boukensha     # nutzt das Profil automatisch
+
+# Weg B – OAuth-Token als Env-Var:
+claude setup-token                                  # erzeugt ein OAuth-Token                                                                                                                                                                                               
+export ANTHROPIC_AUTH_TOKEN=<token>                 # oder BOUKENSHA_AUTH_TOKEN                                                                                                                                                                                             
+uv run boukensha       

@@ -1,0 +1,17 @@
+# Spiel-Lauf: trinken, essen, einen Fido töten. Jede Zeile = ein Agenten-Ziel
+# (eigenes Schritt-Budget). Sicherheitsregeln aus dem System-Prompt beachten.
+
+# Ziel 1 - Tempel: gehe zum Temel als Startpunkt.
+Gehe wenn noetig zurueck zum Tempel und starte von dort.
+
+# Ziel 2 — Wasser: zum Brunnen am Temple Square und trinken.
+Du startest vermutlich im Temple Of Midgaard. Geh nach unten (down) zum Temple Square, wo der große Brunnen steht, und trinke daraus (drink fountain), bis du nicht mehr durstig bist. Bestaetige mit read_pending. Bewege dich Schritt fuer Schritt und pruefe nach jeder Bewegung mit look, wo du bist.
+
+# Ziel 3 — Einen einzelnen Fido sicher toeten.
+Suche einen EINZELNEN, schwachen Fido in einem WACHFREIEN Raum (z. B. Eastern End of Poor Alley: vom Temple Square nach sued zum Market Square, weiter sued zum Common Square, dann west). Pruefe zuerst mit look, dass KEINE Wache (cityguard, Peacekeeper, knight, sorcerer) im Raum ist. Ist eine Wache da oder mehrere Fidos, geh in einen anderen Raum. Toete dann den einzelnen Fido (kill fido), lies mit read_pending die Kampfrunden. Kommt waehrend des Kampfs eine Wache ("has arrived"), sofort flee.
+
+# Ziel 4 — Pluendern und essen.
+Pluendere SOFORT die Leiche (loot_corpse) und iss danach das Fleisch (eat meat). Bestaetige jeweils mit read_pending. Fasse zum Schluss kurz auf Deutsch zusammen, was du erreicht hast (Wasser, Fleisch, Gold aus dem Fido).
+
+# Ziel 5 - Heile dich nach einem Kampf.
+Suche eine Option bei der du dich heilen kannst und beginne danach mit dem zweiten Ziel erneut.

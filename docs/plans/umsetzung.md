@@ -107,26 +107,15 @@ Mit gesetztem `ANTHROPIC_API_KEY` und laufendem MUD getestet.
   `ReadTimeout`.
 - **Neu:** `journeys/test_pruefung.txt` (sicherer Prüf-Lauf: nur `look`+`score`).
 
-## H) Authentifizierung über claude.ai-Konto (OAuth) als Option  ✅ eingebaut (2026-07-13)
-Frage: Kann der Agent auch über ein claude.ai-Konto laufen? **Ja.**
-- **Grundlage:** Der `anthropic`-Client löst Credentials automatisch auf
-  (`ANTHROPIC_API_KEY` → `ANTHROPIC_AUTH_TOKEN` → `ant auth login`-OAuth-Profil →
-  WIF → Default-Profil). Da `backends/anthropic.py` einen **argumentlosen**
-  Client baut, greift dieser OAuth-Pfad bereits ohne Codeänderung.
-- **Zusätzliche explizite Option eingebaut:**
-  - `config.py`: neues Feld `Config.auth_token` (aus `settings.yml: auth_token`
-    oder Env `BOUKENSHA_AUTH_TOKEN`; sonst `None`).
-  - `backends/anthropic.py`: `ClaudeBackend(auth_token=…)` → reicht das Token an
-    `anthropic.Anthropic(auth_token=…)` durch; `None` = Auto-Auflösung.
-  - `agent.py`: übergibt `config.auth_token` ans Backend.
-  - `README.md`: Abschnitt „Authentifizierung" (Tabelle der drei Wege);
-    `~/.boukensha/settings.yml`: auskommentierter `auth_token`-Hinweis.
-- **Verifiziert:** kompiliert sauber; Client mit explizitem Token und mit
-  Auto-Auflösung (`None`) je erzeugt.
-- **Praktisch:** `ant` (Anthropic-CLI) ist hier noch nicht installiert; `claude`
-  (Claude Code) schon. Für den OAuth-Weg: `brew install anthropics/tap/ant` +
-  `ant auth login`, oder ein Token via `claude setup-token` als
-  `ANTHROPIC_AUTH_TOKEN`/`BOUKENSHA_AUTH_TOKEN` setzen.
+## H) Auth: explizite `auth_token`-Umschaltung wieder ENTFERNT  ✅ (2026-07-13)
+Die zuvor eingebaute explizite `auth_token`/OAuth-Umschaltung wurde auf Wunsch
+**zurückgebaut**. Backend/Agent/Config nutzen wieder ausschließlich den
+argumentlosen `anthropic.Anthropic()` (→ `ANTHROPIC_API_KEY` aus der Umgebung).
+- Entfernt: `Config.auth_token`, `ClaudeBackend(auth_token=…)`-Zweig, die
+  `BOUKENSHA_AUTH_TOKEN`/`settings.yml: auth_token`-Auflösung, sowie die
+  README-Tabelle und der settings.yml-Kommentar.
+- Hinweis bleibt bestehen: Das SDK kann ein `ant`-OAuth-Profil weiterhin selbst
+  auflösen — das bucht aber auf API-Guthaben, nicht auf ein Abo (siehe Abschn. I).
 
 ## I) OAuth-Profil-„Absturz" analysiert + behoben  ✅ (2026-07-13)
 Symptom: Agent stürzt bei Nutzung des `ant auth login`-OAuth-Profils „immer" ab.

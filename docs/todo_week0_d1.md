@@ -425,6 +425,38 @@ brew install anthropics/tap/ant
 ant auth login                                                                                                                                                                                                                                                              
 cd week0_explore/boukensha && uv run boukensha     # nutzt das Profil automatisch
 
+#### Option musste resetet werden da diese verwendung nicht zugelassen ist!
+
+
+
+⏺ Jetzt die Docs bereinigen (README + settings.yml), damit keine Verweise auf die entfernte Option zurückbleiben.
+
+Read 1 file
+
+⏺ Update(week0_explore/boukensha/README.md)                                                                                                                                                                             
+⎿  Added 12 lines, removed 29 lines                                                                                                                                                                                   
+39                                                                                                                                                                                                                
+40  ## Authentifizierung                                                                                                                                                                                          
+41                                                                                                                                                                                                                
+42 -Das Backend nutzt den offiziellen `anthropic`-Client. Der **argumentlose**                                                                                                                                    
+43 -`anthropic.Anthropic()` löst Zugangsdaten in fester Reihenfolge auf (erste                                                                                                                                    
+44 -Übereinstimmung gewinnt):                                                                                                                                                                                     
+42 +Das Backend nutzt den offiziellen `anthropic`-Client mit dem **API-Key** aus der
+
+⏺ Update(week0_explore/boukensha/boukensha/agent.py)                                                                                                                                                                    
+⎿  Added 1 line, removed 2 lines                                                                                                                                                                                      
+149      if status in (401, 403) or "authentication_error" in low or "permission" in low:                                                                                                                         
+150          return (                                                                                                                                                                                             
+151              "❌ AAbbruch: Authentifizierung fehlgeschlagen.\n"                                                                                                                                                
+152 -            "   Prüfe die Zugangsdaten: `ANTHROPIC_API_KEY`, `ant auth status`, oder ein\n"                                                                                                                  
+153 -            "   `BOUKENSHA_AUTH_TOKEN`. Bei OAuth ggf. `ant auth login` erneut ausführen.\n"                                                                                                                 
+152 +            "   Prüfe den `ANTHROPIC_API_KEY` (mit Guthaben) in der Umgebung.\n"                                                                                                                             
+153              f"   (API-Meldung: {text[:160]})"                                                                                                                                                                
+154          )                                                                                                                                                                                                    
+155      if status == 429 or "rate_limit" in low or "overloaded" in low:
+
+-------------
+
 # Weg B – OAuth-Token als Env-Var:
 claude setup-token                                  # erzeugt ein OAuth-Token                                                                                                                                                                                               
 export ANTHROPIC_AUTH_TOKEN=<token>                 # oder BOUKENSHA_AUTH_TOKEN                                                                                                                                                                                             

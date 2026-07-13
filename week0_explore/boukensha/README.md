@@ -39,37 +39,20 @@ Konfigurierbar in `~/.boukensha/settings.yml` (`model:`).
 
 ## Authentifizierung
 
-Das Backend nutzt den offiziellen `anthropic`-Client. Der **argumentlose**
-`anthropic.Anthropic()` löst Zugangsdaten in fester Reihenfolge auf (erste
-Übereinstimmung gewinnt):
+Das Backend nutzt den offiziellen `anthropic`-Client mit dem **API-Key** aus der
+Umgebung:
 
-`ANTHROPIC_API_KEY` → `ANTHROPIC_AUTH_TOKEN` → OAuth-Profil aus `ant auth login`
-→ Workload-Identity → Default-Profil auf der Platte.
+```sh
+export ANTHROPIC_API_KEY=sk-ant-…
+```
 
-Drei Wege, den Agenten zu authentifizieren:
-
-| Weg | Wie | Wann |
-|-----|-----|------|
-| **API-Key** | `export ANTHROPIC_API_KEY=sk-ant-…` | Standard, Abrechnung über die Anthropic Console. |
-| **OAuth / claude.ai-Konto** | `ant auth login` (Anthropic CLI) legt ein Profil an, das der `anthropic`-Client automatisch liest — **kein** Env-Var nötig. Alternativ ein `ANTHROPIC_AUTH_TOKEN` setzen. | Nutzung über ein Konto/Abo statt eines statischen API-Keys. |
-| **Explizites Token im Code** | `settings.yml: auth_token: <token>` **oder** `export BOUKENSHA_AUTH_TOKEN=<token>` | Wenn das Token nicht über die SDK-Auto-Auflösung kommen soll. |
-
-Der explizite Weg wird an `anthropic.Anthropic(auth_token=…)` durchgereicht
-(`config.py:Config.auth_token` → `backends/anthropic.py`). Ist nichts gesetzt,
-greift die Auto-Auflösung oben — der Agent läuft also auch mit einem reinen
-`ant auth login`-Profil ohne weitere Konfiguration.
-
-> Hinweis: `ant` ist die Anthropic-CLI (`brew install anthropics/tap/ant`).
-> Ein per Claude Code erzeugtes OAuth-Token (`claude setup-token`) lässt sich
-> als `ANTHROPIC_AUTH_TOKEN` bzw. `BOUKENSHA_AUTH_TOKEN` setzen.
->
-> ⚠️ **Wichtig zur Abrechnung:** Ein `ant auth login`-OAuth-Profil authentifiziert
-> gegen die **Console-Organisation** und bucht auf deren **API-Guthaben** — **nicht**
-> auf ein claude.ai-**Abo** (Pro/Max). Hat die Org kein Guthaben, antwortet die API
-> mit `400 – "credit balance is too low"`. Der Agent stürzt dann **nicht** ab, sondern
-> meldet das klar (siehe `agent.py:_fehlermeldung`). Für einen produktiven Lauf
-> entweder Guthaben in der Console einrichten oder einen `ANTHROPIC_API_KEY` mit
-> Guthaben verwenden.
+> ⚠️ **Hinweis:** Der `anthropic`-Client löst Credentials selbst auf (u. a. ein
+> `ant auth login`-OAuth-Profil, falls vorhanden). Ein solches Profil bucht aber
+> auf das **API-Guthaben der Console-Org** — **nicht** auf ein claude.ai-**Abo**
+> (Pro/Max). Ohne Guthaben antwortet die API mit `400 – "credit balance is too low"`.
+> Der Agent stürzt dabei **nicht** ab, sondern meldet es klar
+> (`agent.py:_fehlermeldung`). Für einen produktiven Lauf einen `ANTHROPIC_API_KEY`
+> mit Guthaben verwenden.
 
 ## Inbetriebnahme
 

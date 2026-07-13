@@ -37,9 +37,7 @@ class Agent:
     ) -> None:
         self.config = config
         self.mud = mud
-        self.backend = backend or ClaudeBackend(
-            model=config.model, auth_token=config.auth_token
-        )
+        self.backend = backend or ClaudeBackend(model=config.model)
         self.logger = logger or SessionLogger()
         self.context = Context(system_prompt=config.system_prompt)
         self.registry = ToolRegistry()
@@ -132,8 +130,7 @@ def _fehlermeldung(fehler: Exception) -> str:
     """Übersetzt einen Backend-/API-Fehler in einen klaren deutschen Hinweis.
 
     Fängt insbesondere die häufigsten Auth-/Abrechnungsfälle ab, damit der Agent
-    nicht mit einem rohen Traceback abstürzt (z. B. beim OAuth-Profil ohne
-    API-Guthaben).
+    nicht mit einem rohen Traceback abstürzt.
     """
     text = str(fehler)
     low = text.lower()
@@ -142,7 +139,6 @@ def _fehlermeldung(fehler: Exception) -> str:
     if "credit balance is too low" in low or "plans & billing" in low:
         return (
             "❌ Abbruch: Das verwendete Konto hat kein API-Guthaben.\n"
-            "   Ein `ant auth login`-OAuth-Profil bucht auf das **API-Guthaben** der\n"
             "   Console-Organisation — NICHT auf ein claude.ai-Abo (Pro/Max). Optionen:\n"
             "   • In der Anthropic Console Guthaben/Billing für diese Org einrichten, oder\n"
             "   • einen API-Key mit Guthaben setzen: `export ANTHROPIC_API_KEY=sk-ant-…`\n"
@@ -151,8 +147,7 @@ def _fehlermeldung(fehler: Exception) -> str:
     if status in (401, 403) or "authentication_error" in low or "permission" in low:
         return (
             "❌ Abbruch: Authentifizierung fehlgeschlagen.\n"
-            "   Prüfe die Zugangsdaten: `ANTHROPIC_API_KEY`, `ant auth status`, oder ein\n"
-            "   `BOUKENSHA_AUTH_TOKEN`. Bei OAuth ggf. `ant auth login` erneut ausführen.\n"
+            "   Prüfe den `ANTHROPIC_API_KEY` (mit Guthaben) in der Umgebung.\n"
             f"   (API-Meldung: {text[:160]})"
         )
     if status == 429 or "rate_limit" in low or "overloaded" in low:

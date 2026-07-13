@@ -41,6 +41,10 @@ class Config:
     system_prompt: str = ""
     mud_host: str = "localhost"
     mud_port: int = 4000
+    # Explizites OAuth-/Auth-Token (z. B. claude.ai-Konto). None → der
+    # anthropic-Client löst Credentials selbst auf (API-Key, ANTHROPIC_AUTH_TOKEN,
+    # `ant auth login`-Profil, …). Siehe README Abschnitt „Authentifizierung".
+    auth_token: str | None = None
     settings: dict = field(default_factory=dict)
 
     @classmethod
@@ -65,11 +69,19 @@ class Config:
             system_prompt = sys_file.read_text(encoding="utf-8")
 
         mud = settings.get("mud", {}) if isinstance(settings, dict) else {}
+        # Auth-Token: Umgebung hat Vorrang, dann settings.yml (auth_token),
+        # sonst None (→ SDK-Auto-Auflösung: API-Key / ANTHROPIC_AUTH_TOKEN / ant-Profil).
+        auth_token = (
+            os.environ.get("BOUKENSHA_AUTH_TOKEN")
+            or (settings.get("auth_token") if isinstance(settings, dict) else None)
+            or None
+        )
         return cls(
             home=home,
             model=str(settings.get("model", DEFAULT_MODEL)),
             system_prompt=system_prompt,
             mud_host=str(mud.get("host", "localhost")),
             mud_port=int(mud.get("port", 4000)),
+            auth_token=str(auth_token) if auth_token else None,
             settings=settings if isinstance(settings, dict) else {},
         )

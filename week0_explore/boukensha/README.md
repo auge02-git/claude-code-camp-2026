@@ -37,6 +37,33 @@ Laut Vorgaben: **primär Haiku 4.5** (`claude-haiku-4-5-20251001`), Alternative
 **Sonnet 4.6** (`claude-sonnet-4-6`). Bewusst **nicht** das Default-/neueste Modell.
 Konfigurierbar in `~/.boukensha/settings.yml` (`model:`).
 
+## Authentifizierung
+
+Das Backend nutzt den offiziellen `anthropic`-Client. Der **argumentlose**
+`anthropic.Anthropic()` löst Zugangsdaten in fester Reihenfolge auf (erste
+Übereinstimmung gewinnt):
+
+`ANTHROPIC_API_KEY` → `ANTHROPIC_AUTH_TOKEN` → OAuth-Profil aus `ant auth login`
+→ Workload-Identity → Default-Profil auf der Platte.
+
+Drei Wege, den Agenten zu authentifizieren:
+
+| Weg | Wie | Wann |
+|-----|-----|------|
+| **API-Key** | `export ANTHROPIC_API_KEY=sk-ant-…` | Standard, Abrechnung über die Anthropic Console. |
+| **OAuth / claude.ai-Konto** | `ant auth login` (Anthropic CLI) legt ein Profil an, das der `anthropic`-Client automatisch liest — **kein** Env-Var nötig. Alternativ ein `ANTHROPIC_AUTH_TOKEN` setzen. | Nutzung über ein Konto/Abo statt eines statischen API-Keys. |
+| **Explizites Token im Code** | `settings.yml: auth_token: <token>` **oder** `export BOUKENSHA_AUTH_TOKEN=<token>` | Wenn das Token nicht über die SDK-Auto-Auflösung kommen soll. |
+
+Der explizite Weg wird an `anthropic.Anthropic(auth_token=…)` durchgereicht
+(`config.py:Config.auth_token` → `backends/anthropic.py`). Ist nichts gesetzt,
+greift die Auto-Auflösung oben — der Agent läuft also auch mit einem reinen
+`ant auth login`-Profil ohne weitere Konfiguration.
+
+> Hinweis: `ant` ist die Anthropic-CLI (`brew install anthropics/tap/ant`).
+> Ein per Claude Code erzeugtes OAuth-Token (`claude setup-token`) lässt sich
+> als `ANTHROPIC_AUTH_TOKEN` bzw. `BOUKENSHA_AUTH_TOKEN` setzen. Ob damit ein
+> Abo statt API-Guthaben belastet wird, hängt vom Konto/der Organisation ab.
+
 ## Inbetriebnahme
 
 ```sh

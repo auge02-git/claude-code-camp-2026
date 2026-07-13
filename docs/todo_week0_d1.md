@@ -405,4 +405,4 @@ Update(week0_explore/boukensha/boukensha/mud.py)
 28 +        type=int,                                                                                                                                                                                                                                                   
 29 +        default=12,                                                                                                                                                                                                                                                 
 30 +        help="max. Werkzeug-Iterationen pro Ziel (Standard 12; höher für Navigation/Suche)",                                                                                                                                                                        
-31 +    ) 
+31 +    ) on backend

@@ -107,6 +107,27 @@ Mit gesetztem `ANTHROPIC_API_KEY` und laufendem MUD getestet.
   `ReadTimeout`.
 - **Neu:** `journeys/test_pruefung.txt` (sicherer Prüf-Lauf: nur `look`+`score`).
 
+## H) Authentifizierung über claude.ai-Konto (OAuth) als Option  ✅ eingebaut (2026-07-13)
+Frage: Kann der Agent auch über ein claude.ai-Konto laufen? **Ja.**
+- **Grundlage:** Der `anthropic`-Client löst Credentials automatisch auf
+  (`ANTHROPIC_API_KEY` → `ANTHROPIC_AUTH_TOKEN` → `ant auth login`-OAuth-Profil →
+  WIF → Default-Profil). Da `backends/anthropic.py` einen **argumentlosen**
+  Client baut, greift dieser OAuth-Pfad bereits ohne Codeänderung.
+- **Zusätzliche explizite Option eingebaut:**
+  - `config.py`: neues Feld `Config.auth_token` (aus `settings.yml: auth_token`
+    oder Env `BOUKENSHA_AUTH_TOKEN`; sonst `None`).
+  - `backends/anthropic.py`: `ClaudeBackend(auth_token=…)` → reicht das Token an
+    `anthropic.Anthropic(auth_token=…)` durch; `None` = Auto-Auflösung.
+  - `agent.py`: übergibt `config.auth_token` ans Backend.
+  - `README.md`: Abschnitt „Authentifizierung" (Tabelle der drei Wege);
+    `~/.boukensha/settings.yml`: auskommentierter `auth_token`-Hinweis.
+- **Verifiziert:** kompiliert sauber; Client mit explizitem Token und mit
+  Auto-Auflösung (`None`) je erzeugt.
+- **Praktisch:** `ant` (Anthropic-CLI) ist hier noch nicht installiert; `claude`
+  (Claude Code) schon. Für den OAuth-Weg: `brew install anthropics/tap/ant` +
+  `ant auth login`, oder ein Token via `claude setup-token` als
+  `ANTHROPIC_AUTH_TOKEN`/`BOUKENSHA_AUTH_TOKEN` setzen.
+
 ## Nicht angefasst (bewusst, laut Vorgaben)
 - `.boukensha/` (unverändert).
 - `week0_explore/mud_manager/` (Ruby-Gem, unverändert).

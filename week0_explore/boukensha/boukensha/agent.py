@@ -37,7 +37,9 @@ class Agent:
     ) -> None:
         self.config = config
         self.mud = mud
-        self.backend = backend or ClaudeBackend(model=config.model)
+        self.backend = backend or ClaudeBackend(
+            model=config.model, auth_token=config.auth_token
+        )
         self.logger = logger or SessionLogger()
         self.context = Context(system_prompt=config.system_prompt)
         self.registry = ToolRegistry()

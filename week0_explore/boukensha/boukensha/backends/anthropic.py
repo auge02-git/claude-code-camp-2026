@@ -86,17 +86,27 @@ class ClaudeBackend:
         model: str = DEFAULT_MODEL,
         max_tokens: int = 1024,
         use_cache: bool = True,
+        auth_token: str | None = None,
     ) -> None:
         self.model = model
         self.max_tokens = max_tokens
         self.use_cache = use_cache
+        # Explizites Auth-Token (z. B. OAuth vom claude.ai-Konto). None → der
+        # Client löst die Credentials selbst auf (API-Key, ANTHROPIC_AUTH_TOKEN,
+        # `ant auth login`-Profil, …), siehe README Abschnitt „Authentifizierung".
+        self.auth_token = auth_token
         self._client = None  # verzögert initialisiert
 
     def _client_lazy(self):
         if self._client is None:
             import anthropic  # verzögerter Import
 
-            self._client = anthropic.Anthropic()
+            if self.auth_token:
+                # OAuth-/Bearer-Token explizit setzen (claude.ai-Konto-Pfad).
+                self._client = anthropic.Anthropic(auth_token=self.auth_token)
+            else:
+                # Auto-Auflösung: API-Key → ANTHROPIC_AUTH_TOKEN → ant-OAuth-Profil.
+                self._client = anthropic.Anthropic()
         return self._client
 
     def complete(self, system: str, messages: list[dict], tools: list[dict]):

@@ -69,15 +69,25 @@ uv run boukensha --local-llm --no-connect
 # Variante A2: lokales Modell explizit setzen
 uv run boukensha --local-llm --model google/gemma-4-12b-qat --no-connect
 
+# Variante A3: Gateway mit eigenem API-Key (z. B. LiteLLM Virtual Key)
+uv run boukensha --local-llm --api-key sk-my-gateway-key --no-connect
+
 # Variante B: dauerhaft über Umgebung
 export BOUKENSHA_LLM_BASE_URL=http://127.0.0.1:1234
 export BOUKENSHA_LLM_MODEL=qwen/qwen-3-5-9b
+export BOUKENSHA_API_KEY=sk-my-gateway-key
+uv run boukensha --no-connect
+
+# Variante C: globaler Modell-Override (auch ohne --local-llm)
+export ANTHROPIC_LLM_MODEL=google/gemma-4-12b-qat
 uv run boukensha --no-connect
 ```
 
 Hinweise:
 - Das Backend setzt bei fehlendem `ANTHROPIC_API_KEY` automatisch einen Dummy-Key (`local-dev-key`).
 - Mit `--local-llm` werden Endpoint + lokales Default-Modell gesetzt; `--model` überschreibt das Modell.
+- `--api-key` / `BOUKENSHA_API_KEY` setzt einen expliziten Key, der Vorrang vor `ANTHROPIC_API_KEY` und dem Dummy-Key hat. Der Key wird beim Start maskiert angezeigt (`sk-xx****`).
+- `ANTHROPIC_LLM_MODEL` überschreibt das Modell global (falls `--model` nicht gesetzt ist).
 
 ## Inbetriebnahme
 

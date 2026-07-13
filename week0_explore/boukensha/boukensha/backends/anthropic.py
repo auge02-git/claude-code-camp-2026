@@ -88,22 +88,27 @@ class ClaudeBackend:
         max_tokens: int = 1024,
         use_cache: bool = True,
         base_url: str | None = None,
+        api_key: str | None = None,
     ) -> None:
         self.model = model
         self.max_tokens = max_tokens
         self.use_cache = use_cache
         self.base_url = base_url
+        self.api_key = api_key    # expliziter Key (Gateway-Pflicht); None → SDK-Default
         self._client = None  # verzögert initialisiert
 
     def _client_lazy(self):
         if self._client is None:
             import anthropic  # verzögerter Import
 
-            # Nutzt ANTHROPIC_API_KEY aus der Umgebung; bei lokalem Endpoint notfalls Dummy-Key.
-            kwargs = {}
+            # Priorität: expliziter api_key → ANTHROPIC_API_KEY → Dummy (nur bei base_url).
+            kwargs: dict = {}
+            if self.api_key:
+                kwargs["api_key"] = self.api_key
+            elif self.base_url:
+                kwargs["api_key"] = os.environ.get("ANTHROPIC_API_KEY", "local-dev-key")
             if self.base_url:
                 kwargs["base_url"] = self.base_url.rstrip("/")
-                kwargs["api_key"] = os.environ.get("ANTHROPIC_API_KEY", "local-dev-key")
             self._client = anthropic.Anthropic(**kwargs)
         return self._client
 

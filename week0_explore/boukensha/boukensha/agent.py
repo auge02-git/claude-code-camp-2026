@@ -40,6 +40,7 @@ class Agent:
         self.backend = backend or ClaudeBackend(
             model=config.model,
             base_url=config.llm_base_url,
+            api_key=config.llm_api_key,
         )
         self.logger = logger or SessionLogger()
         self.context = Context(system_prompt=config.system_prompt)

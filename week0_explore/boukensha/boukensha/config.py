@@ -24,7 +24,7 @@ except ImportError:  # pragma: no cover - yaml ist harte Abhängigkeit, aber Stu
 # LLM-Modell laut Vorgaben: primär Haiku 4.5, Alternative Sonnet 4.6.
 # (Bewusst NICHT das "neueste/Default"-Modell.)
 DEFAULT_MODEL = "claude-haiku-4-5-20251001"
-ALT_MODEL = "claude-sonnet-4-6"
+ALT_MODEL = "bedrock/eu.anthropic.claude-sonnet-4-6"
 
 
 def boukensha_dir() -> Path:
@@ -42,6 +42,7 @@ class Config:
     mud_host: str = "localhost"
     mud_port: int = 4000
     llm_base_url: str | None = None
+    llm_api_key: str | None = None   # expliziter Key (CLI/Env), überschreibt ANTHROPIC_API_KEY
     settings: dict = field(default_factory=dict)
 
     @classmethod
@@ -70,12 +71,19 @@ class Config:
         llm_base_url = os.environ.get("BOUKENSHA_LLM_BASE_URL") or str(
             llm.get("base_url", settings.get("llm_base_url", ""))
         ).strip()
+        llm_api_key = os.environ.get("BOUKENSHA_API_KEY") or str(
+            llm.get("api_key", settings.get("llm_api_key", ""))
+        ).strip() or None
+        model = str(settings.get("model", DEFAULT_MODEL))
+        model = os.environ.get("BOUKENSHA_LLM_MODEL", model)
+        model = os.environ.get("ANTHROPIC_LLM_MODEL", model)
         return cls(
             home=home,
-            model=str(settings.get("model", DEFAULT_MODEL)),
+            model=model,
             system_prompt=system_prompt,
             mud_host=str(mud.get("host", "localhost")),
             mud_port=int(mud.get("port", 4000)),
             llm_base_url=llm_base_url or None,
+            llm_api_key=llm_api_key,
             settings=settings if isinstance(settings, dict) else {},
         )

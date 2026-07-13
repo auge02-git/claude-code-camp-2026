@@ -38,6 +38,11 @@ def main(argv: list[str] | None = None) -> int:
         help="LLM-Endpoint (z. B. http://127.0.0.1:1234), überschreibt Config/Env",
     )
     parser.add_argument(
+        "--api-key",
+        metavar="KEY",
+        help="API-Key für LLM-Gateway (z. B. LiteLLM Virtual Key); überschreibt ANTHROPIC_API_KEY",
+    )
+    parser.add_argument(
         "--model",
         metavar="NAME",
         help="Modellname für den LLM-Aufruf (z. B. google/gemma-4-12b-qat)",
@@ -53,6 +58,8 @@ def main(argv: list[str] | None = None) -> int:
     config = Config.load()
     if args.llm_base_url:
         config.llm_base_url = args.llm_base_url
+    if args.api_key:
+        config.llm_api_key = args.api_key
     if args.model:
         config.model = args.model
 
@@ -60,7 +67,9 @@ def main(argv: list[str] | None = None) -> int:
         config.llm_base_url = config.llm_base_url or LOCAL_LLM_DEFAULT_URL
         # Im Local-LLM-Modus gilt ohne explizites --model der lokale Default.
         if not args.model:
-            config.model = os.environ.get("BOUKENSHA_LLM_MODEL", LOCAL_LLM_DEFAULT_MODEL)
+            config.model = os.environ.get("BOUKENSHA_LLM_MODEL") or os.environ.get(
+                "ANTHROPIC_LLM_MODEL"
+            ) or LOCAL_LLM_DEFAULT_MODEL
 
     # Prüfe, ob ein gültiger LLM-Endpoint verfügbar ist
     has_api_key = bool(os.environ.get("ANTHROPIC_API_KEY", "").strip())
@@ -90,6 +99,9 @@ def main(argv: list[str] | None = None) -> int:
         if config.llm_base_url:
             print(f"LLM-Endpoint: {config.llm_base_url}")
             print(f"LLM-Modell: {config.model}")
+            if config.llm_api_key:
+                masked = config.llm_api_key[:6] + "****" if len(config.llm_api_key) > 6 else "****"
+                print(f"LLM-API-Key: {masked}")
 
         agent = Agent(config=config, mud=mud, max_steps=args.max_steps)
 

@@ -4,5 +4,10 @@
       "command": "uv",
       "args": ["run", "--directory", "week0_explore/mud-mcp", "mud-mcp"]
     }
+  },
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://d2lrzcn8eyzwdw.cloudfront.net",
+    "ANTHROPIC_AUTH_TOKEN": "sk-GoFV3XyDZeqnyjel6ZpInQ",
+    "ANTHROPIC_LLM_MODEL": "bedrock/eu.anthropic.claude-sonnet-4-6"
   }
 }

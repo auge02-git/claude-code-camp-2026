@@ -478,3 +478,39 @@ Oder: uv run boukensha --local-llm --no-connect wenn ein lokaler LLM-Server auf 
 ## Beobachtet:
 ohne: --model: LLM-Modell: qwen/qwen-3.5-9b
 mit: --model google/gemma-4-12b-qat: LLM-Modell: google/gemma-4-12b-qat.
+
+--------------
+
+uv run boukensha --local-llm --api-key sk-mein-litellm-key --no-connect
+# oder mit eigenem Endpoint:
+uv run boukensha --llm-base-url http://127.0.0.1:1234 --api-key sk-mein-key --model google/gemma-4-12b-qat --no-connect
+
+-------------
+
+#### Geändert in:
+claudeCodeCamp/week0_explore/boukensha/boukensha/config.py
+Config.load() berücksichtigt jetzt:
+BOUKENSHA_LLM_MODEL
+ANTHROPIC_LLM_MODEL
+Damit kann das Modell global per Env überschrieben werden.
+claudeCodeCamp/week0_explore/boukensha/boukensha/cli.py
+Im --local-llm-Modus gilt jetzt Modell-Fallback:
+--model (wenn gesetzt)
+BOUKENSHA_LLM_MODEL
+ANTHROPIC_LLM_MODEL
+qwen/qwen-3-5-9b
+claudeCodeCamp/week0_explore/boukensha/README.md
+Doku ergänzt: ANTHROPIC_LLM_MODEL als globaler Override.
+
+### Verifiziert:
+compileall für config.py und cli.py erfolgreich.
+Lauf-Test zeigt Override korrekt:
+mit ANTHROPIC_LLM_MODEL=google/gemma-4-12b-qat und --local-llm wird LLM-Modell: google/gemma-4-12b-qat angezeigt.
+Config.load() übernimmt ANTHROPIC_LLM_MODEL ebenfalls korrekt.
+Wenn du willst, setze ich als nächsten Schritt noch dieselbe Prioritätslogik (--model > BOUKENSHA_LLM_MODEL > ANTHROPIC_LLM_MODEL > Default) zusätzlich explizit in die README als kleine Prioritätstabelle.
+
+-----------
+
+Test mit SVA-OpenAPI-Server:
+
+uv run boukensha --api-key sk-*****--llm-base-url https://d2lrzcn8eyzwdw.cloudfront.net --model bedrock/eu.anthropic.claude-sonnet-4-6 --max-steps 10

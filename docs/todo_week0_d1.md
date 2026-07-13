@@ -68,7 +68,24 @@ beim Aufstieg). Reihenfolge daher: **ausrüsten → leveln → lernen.**
 - Nach jedem Level-Up: erst sichern (`quit`/reconnect), dann weiter.
 ```
 
----
+-------
+
+⏺ Update(week0_explore/boukensha/boukensha/mud.py)                                                                                                                                                                                                                            
+⎿  Added 41 lines, removed 3 lines
+
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 1 new message ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+⏺ Ich teste den robusten Login gegen den echten MUD — beide Pfade: (1) jetziger Reconnect, dann sauber ausloggen, (2) frischer Login über MOTD/Menü.
+
+Running 1 shell command…
+
+· Wandering… (7m 23s · ↓ 24.3k tokens)
+⎿  Tip: Use /permissions to pre-approve and pre-deny bash, edit, and MCP tools
+
+❯ /permissions                                                                                                                                                                                                                                                            
+copied 3370 chars to clipboard
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+❯ Press up to edit queued messages
 
 **Hinweis:** Bitte den Haupt-Agenten diese Datei unter `docs/plans/` anlegen lassen und beim erneuten Versuch als Grundlage verwenden. Ich selbst kann den Schreibvorgang hier nicht durchführen.
 
@@ -370,3 +387,22 @@ create mode 100644 week0_explore/boukensha/boukensha/tools/__pycache__/base.cpyt
 create mode 100644 week0_explore/boukensha/boukensha/tools/__pycache__/mud_tools.cpython-313.pyc
 create mode 100644 week0_explore/boukensha/log_viz/__pycache__/server.cpython-313.pyc
 create mode 100644 week0_explore/boukensha/uv.lock
+
+-------------
+
+Update(week0_explore/boukensha/boukensha/mud.py)                                                                                                                                                                                                                            
+⎿  Added 12 lines, removed 1 line
+
+------------
+
+⏺ Update(week0_explore/boukensha/boukensha/cli.py)                                                                                                                                                                                                                            
+⎿  Added 7 lines, removed 1 line                                                                                                                                                                                                                                            
+23      )                                                                                                                                                                                                                                                               
+24      parser.add_argument("--dsl", metavar="DATEI", help="skriptbaren Ablauf ausführen")                                                                                                                                                                              
+25      parser.add_argument("--no-connect", action="store_true", help="nicht zum MUD verbinden")                                                                                                                                                                        
+26 +    parser.add_argument(                                                                                                                                                                                                                                            
+27 +        "--max-steps",                                                                                                                                                                                                                                              
+28 +        type=int,                                                                                                                                                                                                                                                   
+29 +        default=12,                                                                                                                                                                                                                                                 
+30 +        help="max. Werkzeug-Iterationen pro Ziel (Standard 12; höher für Navigation/Suche)",                                                                                                                                                                        
+31 +    ) 

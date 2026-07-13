@@ -23,6 +23,12 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--dsl", metavar="DATEI", help="skriptbaren Ablauf ausführen")
     parser.add_argument("--no-connect", action="store_true", help="nicht zum MUD verbinden")
+    parser.add_argument(
+        "--max-steps",
+        type=int,
+        default=12,
+        help="max. Werkzeug-Iterationen pro Ziel (Standard 12; höher für Navigation/Suche)",
+    )
     args = parser.parse_args(argv if argv is not None else sys.argv[1:])
 
     config = Config.load()
@@ -33,7 +39,7 @@ def main(argv: list[str] | None = None) -> int:
         print(mud.connect())
         print(mud.login())  # ohne Argumente → credentials.json (mud-mcp)
 
-    agent = Agent(config=config, mud=mud)
+    agent = Agent(config=config, mud=mud, max_steps=args.max_steps)
 
     try:
         if args.dsl:

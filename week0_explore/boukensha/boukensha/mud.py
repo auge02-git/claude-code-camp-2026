@@ -14,10 +14,21 @@ from __future__ import annotations
 
 import re
 
-from mud_mcp.session import MudSession  # wiederverwendet, unverändert
+from mud_mcp.session import (  # wiederverwendet, unverändert
+    DEFAULT_PASSWORD,
+    DEFAULT_USERNAME,
+    MudSession,
+)
 
 _ANSI_RE = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 _NAME_PROMPT = re.compile(r"By what name do you wish to be known.*\?", re.I)
+_PASSWORD_PROMPT = re.compile(r"[Pp]assword")
+_RECONNECT = re.compile(r"Reconnecting", re.I)
+_WRONG_PW = re.compile(r"Wrong password", re.I)
+_MENU = re.compile(r"Make your choice|Enter the game", re.I)
+_PRESS_RETURN = re.compile(r"PRESS RETURN|\[ Return to continue", re.I)
+# Spiel-Prompt der Form "25H 100M 83V ... >" signalisiert: wir sind in der Welt.
+_GAME_PROMPT = re.compile(r"\d+H\s+\d+M\s+\d+V.*>")
 
 
 def _clean(text: str) -> str:
@@ -46,9 +57,47 @@ class MudManager:
         return _clean(banner)
 
     def login(self, username: str = "", password: str = "") -> str:
-        """Loggt ein — ohne Argumente via ``credentials.json`` (mud-mcp)."""
-        assert self._session is not None, "vor login zuerst connect() aufrufen"
-        return _clean(self._session.login(username or None, password or None))
+        """Robuster Login — ohne Argumente via ``credentials.json`` (mud-mcp).
+
+        Nutzt die (unveränderten) ``MudSession``-Primitiven und behandelt BEIDE
+        Fälle, an denen die schlichte ``session.login()`` scheitert:
+        - **Reconnecting** (Charakter war link-dead) → sofort in der Welt, und
+        - **sauberer Login** (frisch ausgeloggt) → erst MOTD/„PRESS RETURN" und
+          das Hauptmenü („1) Enter the game"), das quittiert werden muss.
+        """
+        s = self._session
+        assert s is not None, "vor login zuerst connect() aufrufen"
+        user = username or DEFAULT_USERNAME
+        pw = password or DEFAULT_PASSWORD
+
+        # Namens-Prompt kann von connect() schon konsumiert sein → tolerant warten.
+        try:
+            s.read_until(_NAME_PROMPT, timeout=2.0)
+        except Exception:
+            pass
+        s.send_command(user)
+        s.read_until(_PASSWORD_PROMPT, timeout=8.0)
+        s.send_command(pw)
+
+        # Post-Passwort-Ablauf abarbeiten (Reconnect | MOTD/Menü), begrenzt.
+        transcript = ""
+        for _ in range(8):
+            out = s.read_until_quiet(quiet_seconds=1.0, timeout=8.0)
+            transcript += out
+            if _WRONG_PW.search(out):
+                raise RuntimeError("Login fehlgeschlagen: falsches Passwort")
+            if _RECONNECT.search(out) or _GAME_PROMPT.search(out):
+                break  # in der Welt
+            if _MENU.search(out):
+                s.send_command("1")  # Spiel betreten
+                continue
+            if _PRESS_RETURN.search(out) or out.rstrip().endswith(":"):
+                s.send_command("")  # MOTD/Return-Gate wegklicken
+                continue
+            if not out.strip():
+                break  # nichts mehr → fertig
+            s.send_command("")  # Unbekanntes: mit Return weiterschalten
+        return _clean(transcript)
 
     def send(self, command: str, quiet_seconds: float = 1.0, timeout: float = 10.0) -> str:
         """Sendet ein Kommando und liefert die Antwort (bis zum ``> ``-Prompt)."""

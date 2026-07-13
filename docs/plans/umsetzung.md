@@ -86,6 +86,27 @@ Datei: `week0_explore/boukensha/boukensha/backends/anthropic.py`
 - Verifiziert: Kompiliert sauber; Transformationen getestet (Breakpoints korrekt,
   keine Mutation der Original-Objekte).
 
+## G) Agenten-Testlauf + Login-Robustheit  ✅ verifiziert (2026-07-13)
+Mit gesetztem `ANTHROPIC_API_KEY` und laufendem MUD getestet.
+- **Aufruf:** aus `week0_explore/boukensha/`, `uv run boukensha --dsl journeys/test_pruefung.txt`
+  (bzw. `uv run --directory week0_explore/boukensha boukensha …`, wenn cwd der Repo-Root ist).
+- **Agent läuft:** verbindet, loggt ein, führt die Tool-Use-Schleife aus
+  (`look` → `score`), erzeugt deutsche Zusammenfassung. **Logging vollständig:**
+  JSONL in `~/.boukensha/logs/<id>/<datum>.jsonl` mit `prompt/action/tool/usage/output`.
+- **Prompt-Caching verifiziert (isolierter Backend-Test):**
+  - Sonnet 5 (Schwelle ~1024): Aufruf 2 `cache_read=2355` → Treffer, große Ersparnis.
+  - Haiku 4.5 großer Präfix (~12,6k): Aufruf 2 `cache_read=12602` → Treffer.
+  - Haiku 4.5 mit aktuellem Agent-Präfix (~2074 Tok.): `cache_read=0` — **unter**
+    Haikus Cache-Schwelle. Greift erst, wenn der Verlauf über die Schwelle wächst
+    (lange Mehr-Schritt-Sessions) oder bei Sonnet. Kein Bug, sondern Schwellwert.
+- **Login-Bug behoben** in `boukensha/mud.py` (additiv; `session.py` unverändert):
+  `MudManager.login()` treibt den Login jetzt selbst über die `MudSession`-Primitiven
+  und behandelt BEIDE Fälle — *Reconnecting* (link-dead) UND *frischer Login*
+  (MOTD/„PRESS RETURN" + Hauptmenü „1) Enter the game"). Beide Pfade live getestet
+  → landen in der Welt (Temple Of Midgaard). Zuvor lief der frische Login in einen
+  `ReadTimeout`.
+- **Neu:** `journeys/test_pruefung.txt` (sicherer Prüf-Lauf: nur `look`+`score`).
+
 ## Nicht angefasst (bewusst, laut Vorgaben)
 - `.boukensha/` (unverändert).
 - `week0_explore/mud_manager/` (Ruby-Gem, unverändert).

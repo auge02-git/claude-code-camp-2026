@@ -291,3 +291,8 @@ create mode 100644 week0_explore/boukensha/pyproject.toml
 
 Resume this session with:
 claude --resume b95dd29b-9bf8-466e-acc5-6aef9a1bbe51
+
+------------
+
+### SVA Key um den Agent laufen lassen zu können.
+export ANTHROPIC_API_KEY="sk-GoFV3XyDZeqnyjel6ZpInQ"

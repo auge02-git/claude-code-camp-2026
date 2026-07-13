@@ -68,6 +68,7 @@ class Agent:
                 messages=self.context.messages,
                 tools=tools,
             )
+            self._log_usage(antwort)
             self.context.add_assistant(antwort.content)
 
             if getattr(antwort, "stop_reason", None) != "tool_use":
@@ -95,6 +96,19 @@ class Agent:
 
         self.logger.log("output", text="(max_steps erreicht)")
         return "(Abbruch: max_steps erreicht)"
+
+    def _log_usage(self, antwort) -> None:
+        """Protokolliert Token-Nutzung inkl. Cache-Treffer (Prompt-Caching)."""
+        usage = getattr(antwort, "usage", None)
+        if usage is None:
+            return
+        self.logger.log(
+            "usage",
+            input=getattr(usage, "input_tokens", None),
+            output=getattr(usage, "output_tokens", None),
+            cache_write=getattr(usage, "cache_creation_input_tokens", None),
+            cache_read=getattr(usage, "cache_read_input_tokens", None),
+        )
 
 
 def _text_of(antwort) -> str:

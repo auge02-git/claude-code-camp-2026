@@ -39,16 +39,21 @@ Stand: **2026-07-12**.
 
 ### C) Architektur-Arbeit (Boukensha-Agent)
 - **Blaupause fertig** (`boukensha_architecture_python.md`), leitplanken-konform.
-- **Noch NICHT gebaut:** Paket-Gerüst unter `week0_explore/boukensha/` — **wartet auf Go**.
+- **Gerüst GEBAUT + IN BETRIEB GENOMMEN** unter `week0_explore/boukensha/`:
+  `uv sync` ok, Verdrahtungs-Smoke-Test ok (9 Werkzeuge, Haiku 4.5), MUD-Pfad
+  ohne LLM live getestet (connect/login/look/score/quit), Agent-Home
+  `~/.boukensha` angelegt (`settings.yml` + deutscher `prompts/system.md`),
+  README geschrieben. Details: `umsetzung.md` Abschnitt E.
+- **Farm-Loop `f40a8f93` wurde GESTOPPT** (CronDelete) — läuft nicht mehr.
 
 ## Nächste Schritte (Priorität)
-1. **Boukensha-Gerüst anlegen** in `week0_explore/boukensha/` gemäß Blaupause
-   (pyproject + Agentic Loop + config/logger/context/registry + `mud.py`-Wrapper).
-   Backend-Modell: **Haiku 4.5** (Alt.: Sonnet 4.6). *Leitplanken beachten (siehe `vorgaben.md`).*
-2. **Farmen fortsetzen** bis Level 2 (oder Ansatz ändern: größeres Intervall / Sewer freigeben).
-3. **Nach Level-Up:** neue Krieger-Skills im Practice Yard (Raum 3023) lernen
-   (`practice`), z. B. bash/rescue/second attack.
-4. Optional: `log_viz` (FastAPI) + `run_dsl` ergänzen.
+1. **Echter Live-Lauf mit LLM:** `cd week0_explore/boukensha`, `export ANTHROPIC_API_KEY=…`,
+   dann `uv run boukensha` (verbindet + loggt via `credentials.json` ein → REPL).
+   (Key war beim letzten Test nicht in der Shell gesetzt — nur das fehlte noch.)
+2. **Modell-ID Sonnet 4.6 final bestätigen** (`config.py:ALT_MODEL` = `claude-sonnet-4-6`).
+3. Optional: Feinschliff Agentic Loop (expliziter Reflect-Schritt).
+4. Optional/später: MUD-Farmen wieder aufnehmen (Level 2) — Ansatz ggf. anpassen
+   (größeres Intervall / Sewer), da 5-Min-Loop bei spärlichen Fidos zäh war.
 
 ## Wichtige Wiederanlauf-Kommandos
 ```sh

@@ -57,7 +57,7 @@ class KillTool(Tool):
 class FleeTool(Tool):
     name = "flee"
     description = (
-        "Flieht aus dem Kampf (`flee`). Bei „cityguard/Peacekeeper ... has arrived" "
+        "Flieht aus dem Kampf (`flee`). Bei 'cityguard/Peacekeeper ... has arrived' "
         "während eines Kampfs SOFORT einsetzen (Latenz einplanen, nicht erst bei "
         "niedrigen HP)."
     )

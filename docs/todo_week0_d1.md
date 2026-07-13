@@ -460,4 +460,9 @@ Read 1 file
 # Weg B – OAuth-Token als Env-Var:
 claude setup-token                                  # erzeugt ein OAuth-Token                                                                                                                                                                                               
 export ANTHROPIC_AUTH_TOKEN=<token>                 # oder BOUKENSHA_AUTH_TOKEN                                                                                                                                                                                             
-uv run boukensha       
+uv run boukensha
+
+--------------
+
+# Resume this session with:
+claude --resume "Agent-test.2"

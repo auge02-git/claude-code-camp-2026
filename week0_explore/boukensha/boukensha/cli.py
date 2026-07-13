@@ -24,6 +24,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--dsl", metavar="DATEI", help="skriptbaren Ablauf ausführen")
     parser.add_argument("--no-connect", action="store_true", help="nicht zum MUD verbinden")
     parser.add_argument(
+        "--local-llm",
+        action="store_true",
+        help="nutzt einen lokalen Anthropic-kompatiblen LLM-Server (http://127.0.0.1:1234)",
+    )
+    parser.add_argument(
         "--max-steps",
         type=int,
         default=12,
@@ -32,6 +37,9 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv if argv is not None else sys.argv[1:])
 
     config = Config.load()
+    if args.local_llm:
+        config.llm_base_url = "http://127.0.0.1:1234"
+
     mud = MudManager(host=config.mud_host, port=config.mud_port)
 
     try:
@@ -39,6 +47,12 @@ def main(argv: list[str] | None = None) -> int:
             print("Verbinde zum MUD …")
             print(mud.connect())
             print(mud.login())  # ohne Argumente → credentials.json (mud-mcp)
+        else:
+            print("Starte ohne MUD-Verbindung (--no-connect).")
+            print("Hinweis: MUD-Werkzeuge liefern in diesem Modus nur eine Klartext-Fehlermeldung.")
+
+        if config.llm_base_url:
+            print(f"LLM-Endpoint: {config.llm_base_url}")
 
         agent = Agent(config=config, mud=mud, max_steps=args.max_steps)
 

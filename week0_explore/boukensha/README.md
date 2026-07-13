@@ -54,6 +54,24 @@ export ANTHROPIC_API_KEY=sk-ant-…
 > (`agent.py:_fehlermeldung`). Für einen produktiven Lauf einen `ANTHROPIC_API_KEY`
 > mit Guthaben verwenden.
 
+### Optional: lokaler LLM-Server
+
+Wenn ein **Anthropic-kompatibler** lokaler Endpoint verfügbar ist (z. B.
+`http://127.0.0.1:1234`), kann Boukensha wahlweise dagegen laufen:
+
+```sh
+# Variante A: pro Aufruf
+uv run boukensha --local-llm --no-connect
+
+# Variante B: dauerhaft über Umgebung
+export BOUKENSHA_LLM_BASE_URL=http://127.0.0.1:1234
+uv run boukensha --no-connect
+```
+
+Hinweis: Im lokalen Modus setzt das Backend bei fehlendem `ANTHROPIC_API_KEY`
+automatisch einen Dummy-Key (`local-dev-key`), da viele kompatible Server einen
+Header erwarten.
+
 ## Inbetriebnahme
 
 ```sh

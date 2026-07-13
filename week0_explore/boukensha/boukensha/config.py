@@ -23,11 +23,8 @@ except ImportError:  # pragma: no cover - yaml ist harte Abhängigkeit, aber Stu
 
 # LLM-Modell laut Vorgaben: primär Haiku 4.5, Alternative Sonnet 4.6.
 # (Bewusst NICHT das "neueste/Default"-Modell.)
-# Alias "claude-haiku-4-5" (= volle ID claude-haiku-4-5-20251001).
-# DEFAULT_MODEL = "claude-haiku-4-5"
-DEFAULT_MODEL = "claude-sonnet-4-6"
-# ALT_MODEL = "claude-sonnet-4-6"
-ALT_MODEL = "claude-fable-5"  # Modell-ID vor Nutzung bestätigen
+DEFAULT_MODEL = "claude-haiku-4-5-20251001"
+ALT_MODEL = "claude-sonnet-4-6"
 
 
 def boukensha_dir() -> Path:
@@ -44,6 +41,7 @@ class Config:
     system_prompt: str = ""
     mud_host: str = "localhost"
     mud_port: int = 4000
+    llm_base_url: str | None = None
     settings: dict = field(default_factory=dict)
 
     @classmethod
@@ -68,11 +66,16 @@ class Config:
             system_prompt = sys_file.read_text(encoding="utf-8")
 
         mud = settings.get("mud", {}) if isinstance(settings, dict) else {}
+        llm = settings.get("llm", {}) if isinstance(settings, dict) else {}
+        llm_base_url = os.environ.get("BOUKENSHA_LLM_BASE_URL") or str(
+            llm.get("base_url", settings.get("llm_base_url", ""))
+        ).strip()
         return cls(
             home=home,
             model=str(settings.get("model", DEFAULT_MODEL)),
             system_prompt=system_prompt,
             mud_host=str(mud.get("host", "localhost")),
             mud_port=int(mud.get("port", 4000)),
+            llm_base_url=llm_base_url or None,
             settings=settings if isinstance(settings, dict) else {},
         )

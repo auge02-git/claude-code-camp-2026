@@ -37,7 +37,10 @@ class Agent:
     ) -> None:
         self.config = config
         self.mud = mud
-        self.backend = backend or ClaudeBackend(model=config.model)
+        self.backend = backend or ClaudeBackend(
+            model=config.model,
+            base_url=config.llm_base_url,
+        )
         self.logger = logger or SessionLogger()
         self.context = Context(system_prompt=config.system_prompt)
         self.registry = ToolRegistry()
@@ -52,6 +55,33 @@ class Agent:
         self.logger.log("observe", text=beobachtung)
         return beobachtung
 
+    def _observe_if_available(self) -> None:
+        """Führt den Observe-Schritt nur bei aktiver MUD-Verbindung aus."""
+        if not self.mud.is_open:
+            return
+        try:
+            beobachtung = self.observe()
+        except Exception as fehler:
+            self.logger.log(
+                "warn",
+                text=f"Observe fehlgeschlagen ({type(fehler).__name__}): {str(fehler)[:200]}",
+            )
+            return
+        if beobachtung.strip():
+            # Beobachtung als User-Nachricht in den nächsten Take-Action-Schritt einspeisen.
+            self.context.add_user(f"Beobachtung aus der Welt:\n{beobachtung}")
+
+    @staticmethod
+    def _tool_input(block) -> dict:
+        """Liefert robuste Tool-Argumente als Dict (auch bei fehlendem Input)."""
+        roh = getattr(block, "input", {})
+        if isinstance(roh, dict):
+            return roh
+        try:
+            return dict(roh)
+        except Exception:
+            return {}
+
     def step(self, prompt: str) -> str:
         """Ein „Your Prompt → … → Output"-Durchlauf.
 
@@ -63,6 +93,7 @@ class Agent:
         tools = self.registry.anthropic_schemas()
 
         for _ in range(self.max_steps):
+            self._observe_if_available()
             try:
                 antwort = self.backend.complete(
                     system=self.context.system_prompt,
@@ -82,6 +113,7 @@ class Agent:
 
             if getattr(antwort, "stop_reason", None) != "tool_use":
                 text = _text_of(antwort)
+                self.logger.log("reflect", text=text)
                 self.logger.log("output", text=text)
                 return text
 
@@ -90,12 +122,29 @@ class Agent:
             for block in antwort.content:
                 if getattr(block, "type", None) != "tool_use":
                     continue
+                tool_input = self._tool_input(block)
                 tool = self.registry.get(block.name)
-                self.logger.log("action", tool=block.name, input=dict(block.input))
+                self.logger.log("action", tool=block.name, input=tool_input)
                 if tool is None:
                     ergebnis = f"Unbekanntes Werkzeug: {block.name}"
+                elif not self.mud.is_open:
+                    ergebnis = (
+                        "MUD nicht verbunden (`--no-connect`). "
+                        f"Werkzeug `{block.name}` wurde nicht ausgeführt."
+                    )
                 else:
-                    ergebnis = tool.run(self.mud, **dict(block.input))
+                    try:
+                        ergebnis = tool.run(self.mud, **tool_input)
+                    except Exception as fehler:
+                        self.logger.log(
+                            "error",
+                            fehler=type(fehler).__name__,
+                            text=f"Tool `{block.name}` fehlgeschlagen: {str(fehler)[:300]}",
+                        )
+                        ergebnis = (
+                            f"Werkzeug `{block.name}` fehlgeschlagen "
+                            f"({type(fehler).__name__}): {str(fehler)[:200]}"
+                        )
                 self.logger.log("tool", tool=block.name, result=ergebnis)
                 tool_results.append(
                     {"type": "tool_result", "tool_use_id": block.id, "content": ergebnis}

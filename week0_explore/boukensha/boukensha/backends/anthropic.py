@@ -22,6 +22,8 @@ Haiku ~2048 Tokens). Darunter ignoriert die API ``cache_control`` folgenlos.
 
 from __future__ import annotations
 
+import os
+
 from ..config import DEFAULT_MODEL
 
 # Standard-Cache-Marker (kurzlebig, ~5 Min TTL serverseitig).
@@ -85,18 +87,24 @@ class ClaudeBackend:
         model: str = DEFAULT_MODEL,
         max_tokens: int = 1024,
         use_cache: bool = True,
+        base_url: str | None = None,
     ) -> None:
         self.model = model
         self.max_tokens = max_tokens
         self.use_cache = use_cache
+        self.base_url = base_url
         self._client = None  # verzögert initialisiert
 
     def _client_lazy(self):
         if self._client is None:
             import anthropic  # verzögerter Import
 
-            # Nutzt ANTHROPIC_API_KEY aus der Umgebung.
-            self._client = anthropic.Anthropic()
+            # Nutzt ANTHROPIC_API_KEY aus der Umgebung; bei lokalem Endpoint notfalls Dummy-Key.
+            kwargs = {}
+            if self.base_url:
+                kwargs["base_url"] = self.base_url.rstrip("/")
+                kwargs["api_key"] = os.environ.get("ANTHROPIC_API_KEY", "local-dev-key")
+            self._client = anthropic.Anthropic(**kwargs)
         return self._client
 
     def complete(self, system: str, messages: list[dict], tools: list[dict]):

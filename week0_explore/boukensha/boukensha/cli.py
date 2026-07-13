@@ -34,14 +34,14 @@ def main(argv: list[str] | None = None) -> int:
     config = Config.load()
     mud = MudManager(host=config.mud_host, port=config.mud_port)
 
-    if not args.no_connect:
-        print("Verbinde zum MUD …")
-        print(mud.connect())
-        print(mud.login())  # ohne Argumente → credentials.json (mud-mcp)
-
-    agent = Agent(config=config, mud=mud, max_steps=args.max_steps)
-
     try:
+        if not args.no_connect:
+            print("Verbinde zum MUD …")
+            print(mud.connect())
+            print(mud.login())  # ohne Argumente → credentials.json (mud-mcp)
+
+        agent = Agent(config=config, mud=mud, max_steps=args.max_steps)
+
         if args.dsl:
             from .run_dsl import run_dsl_file
 
@@ -50,6 +50,12 @@ def main(argv: list[str] | None = None) -> int:
             from .repl import repl
 
             repl(agent)
+    except KeyboardInterrupt:
+        print("\nAbgebrochen.")
+        return 130
+    except Exception as fehler:  # kein roher Traceback nach außen
+        print(f"\n❌ Fehler: {type(fehler).__name__}: {fehler}", file=sys.stderr)
+        return 1
     finally:
         mud.close()
     return 0

@@ -128,6 +128,24 @@ Frage: Kann der Agent auch über ein claude.ai-Konto laufen? **Ja.**
   `ant auth login`, oder ein Token via `claude setup-token` als
   `ANTHROPIC_AUTH_TOKEN`/`BOUKENSHA_AUTH_TOKEN` setzen.
 
+## I) OAuth-Profil-„Absturz" analysiert + behoben  ✅ (2026-07-13)
+Symptom: Agent stürzt bei Nutzung des `ant auth login`-OAuth-Profils „immer" ab.
+- **Diagnose (reproduziert):** Alle Requests werden authentifiziert (SDK 0.116
+  liest das Profil), aber die API antwortet mit `400 – "Your credit balance is too
+  low"`. Ursache ist **kein Code-Bug**: `ant auth login` bucht auf das **API-Guthaben**
+  der Console-Org, nicht auf ein claude.ai-Abo — und die Org hat kein Guthaben. Der
+  `anthropic-beta: oauth-…`-Header ist hier NICHT der Blocker (mit/ohne identischer 400).
+  Der „Absturz" war die **unbehandelte** `BadRequestError`-Exception (Traceback).
+- **Fix (Code):**
+  - `agent.py`: `step()` fängt Backend-/API-Fehler ab → kein Traceback mehr; neue
+    Hilfsfunktion `_fehlermeldung()` übersetzt Billing/Auth/Rate-Limit in klare
+    deutsche Hinweise; Fehler wird als `error`-Ereignis geloggt.
+  - `cli.py`: Top-Level `try/except` um Connect/Login/REPL → sauberer Exit statt
+    Traceback (KeyboardInterrupt → 130, sonst → 1).
+- **Doku:** README-Abschnitt „Authentifizierung" um Abrechnungs-Warnung ergänzt.
+- **Verifiziert:** kompiliert sauber; `agent.step()` liefert bei OAuth-only-Profil
+  jetzt die Klartext-Meldung statt eines Absturzes.
+
 ## Nicht angefasst (bewusst, laut Vorgaben)
 - `.boukensha/` (unverändert).
 - `week0_explore/mud_manager/` (Ruby-Gem, unverändert).

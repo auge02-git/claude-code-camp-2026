@@ -409,6 +409,13 @@ Update(week0_explore/boukensha/boukensha/mud.py)
 
 -------------
 
+⏺ Update(week0_explore/boukensha/boukensha/cli.py)                                                                                                                                                                      
+⎿  Added 12 lines, removed 6 lines                                                                                                                                                                                    
+34      config = Config.load()                                                                                                                                                                                    
+35      mud = MudManager(host=config.mud_host, port=config.mud_port)
+
+-------------
+
 So nutzt du das claude.ai-Konto konkret
 
 Hier ist claude (Claude Code) installiert, ant (Anthropic-CLI) noch nicht. Zwei Wege:

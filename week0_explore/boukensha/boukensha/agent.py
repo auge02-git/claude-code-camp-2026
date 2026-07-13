@@ -65,11 +65,20 @@ class Agent:
         tools = self.registry.anthropic_schemas()
 
         for _ in range(self.max_steps):
-            antwort = self.backend.complete(
-                system=self.context.system_prompt,
-                messages=self.context.messages,
-                tools=tools,
-            )
+            try:
+                antwort = self.backend.complete(
+                    system=self.context.system_prompt,
+                    messages=self.context.messages,
+                    tools=tools,
+                )
+            except Exception as fehler:
+                # Kein harter Absturz mehr: API-/Auth-/Billing-Fehler sauber melden.
+                text = _fehlermeldung(fehler)
+                self.logger.log(
+                    "error", fehler=type(fehler).__name__, text=str(fehler)[:500]
+                )
+                self.logger.log("output", text=text)
+                return text
             self._log_usage(antwort)
             self.context.add_assistant(antwort.content)
 
@@ -117,3 +126,38 @@ def _text_of(antwort) -> str:
     """Sammelt die Textblöcke einer Antwort."""
     teile = [b.text for b in antwort.content if getattr(b, "type", None) == "text"]
     return "\n".join(teile).strip()
+
+
+def _fehlermeldung(fehler: Exception) -> str:
+    """Übersetzt einen Backend-/API-Fehler in einen klaren deutschen Hinweis.
+
+    Fängt insbesondere die häufigsten Auth-/Abrechnungsfälle ab, damit der Agent
+    nicht mit einem rohen Traceback abstürzt (z. B. beim OAuth-Profil ohne
+    API-Guthaben).
+    """
+    text = str(fehler)
+    low = text.lower()
+    status = getattr(fehler, "status_code", None)
+
+    if "credit balance is too low" in low or "plans & billing" in low:
+        return (
+            "❌ Abbruch: Das verwendete Konto hat kein API-Guthaben.\n"
+            "   Ein `ant auth login`-OAuth-Profil bucht auf das **API-Guthaben** der\n"
+            "   Console-Organisation — NICHT auf ein claude.ai-Abo (Pro/Max). Optionen:\n"
+            "   • In der Anthropic Console Guthaben/Billing für diese Org einrichten, oder\n"
+            "   • einen API-Key mit Guthaben setzen: `export ANTHROPIC_API_KEY=sk-ant-…`\n"
+            f"   (API-Meldung: {text[:160]})"
+        )
+    if status in (401, 403) or "authentication_error" in low or "permission" in low:
+        return (
+            "❌ Abbruch: Authentifizierung fehlgeschlagen.\n"
+            "   Prüfe die Zugangsdaten: `ANTHROPIC_API_KEY`, `ant auth status`, oder ein\n"
+            "   `BOUKENSHA_AUTH_TOKEN`. Bei OAuth ggf. `ant auth login` erneut ausführen.\n"
+            f"   (API-Meldung: {text[:160]})"
+        )
+    if status == 429 or "rate_limit" in low or "overloaded" in low:
+        return (
+            "❌ Abbruch: Rate-Limit/Überlastung. Später erneut versuchen.\n"
+            f"   (API-Meldung: {text[:160]})"
+        )
+    return f"❌ Abbruch: Modellaufruf fehlgeschlagen ({type(fehler).__name__}): {text[:200]}"

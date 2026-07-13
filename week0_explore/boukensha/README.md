@@ -61,8 +61,15 @@ greift die Auto-Auflösung oben — der Agent läuft also auch mit einem reinen
 
 > Hinweis: `ant` ist die Anthropic-CLI (`brew install anthropics/tap/ant`).
 > Ein per Claude Code erzeugtes OAuth-Token (`claude setup-token`) lässt sich
-> als `ANTHROPIC_AUTH_TOKEN` bzw. `BOUKENSHA_AUTH_TOKEN` setzen. Ob damit ein
-> Abo statt API-Guthaben belastet wird, hängt vom Konto/der Organisation ab.
+> als `ANTHROPIC_AUTH_TOKEN` bzw. `BOUKENSHA_AUTH_TOKEN` setzen.
+>
+> ⚠️ **Wichtig zur Abrechnung:** Ein `ant auth login`-OAuth-Profil authentifiziert
+> gegen die **Console-Organisation** und bucht auf deren **API-Guthaben** — **nicht**
+> auf ein claude.ai-**Abo** (Pro/Max). Hat die Org kein Guthaben, antwortet die API
+> mit `400 – "credit balance is too low"`. Der Agent stürzt dann **nicht** ab, sondern
+> meldet das klar (siehe `agent.py:_fehlermeldung`). Für einen produktiven Lauf
+> entweder Guthaben in der Console einrichten oder einen `ANTHROPIC_API_KEY` mit
+> Guthaben verwenden.
 
 ## Inbetriebnahme
 

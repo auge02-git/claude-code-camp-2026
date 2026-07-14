@@ -146,6 +146,7 @@ Verifikation: `kick fido` →
 **Workaround:** Login manuell über `mud_send` treiben — `mud_send("dummy")`,
 dann `mud_send("helloworld")`.
 
+---
 ⏺ Update(~/Documents/005___data/git/001_podman_runtime/claudeCodeCamp/docs/plans/week0_dummy_level-and-skills.md)                                                                                                                                                             
 ⎿  Added 6 lines                                                                                                                                                                                                                                                            
 56    kampffreie Erkundung (Schritt 3), Leveln als Hintergrundaufgabe.                                                                                                                                                                                                  
@@ -157,4 +158,3 @@ dann `mud_send("helloworld")`.
 62 +  Wächter, oft liegt zusätzlich ein Stück Fleisch am Boden.                                                                                                                                                                                                         
 63 +- **Iteration 2026-07-12 #2:** 3 Fidos in 3024 erlegt → **Exp 236 → 336**, **Gold 10 → 20**,                                                                                                                                                                        
 64 +  1 Fleisch im Gepäck. Kein Schaden. (Noch ~1664 Exp bis Lvl 2.)   
-

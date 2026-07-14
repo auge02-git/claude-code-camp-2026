@@ -5,3 +5,4 @@ __pycache__/
 # Local login credentials (plaintext password) — keep out of git.
 # Copy credentials.example.json to credentials.json and fill it in.
 credentials.json
+settings.local.json″

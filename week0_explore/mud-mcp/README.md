@@ -35,7 +35,6 @@ Requires the MUD server to be running (`cd ../infrastructure && docker compose u
 ## Development
 
 ```sh
-uv sync                              # install deps into .venv
 uv run python scripts/smoke_test.py  # drive the server over stdio against the live MUD
 uv run python -m mud_mcp.server      # run the server directly (stdio)
 ```

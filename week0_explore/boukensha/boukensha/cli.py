@@ -14,6 +14,7 @@ import sys
 
 from .agent import Agent
 from .config import Config
+from .logger import latest_mud_session_log
 from .mud import MudManager
 
 LOCAL_LLM_DEFAULT_URL = "http://127.0.0.1:1234"
@@ -54,6 +55,15 @@ def main(argv: list[str] | None = None) -> int:
         help="max. Werkzeug-Iterationen pro Ziel (Standard 5; höher für Navigation/Suche)",
     )
     args = parser.parse_args(argv if argv is not None else sys.argv[1:])
+
+    letztes_log = latest_mud_session_log()
+    if letztes_log is not None:
+        # Maschinenlesbar fuer Wrapper-Skripte und direkt sichtbar in der Shell.
+        print(f"BOUKENSHA_LAST_LOG={letztes_log}")
+        print(f"Letztes MUD-Log: {letztes_log}")
+    else:
+        print("BOUKENSHA_LAST_LOG=")
+        print("Letztes MUD-Log: (keins gefunden)")
 
     config = Config.load()
     if args.llm_base_url:

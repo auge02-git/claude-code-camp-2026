@@ -110,10 +110,10 @@ class MudSession:
     DEFAULT_TIMEOUT = 10.0
 
     def __init__(
-        self,
-        host: str = DEFAULT_HOST,
-        port: int = DEFAULT_PORT,
-        timeout: float = DEFAULT_TIMEOUT,
+            self,
+            host: str = DEFAULT_HOST,
+            port: int = DEFAULT_PORT,
+            timeout: float = DEFAULT_TIMEOUT,
     ) -> None:
         self.host = host
         self.port = port
@@ -186,9 +186,9 @@ class MudSession:
                 if remaining_total <= 0:
                     break
                 if (
-                    self._last_recv_at is not None
-                    and (_monotime() - self._last_recv_at) >= quiet_seconds
-                    and self._buffer
+                        self._last_recv_at is not None
+                        and (_monotime() - self._last_recv_at) >= quiet_seconds
+                        and self._buffer
                 ):
                     break
                 if self._last_recv_at is not None and self._buffer:

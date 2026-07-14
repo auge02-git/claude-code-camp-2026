@@ -56,10 +56,16 @@ class Agent:
         self.logger.log("observe", text=beobachtung)
         return beobachtung
 
-    def _observe_if_available(self) -> None:
-        """Führt den Observe-Schritt nur bei aktiver MUD-Verbindung aus."""
+    def _poll_observation(self) -> str:
+        """Liest MUD-Ausgabe (falls verbunden) und gibt sie als String zurück.
+
+        Im Gegensatz zu :meth:`_observe_if_available` wird KEIN eigener
+        ``user``-Turn hinzugefügt. Die Ausgabe wird stattdessen vom Aufrufer
+        direkt in den passenden Kontext-Block eingebettet, um doppelte
+        aufeinanderfolgende ``user``-Rollen zu vermeiden (Anthropic-API-Fehler).
+        """
         if not self.mud.is_open:
-            return
+            return ""
         try:
             beobachtung = self.observe()
         except Exception as fehler:
@@ -67,10 +73,8 @@ class Agent:
                 "warn",
                 text=f"Observe fehlgeschlagen ({type(fehler).__name__}): {str(fehler)[:200]}",
             )
-            return
-        if beobachtung.strip():
-            # Beobachtung als User-Nachricht in den nächsten Take-Action-Schritt einspeisen.
-            self.context.add_user(f"Beobachtung aus der Welt:\n{beobachtung}")
+            return ""
+        return beobachtung.strip()
 
     @staticmethod
     def _tool_input(block) -> dict:
@@ -89,12 +93,26 @@ class Agent:
         Führt die Tool-Use-Schleife aus, bis das Modell ohne Werkzeugaufruf
         antwortet (Reflect → Output) oder ``max_steps`` erreicht ist.
         """
-        self.context.add_user(prompt)
+        # Initiale Beobachtung direkt in den ersten user-Turn einbetten —
+        # verhindert doppelte aufeinanderfolgende user-Rollen, die die Anthropic-API
+        # ablehnt (roles must alternate).
+        obs = self._poll_observation()
+        if obs:
+            user_content: list | str = [
+                {"type": "text", "text": prompt},
+                {"type": "text", "text": f"Beobachtung aus der Welt:\n{obs}"},
+            ]
+        else:
+            user_content = prompt
+        self.context.add_user(user_content)
         self.logger.log("prompt", text=prompt)
-        tools = self.registry.anthropic_schemas()
+
+        # Keine Tools wenn MUD nicht verbunden → zwingt das Modell zu einer
+        # direkten Textantwort (stop_reason = "end_turn") statt in einem
+        # Tool-Loop zu hängen, weil alle Werkzeuge "MUD nicht verbunden" melden.
+        tools = self.registry.anthropic_schemas() if self.mud.is_open else []
 
         for _ in range(self.max_steps):
-            self._observe_if_available()
             try:
                 antwort = self.backend.complete(
                     system=self.context.system_prompt,
@@ -147,11 +165,27 @@ class Agent:
                             f"({type(fehler).__name__}): {str(fehler)[:200]}"
                         )
                 self.logger.log("tool", tool=block.name, result=ergebnis)
+                if block.name == "move":
+                    try:
+                        self.logger.log_move(str(tool_input.get("direction", "")), str(ergebnis))
+                    except Exception as fehler:
+                        self.logger.log(
+                            "warn",
+                            text=f"Move-Log fehlgeschlagen ({type(fehler).__name__}): {str(fehler)[:200]}",
+                        )
                 tool_results.append(
                     {"type": "tool_result", "tool_use_id": block.id, "content": ergebnis}
                 )
-            # Ergebnis zurück in die Aktion (Kante „Tool Use → Take Action").
-            self.context.add_user(tool_results)
+            # Nachfolgende Beobachtung direkt als Text-Block IN denselben user-Turn
+            # wie die tool_results einfügen — ein weiterer separater user-Turn würde
+            # zwei aufeinanderfolgende user-Rollen erzeugen (API-Fehler).
+            nach_obs = self._poll_observation()
+            user_content = list(tool_results)
+            if nach_obs:
+                user_content.append(
+                    {"type": "text", "text": f"Beobachtung aus der Welt:\n{nach_obs}"}
+                )
+            self.context.add_user(user_content)
 
         self.logger.log("output", text="(max_steps erreicht)")
         # Zu viele Iterationen → wahrscheinlich Tool-Schleife oder Backend-Fehler.
@@ -160,9 +194,9 @@ class Agent:
             "❌ Abbruch: Zu viele Iterationen ohne Abschluss. "
             f"{debug_msgs}\n"
             "   Mögliche Ursachen:\n"
-            "   • Backend gibt keine Endantwort zurück (stop_reason != 'tool_use')\n"
+            "   • Modell ruft dauerhaft Tools auf (stop_reason bleibt 'tool_use')\n"
             "   • Ein Tool ruft sich selbst rekursiv auf\n"
-            "   • Versuche --max-steps zu erhöhen (default: 5)"
+            "   • Versuche --max-steps zu erhöhen (default: 12)"
         )
 
     def _log_usage(self, antwort) -> None:

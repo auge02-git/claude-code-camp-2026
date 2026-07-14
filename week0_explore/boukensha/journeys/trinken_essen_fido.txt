@@ -1,4 +1,4 @@
-# Spiel-Lauf: trinken, essen, einen Fido töten. Jede Zeile = ein Agenten-Ziel
+# Spiel-Lauf: trinken, essen, mehrere Fidos töten. Jede Zeile = ein Agenten-Ziel
 # (eigenes Schritt-Budget). Sicherheitsregeln aus dem System-Prompt beachten.
 
 # Ziel 1 - Tempel: gehe zum Temel als Startpunkt.
@@ -15,3 +15,6 @@ Pluendere SOFORT die Leiche (loot_corpse) und iss danach das Fleisch (eat meat).
 
 # Ziel 5 - Heile dich nach einem Kampf.
 Suche eine Option bei der du dich heilen kannst und beginne danach mit dem zweiten Ziel erneut.
+
+# Ziel 6 - Lerne vom Gildemeister kick
+Sucher nach dem Gildenmeister und lerne die Technik kick und wende diese beim Kampf gegen Fidos an.

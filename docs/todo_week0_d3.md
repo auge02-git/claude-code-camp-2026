@@ -34,3 +34,16 @@ Update(.claude/scripts/mud_player.py)
 19 +MUD_MCP_SRC = Path(__file__).resolve().parents[4] / "mud-mcp"                                                                                                                                                            
 20  sys.path.insert(0, str(MUD_MCP_SRC))                           
 
+---------
+
+Weitere Optimierungen durch bessere Anweisungen, die auf Reflektionen der vorherige Durchläufe nbasieren.
+
+[week0_tests 5f120c9] AWO: optimized, better promting and lerning from before steps.
+6 files changed, 791 insertions(+)
+create mode 100644 week0_explore/boukensha/journeys/erfahrung_durchlaeufe_v3.md
+create mode 100644 week0_explore/boukensha/journeys/erfahrung_durchlaeufe_v4.txt
+create mode 100644 week0_explore/explore_architecture/02_agent_skills/.claude/scripts/boukensha_safe_farm.py
+create mode 100644 week0_explore/explore_architecture/02_agent_skills/.claude/skills/boukensha-safe-farm/SKILL.md
+create mode 100644 week0_explore/logs/short-agent-instruction-2026-07-15_2.md
+create mode 100644 week0_explore/logs/short-agent-instruction-2026-07-15_2.txt
+

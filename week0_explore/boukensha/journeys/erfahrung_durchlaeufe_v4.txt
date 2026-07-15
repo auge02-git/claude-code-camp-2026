@@ -1,0 +1,125 @@
+# Running Anthropic messages API on conversation with messages.
+# Erfahrungsbericht fuer den naechsten Boukensha-Lauf (dummy, Level 1)
+# Quelle: ../../logs/hand-agent-output-2026-07-15_4.log
+# Stand: 2026-07-15
+# Ziel: Keine Osttor-Sackgasse mehr, schneller zum Brunnen, sicherer Fido-Fortschritt.
+# Jede Zeile = ein Agenten-Ziel (eigenes Schritt-Budget). Sicherheitsregeln aus dem System-Prompt beachten.
+
+# Kern-Erkenntnisse aus diesem Lauf:
+# - Das Osttor ist fuer den aktuellen Low-Level-Lauf eine Navigationsfalle.
+# - "Outside The East Gate Of Midgaard" ist kein sinnvoller Farm-Pfad, wenn das Gate geschlossen ist.
+# - Wenn bei Exits nur blockierte Richtungen auftauchen oder "The gate seems to be closed" kommt: NICHT weiter experimentieren.
+# - Aber: systematisch andere Richtungen testen (south/up/down), nicht sofort aufgeben.
+# - Bei Blockade Tageszyklen-Meldungen ("The day has begun") nicht als Bewegungs-Signal missinterpretieren.
+# - Kein langes Suchen nach versteckten Pfaden an Sackgassen; systematisches Testen, dann Rueckkehr zur sicheren Route.
+# - Fido-Farming bleibt auf sichere Innenstadtraeume fokussiert, vor allem Eastern End Of Poor Alley.
+# - Vor jedem Kampf erst look, dann Wachen checken, dann nur Einzelziel angreifen.
+# - Mentale Routenplanung auch bei Feststecken: klare Ziele halten (Stadtzentrum -> Temple -> Farm).
+# - Hunger ist ernst, aber Wasser und sichere Position haben weiterhin Prioritaet.
+
+# Harte Regeln:
+# 1. Nie cityguard, Peacekeeper, knight, sorcerer oder Mayor angreifen.
+# 2. Bei "has arrived" oder Wachenpraesenz sofort flee.
+# 3. Keine Kaempfe in Raeumen mit Wachen oder mehreren unklaren Zielen.
+# 4. Exits sind bindend: nur dort vermutete Richtungen testen, die der Raum wirklich anzeigt.
+# 5. Bei "gate seems to be closed": systematisch n/s/u/d testen, nicht aufgeben, aber auch nicht endlos raten.
+# 6. Tageszyklen-Meldungen ("The day has begun") sind reine Zeit-Info, keine Bewegungs-Erlaubnis.
+# 7. Wasser > sichere Position > Hunger > Gold/Exp.
+# 8. Mentale Routenplanung: selbst wenn blockiert, klare Ziele im Kopf halten (Temple -> Farm -> quit).
+
+# Ziel 1 - Start sauber verifizieren.
+# Fuehre direkt score und look aus. Pruefe Raumname, HP, Hunger und moegliche Gefahr. Keine Bewegung vor klarer Positionsbestaetigung.
+score
+look
+
+# Ziel 2 - Tempel/Brunnen priorisieren.
+# Wenn du im Donation Room bist: west, dann south, dann drink fountain.
+# Wenn du im Market Square bist: north, dann drink fountain.
+# Wenn du schon auf Temple Square bist: direkt drink fountain.
+# Wenn du einen anderen bekannten Zentralraum hast: erst ueber Common Square/Temple Square stabilisieren, nicht zum Osttor laufen.
+drink fountain
+
+# Ziel 3 - Osttor-Regel beachten.
+# Gehe NICHT absichtlich zum East Gate oder Outside The East Gate, solange du keinen verifizierten Nutzen hast.
+# Wenn du trotzdem dort landest und "The gate seems to be closed" siehst: sofort als Sackgasse markieren und nicht weiter erkunden.
+# Kein wiederholtes east/west-Spam an geschlossenen Toren.
+
+# Ziel 4 - Sichere Route ins Farmgebiet.
+# Nutze nur bestaetigte Innenstadtrouten:
+# Common Square -> west -> Poor Alley
+# Common Square -> north -> Temple Square
+# Eastern End Of Poor Alley (3024) ist der primaere Farm-Anker.
+# Bewege dich konservativ und pruefe nach unsicheren Schritten mit look.
+west
+look
+
+# Ziel 5 - Raumpruefung vor jedem Kampf.
+# Scanne den Raum mit look.
+# Nur wenn KEINE Wache da ist und idealerweise nur ein einzelner Fido sichtbar ist: angreifen.
+# Wenn zwei Fidos da sind, nur kaempfen, wenn die Lage trotzdem kontrollierbar und wachfrei ist; sonst Raum wechseln.
+look
+
+# Ziel 6 - Fido-Farm-Zyklus.
+# Standard-Reihenfolge:
+# 1) look
+# 2) kill fido
+# 3) get all corpse
+# 4) eat meat
+# 5) alle 3-4 Zyklen score
+# Ziel ist stabile Wiederholbarkeit, nicht heroische Kaempfe.
+kill fido
+get all corpse
+eat meat
+score
+
+# Ziel 7 - Wenn kein Fido da ist.
+# Nur kurz zwischen zwei benachbarten sicheren Raeumen pendeln und erneut look.
+# Bevorzugt rund um Eastern End Of Poor Alley / Poor Alley.
+# Keine langen Erkundungen ausserhalb der sicheren Route.
+east
+look
+west
+look
+
+# Ziel 8 - Reaktion auf Blockaden und schlechte Navigation.
+# Wenn du in einer Sackgasse landest (z.B. Outside East Gate mit geschlossenem Tor):
+# - Erste Reaktion: look + score zur Lagebestaetigung.
+# - Systematisch verfuegbare Exits testen (wenn w blockiert: n versuchen, dann s, dann u/d).
+# - Nicht blind raten, aber auch nicht zu schnell aufgeben.
+# - Wenn alle Richtungen blockiert: zur letzten sicheren Referenz zurueckkehren (z.B. Common Square).
+# - MENTAL die beste Route planen (z.B. City-Center -> Temple -> Poor Alley 3024), auch wenn gerade feststeckend.
+# - Ein geschlossener Gate-Raum ist kein Explorationsziel, aber ein systematischer Ausweg ist legitim.
+
+# Ziel 9 - Blockade: Systematisches Richtungs-Testen bei Dead-End.
+# Wenn west blockiert ist (z.B. "The gate seems to be closed"):
+# - Schritt 1: Look + Score zur Bestätigung der Position.
+# - Schritt 2: Systematisch andere Richtungen testen (north, south, up, down).
+# - Schritt 3: Beachte Tageszyklen-Meldungen (z.B. "The day has begun") - sie bestätigen nur Zeit, nicht Position.
+# - Schritt 4: Wenn south funktioniert: NEHMEN und weg von der Sackgasse.
+# - Schritt 5: Falls alle Richtungen blockiert: Nur noch look/score nutzen, warten ist letzte Option.
+
+# Ziel 10 - Mentale Routenplanung auch bei Feststecken.
+# Auch wenn du momentan blockiert bist:
+# - Klare Zielroute im Kopf halten: Stadtzentrum -> Temple Square -> Wasser -> Poor Alley 3024 -> Farm.
+# - Bei erfolgreicher Bewegung sofort diese Route abfahren, kein Zögern.
+# - Checkpoint setzen: quit beim Rezeptionisten, um Fortschritt zu sichern.
+
+# Ziel 11 - Reaktion auf Gefahr.
+# Bei Wache, "has arrived", Multi-Mob-Chaos oder sinkenden HP: frueh flee.
+# Danach look und nur in sicheren Raeumen neu ansetzen.
+flee
+look
+
+# Ziel 12 - Fortschritt sichern.
+# Sobald Wasser gesichert ist und mindestens ein oder mehrere saubere Fido-Zyklen gelungen sind:
+# Status ausgeben, Lage kurz zusammenfassen und an sicherer Stelle quit.
+quit
+
+# Optional /btw-Hinweise fuer spaetere Laeufe:
+# - Main Street ist fuer diesen Charakter unzuverlaessiger als Poor Alley.
+# - Wenn kill fido nicht sauber greift, zuerst nochmal look und Zielbeschreibung pruefen statt blind zu spammen.
+# - Nicht auf "vielleicht gibt es einen versteckten Pfad" setzen, wenn die Exits klar sind.
+# - Bei East Gate Dead-End: south ausprobieren, bevor aufgeben.
+# - Tageszyklen-Meldungen sind Zeit-Flavor-Text, nicht Navigation-Info.
+# - Weitere Exploration erst nach stabiler Wasser-/Hunger-/Farm-Routine.
+

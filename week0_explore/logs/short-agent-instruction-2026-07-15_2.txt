@@ -1,0 +1,153 @@
+═══════════════════════════════════════════════════════════════════════════════
+  ARBEITSANWEISUNG FÜR BOUKENSHA-AGENT (dummy, Level 1)
+  Generiert aus: hand-agent-output-2026-07-15_2.log (61 Schritte)
+  Gültig ab: 2026-07-15
+═══════════════════════════════════════════════════════════════════════════════
+
+█ KRITISCHE ERKENNTNISSE AUS DEM LAUF
+
+1. NAVIGATION IST DIE GRÖSSTE HERAUSFORDERUNG
+   - Agent wurde mehrfach verwirrt und verlief sich in Übergangszonen
+   - Oft zirkulär zwischen Common Square ↔ Market Square ↔ Poor Alley
+   - Temple Square benötigte ~20 Schritte statt 3-4
+
+2. ERFOLGREICHE PFADE (dokumentiert)
+   ✓ Common Square → (west) → Poor Alley (Eingang)
+   ✓ Common Square → (north) → Temple Square (Brunnen)
+   ✓ Poor Alley → (south) → Grubby Inn
+
+3. HAUPTPROBLEME
+   ⚠ Kein Wasser getrunken (trotz mehrfacher Versuche, Temple Square zu erreichen)
+   ⚠ Kein Fido gefunden/getötet (Poor Alley erreicht, aber keine Spawn gesehen)
+   ⚠ Kritische Fehler: agent.west von False Locations = Wache-Trigger
+   ⚠ 3× Void-Ereignis durch Idle/Wrong-Transitions
+
+4. WACHEN-VERLAUF
+   Gesichtet: cityguard, Peacekeeper, knight (überall in Stadtzentrum)
+   Triggerpunkt: "west" von Common Square → Wache sofort
+   Sichere Zonen: Poor Alley (Eastern End), Grubby Inn
+
+█ OPTIMIERTE ARBEITSANWEISUNG FÜR NÄCHSTEN LAUF
+
+═══════════════════════════════════════════════════════════════════════════════
+PHASE 1: INITIALES ÜBERLEBEN (Priorität: Wasser + Hunger)
+═══════════════════════════════════════════════════════════════════════════════
+
+Step 1: STATUS PRÜFEN
+  > score              [HP/Mana/Exp prüfen]
+  > look               [Raum bestimmen]
+
+Step 2: BRUNNEN FINDEN (DIREKT!)
+  Aktueller Standort meist: Temple of Midgaard oder Donation Room
+
+  WENN "Donation Room": wollen nach west → Temple of Midgaard → south
+                        → Temple Square → drink fountain
+  WENN "Temple Square": drink fountain (direkt!)
+  WENN "Market Square": north → Temple Square → drink fountain
+
+  ⚠️ NICHT: west von Common Square (Wache!)
+
+Step 3: ESSEN FINDEN
+  Nach Brunnen (Durst weg):
+  > north → Market Square
+  > south → Common Square
+  > west → Poor Alley (Eastern End)
+  Dort nach Fido suchen: look
+  WENN Fido sichtbar: kill fido → loot_corpse → eat meat
+
+
+═══════════════════════════════════════════════════════════════════════════════
+PHASE 2: SICHERE FARM-ROUTINE (Priorität: Exp + Gold)
+═══════════════════════════════════════════════════════════════════════════════
+
+Farm-Ort: "The Eastern End Of Poor Alley" (Raum 3024)
+Abfolge PRO KILL:
+  1. look                [Fido prüfen]
+  2. kill fido           [angreifen]
+  3. loot_corpse         [Gold + Fleisch sammeln]
+  4. eat meat            [Hunger beheben]
+  5. score               [alle 3-4 Kills: Status]
+
+Wenn KEIN Fido → move east/west je nach Raum-Description
+Wenn WACHE ("has arrived") → flee (sofort!)
+
+Ziel: 1764 Exp für Level 2
+
+
+═══════════════════════════════════════════════════════════════════════════════
+PHASE 3: SICHERUNG & SKILLS (Priorität: Fortbestand)
+═══════════════════════════════════════════════════════════════════════════════
+
+Nach ~500 Exp oder Gefahr erkannt:
+  > move → Common Square → east → Temple of Midgaard → south → Reception
+  > quit                           [SPEICHERN!]
+
+Skill-Lernen (nur NACH Level-Up in Practice Yard):
+  → Market Square → south → Main Street (3016, NICHT KÄMPFEN!)
+  → south → Guild entrance → east → Bar → south → Practice Yard
+  > practice                        [Session-Status]
+  > practice <skill>               [neuer Skill]
+
+
+═══════════════════════════════════════════════════════════════════════════════
+SICHERHEITSREGELN (ZWINGEND)
+═══════════════════════════════════════════════════════════════════════════════
+
+1. ❌ WACHEN ANGREIFEN = SOFORTIGER TOD
+   Wachen: cityguard, Peacekeeper, knight, sorcerer, Mayor
+
+2. ⚠️ BEI "has arrived" → flee (NICHT KÄMPFEN!)
+
+3. 🎯 NUR EINZELNE FIDOS IN PERIPHEREN RÄUMEN
+
+4. 💧 PRIORITÄT: Wasser vor Hunger vor Gold
+
+5. 🏃 BEI <20% HP → flee (nicht erst bei kritisch!)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+BEKANNTE LOCATIONS (Navigation-Anker)
+═══════════════════════════════════════════════════════════════════════════════
+
+ZENTRAL (mit Wachen):
+  - Market Square ← zentral
+  - Common Square ← süd von Market
+  - Temple Square ← nord von Market (BRUNNEN!)
+  - Main Street ← wach-präsent
+
+PERIPHERIE (Farming):
+  - Poor Alley (Eastern End) ← wach-FREI, beste Fido-Spawns
+  - Grubby Inn (süd von Poor Alley) ← wach-frei, kein Loot
+
+VERBOTEN (für Level 1):
+  - Guild of Swordsmen (3016) ← Wache+Fido
+  - Practice Yard ← nach Level-Up nur!
+  - Armory ← unwirtschaftlich
+
+
+═══════════════════════════════════════════════════════════════════════════════
+FEHLER AUS DIESEM LAUF (VERMEIDEN!)
+═══════════════════════════════════════════════════════════════════════════════
+
+❌ Zu viel Zeit im Zentrum verbracht (Temple Square sollte <5 min sein)
+❌ "west" von Common Square getried (direkt Wache)
+❌ Kein systematischer Weg zum Brunnen (mutige Navigations-Versuche)
+❌ Keine Rückkehr zum "quit"-Punkt nach Stabilisierung
+❌ Zu viele "look"-Befehle ohne Aktion
+
+
+═══════════════════════════════════════════════════════════════════════════════
+EFFIZIENT-CHECKLISTE FÜR NÄCHSTEN START
+═══════════════════════════════════════════════════════════════════════════════
+
+[ ] 1. score (Status)
+[ ] 2. Direct to Temple Square → drink fountain
+[ ] 3. Direct to Poor Alley (Eastern End)
+[ ] 4. Farm-Loop: kill → loot → eat
+[ ] 5. Nach 3-5 Kills → quit (speichern)
+[ ] 6. (Optional) Erkunden neuer Farm-Zonen (Sewer, etc.) nur mit 30+ HP
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Stand: 2026-07-15 | Quelle: 61 logged steps | Charakter: dummy (Krieger, L1)
+

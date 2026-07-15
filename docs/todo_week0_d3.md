@@ -47,3 +47,10 @@ create mode 100644 week0_explore/explore_architecture/02_agent_skills/.claude/sk
 create mode 100644 week0_explore/logs/short-agent-instruction-2026-07-15_2.md
 create mode 100644 week0_explore/logs/short-agent-instruction-2026-07-15_2.txt
 
+[week0_tests 37be942] AWO: fix, better promting by architecture 2 and runnings.
+2 files changed, 172 insertions(+)
+create mode 100644 week0_explore/boukensha/journeys/erfahrungen_durchlaeufe_v5.txt
+
+----------
+
+Andre.Wolff@MB-J3XNPGKM94 boukensha % uv run boukensha --llm-base-url http://localhost:1234 --model google/gemma-4-12b-qat --max-steps 30 --dsl ./journeys/mud-journeys-2026-07-15_v6.log

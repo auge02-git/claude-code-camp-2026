@@ -14,15 +14,24 @@ Beispiel (``journeys/trinken_essen.txt``)::
 from __future__ import annotations
 
 from pathlib import Path
+from typing import IO
 
 from .agent import Agent
 
 
-def run_dsl_file(agent: Agent, pfad: str) -> None:
-    """Führt jede nicht-leere, nicht-kommentierte Zeile als Agenten-Schritt aus."""
+def run_dsl_file(agent: Agent, pfad: str, log_datei: IO[str] | None = None) -> None:
+    """Führt jede nicht-leere, nicht-kommentierte Zeile als Agenten-Schritt aus.
+
+    Wenn ``log_datei`` übergeben wird, werden Anweisung und Antwort zusätzlich
+    zur Terminal-Ausgabe dorthin geschrieben.
+    """
     for zeile in Path(pfad).read_text(encoding="utf-8").splitlines():
         anweisung = zeile.strip()
         if not anweisung or anweisung.startswith("#"):
             continue
         print(f"\n» {anweisung}")
-        print(agent.step(anweisung))
+        ausgabe = agent.step(anweisung)
+        print(ausgabe)
+        if log_datei:
+            log_datei.write(f"» {anweisung}\n{ausgabe}\n\n")
+            log_datei.flush()

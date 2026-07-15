@@ -122,6 +122,7 @@ class SessionLogger:
         text = output.strip().replace("\n", " / ")
         return text[:140] + ("..." if len(text) > 140 else "")
 
+
     @staticmethod
     def _escape(text: str) -> str:
         return text.replace("|", "\\|")

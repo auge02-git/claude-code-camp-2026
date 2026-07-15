@@ -47,5 +47,5 @@ uv run python -m mud_mcp.server
 - Vor Code-Aenderungen zuerst im betroffenen Teilprojekt arbeiten; es gibt keinen globalen Build-Entry-Point.
 - Bei MCP-bezogenen Aenderungen immer Abhaengigkeit zur laufenden MUD-Infrastruktur mitdenken.
 - Bei Parser-/Datenmodell-Aenderungen Downstream-Effekte auf `preview/` und MCP-Tool-Antworten pruefen.
-- Fuer neue Agent-Prompts bestehende Muster in `copilotTests/prompts/` und `copilotTests/configs/` wiederverwenden.
+
 

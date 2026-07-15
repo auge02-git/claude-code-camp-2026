@@ -19,7 +19,7 @@ Im Punkt "Exits:" werde alle möglichen Navigationsschritte (Richtungen) aufgeli
 
 Versuche den Weg zu verkuerzten und weitere EXP zu sammeln. Nutzte hierfuer die gemachten Erfahrung und bewege dich weiter. Gib am Ende eine Staus Informationen aus und sichere deinen Fortschritt im Spiel.
 Versuche deine Weg voraus zu planen und mögliche Hindernisse fruehzeitig zu umgehen.
-Nutzte den Geldautomaten (ATM) um Geld einzubezahlen und zu sparen. Dies kann für spätere Käufe oder Upgrades nützlich sein. Wenn es nötig ist kann auf diesem Weg ebenso Geld geholt werden um Waren zu kaufen und zu bezahlen. Hierfür nutze dem Befehl help um weitere Funktionen zu erhalten.
+Nutzte den Geldautomaten (ATM) mit "deposit" um Geld einzubezahlen und zu sparen. Dies kann für spätere Käufe oder Upgrades nützlich sein. Wenn es nötig ist kann auf diesem Weg ebenso Geld geholt werden um Waren zu kaufen und zu bezahlen. Hierfür nutze dem Befehl help um weitere Funktionen zu erhalten.
 
 Ziel ist es das naechste Level zu erreichen und die EXP zu maximieren. Bitte berücksichtige bei der Auswahl der Gegner, dass du in zwischen Stärken sein muss und nutze kick für weitere Angriffe.
 

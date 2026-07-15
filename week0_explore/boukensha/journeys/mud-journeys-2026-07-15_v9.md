@@ -5,11 +5,10 @@ Diese Datei strukturiert die Arbeitsanweisungen so, dass ein Agent sie determini
 Ziel: schnelleres Leveln (naechstes Level), mehr EXP pro Minute, weniger Sackgassen, sicherer Fortschritt.
 
 ## Eingaben (vor Start lesen)
-1. `journeys/erfahrung_durchlaeufe_v4.txt`
-2. `journeys/erfahrungen_durchlaeufe_v5.txt`
-3. `journeys/erfahrung_durchlaeufe_v6.txt`
-4. `../../logs/mud-session-2026-07-15.log` (Karte / reale Bewegungshistorie)
-5. `../../logs/mud-journeys-2026-07-15.log` (nur als optionale `/btw`-Auswege, nicht als Pflichtplan)
+1. `journeys/erfahrungen_durchlaeufe_v5.txt`
+2. `journeys/erfahrung_durchlaeufe_v6.txt`
+3. `../../logs/mud-session-2026-07-15.log` (Karte / reale Bewegungshistorie)
+4. `../../logs/hand-agent-output-2026-07-15_7.log` (nur als optionale `/btw`-Auswege, nicht als Pflichtplan)
 
 ## Ausgabe-Vertrag
 - Jede Ausgabezeile = genau ein Agenten-Ziel (ein Schritt-Budget).
@@ -67,7 +66,7 @@ Ziel: schnelleres Leveln (naechstes Level), mehr EXP pro Minute, weniger Sackgas
 
 ## ATM-Regel (Geld sichern)
 - ATM nutzen, sobald eine sichere Phase erreicht ist (kein Kampf, keine Wache im Raum, Route bekannt).
-- Mit `help` die lokalen ATM-Befehle pruefen und dann Geld einzahlen.
+- ATM-Befehle zum pruefen (balance), abzuheben (withdraw <summe>) dann Geld einzahlen (deposit <summe>).
 - Nur abheben, wenn ein konkreter Kauf ansteht.
 
 ## Planungsregel pro Schritt

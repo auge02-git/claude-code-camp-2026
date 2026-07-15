@@ -114,7 +114,6 @@ Voraussetzungen für den Live-Betrieb:
 
 - `settings.yml` — Modell + MUD-Host/Port.
 - `prompts/system.md` — deutscher System-Prompt (Sicherheitsregeln, Weltwissen).
-- `logs/<session_id>/<datum>.jsonl` — Sitzungslogs (siehe `log_viz`).
 
 Überschreibbar via Umgebungsvariable `BOUKENSHA_DIR`.
 

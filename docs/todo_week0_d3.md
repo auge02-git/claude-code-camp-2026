@@ -110,3 +110,7 @@ create mode 100644 week0_explore/explore_architecture/EXPLORATION.md
 update explore_extracs.md
 2 files changed, 164 insertions(+), 33 deletions(-)
 
+[week0_tests 07f7566] AWO: fix, documentations to frame of bootcamp as stub.
+3 files changed, 167 insertions(+), 1 deletion(-)
+create mode 100644 docs/explore_extracts.md
+rename docs/{explore_extracs.md => explore_extracts_german.md} (100%)

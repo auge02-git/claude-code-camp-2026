@@ -229,3 +229,19 @@ Andre.Wolff@MB-J3XNPGKM94 boukensha % uv run boukensha --llm-base-url http://loc
 2 files changed, 11 insertions(+), 4 deletions(-)
 
 ---------
+
+### Ziel reduziere Imput-Token durch zusammenfassung der Erkenntnisse.
+
+[week0_tests 8dd2cda] AWO: update, new journeys and agent descriptions for rerun v11.
+4 files changed, 1129 insertions(+)
+create mode 100644 week0_explore/boukensha/journeys/erfahrung_durchlaeufe_v10.txt
+create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-15_v11.md
+
+----------
+
+### Test mit mud-play Skill und Funktionen laden
+
+cd **/claudeCodeCamp/week0_explore/explore_architecture/02_agent_skills
+Andre.Wolff@MB-J3XNPGKM94 02_agent_skills % claude
+KI: load skill mud-play
+

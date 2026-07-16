@@ -1,7 +1,7 @@
-# Konsolidierte Erfahrungssammlung v10 (dedupliziert)
+# Konsolidierte Erfahrungssammlung v10
 # Erstellt am: 2026-07-16
 # Quelle: Zusammenfuehrung aller Dateien passend zu erfahrung*_durchlaeufe_*.txt
-# Hinweis: Doppelte Informationen (identische Inhalte) wurden entfernt; Quelle ist nachrangig.
+# Wichtiger Hinweis: Inhalte wurden unveraendert uebernommen, inklusive Duplikaten.
 
 
 ================================================================================
@@ -48,6 +48,7 @@ Nutze dein Umgebungswissen und suche nach Fido und töde diese um Gold, essen un
 ================================================================================
 # END SOURCE: erfahrungen_durchlaeufe_v1.txt
 ================================================================================
+
 
 ================================================================================
 # BEGIN SOURCE: erfahrung_durchlaeufe_v4.txt
@@ -178,9 +179,11 @@ quit
 # - Tageszyklen-Meldungen sind Zeit-Flavor-Text, nicht Navigation-Info.
 # - Weitere Exploration erst nach stabiler Wasser-/Hunger-/Farm-Routine.
 
+
 ================================================================================
 # END SOURCE: erfahrung_durchlaeufe_v4.txt
 ================================================================================
+
 
 ================================================================================
 # BEGIN SOURCE: erfahrungen_durchlaeufe_v5.txt
@@ -345,9 +348,11 @@ quit
 # - Tageszyklen-Meldungen sind Zeit-Flavor-Text, keine Navigation.
 # - Weitere Exploration erst nach stabiler Wasser-/Hunger-/Farm-Routine.
 
+
 ================================================================================
 # END SOURCE: erfahrungen_durchlaeufe_v5.txt
 ================================================================================
+
 
 ================================================================================
 # BEGIN SOURCE: erfahrung_durchlaeufe_v6.txt
@@ -564,9 +569,232 @@ quit
 # - Aggressiver leveln heisst nicht riskant leveln: Wachen-Regeln bleiben absolut.
 # - Bei Unsicherheit immer auf Standard-Modus zurueckschalten.
 
+
 ================================================================================
 # END SOURCE: erfahrung_durchlaeufe_v6.txt
 ================================================================================
+
+
+================================================================================
+# BEGIN SOURCE: erfahrungen_durchlaeufe_v6.txt
+================================================================================
+
+# Running Anthropic messages API on conversation with messages.
+# Erfahrungsbericht fuer den naechsten Boukensha-Lauf (dummy, Level 1)
+# Quelle: ../../logs/hand-agent-output-2026-07-15_6.log
+# Stand: 2026-07-15
+# Ziel: Zuverlaessig Level 2 erreichen, Pet-Shop-Zeitverlust vermeiden, sichere Basis + optional aggressiver leveln.
+# Jede Zeile = ein Agenten-Ziel (eigenes Schritt-Budget). Sicherheitsregeln aus dem System-Prompt beachten.
+
+# Kern-Erkenntnisse aus diesem Lauf:
+# - Der Pet Shop ist kein verlaesslicher Start-Farmspot: viele Tiere, aber oft kein klar sichtbar angreifbarer fido.
+# - Wenn im Pet Shop kein einzelnes Ziel sichtbar ist, sofort abbrechen und zur bekannten Farm-Route wechseln.
+# - Exits sind nicht nur Orientierung, sondern die PRIMAERE Navigationsmatrix fuer jede Bewegung.
+# - look + Exits muessen vor JEDEM Raumwechsel ausgewertet werden.
+# - Batch-Planung (3-5 Schritte voraus) verhindert Schleifen und reaktives Zappeln.
+# - Die Hotspots 3024 / 3012 bleiben wertvoller als improvisierte Farmversuche in der Main Street oder im Pet Shop.
+# - Main Street bleibt wegen Wachen-Praesenz ein Transitraum, kein Kampfgebiet.
+# - Eine etwas aggressivere Strategie ist sinnvoll, aber nur in sicheren Raeumen und mit HP-Puffer.
+# - kick ist ein echter DPS-Booster und sollte nach kill aktiv genutzt werden, um Zeit pro Kampf zu reduzieren.
+# - Aggression darf NIE die Wachen-Regeln ueberschreiben: bei "has arrived" sofort flee.
+
+# Neue Kern-Erkenntnis: PET-SHOP-FALLE
+# - Der Pet Shop wirkt wie ein natuerlicher Fido-Ort, liefert aber oft keinen direkt nutzbaren Kampfstart.
+# - Wiederholtes look im Pet Shop ohne neue Ziele erzeugt nur Zeitverlust.
+# - Sobald klar ist, dass nur der Pet Shop Boy sichtbar ist: north und Route zu 3024/3012 planen.
+# - Der Pet Shop ist deshalb nur ein Pruefpunkt, kein Farm-Anker.
+
+# Neue Kern-Erkenntnis: AGGRESSIVER LEVEL-MODUS (OPTIONAL)
+# - Wenn HP stabil sind und der Raum sicher ist, darf offensiver gespielt werden.
+# - Nicht nur der allerschwaechste Mob ist erlaubt; Gegner muessen aber im kontrollierbaren Staerkebereich bleiben.
+# - kill + kick reduziert Kampfzeit und erhoeht EXP pro Minute.
+# - Aggressiver Modus gilt NUR in wachfreien Raeumen mit bekanntem Fluchtweg.
+
+# Harte Regeln (aktualisiert v6):
+# 1. Nie cityguard, Peacekeeper, knight, sorcerer oder Mayor angreifen.
+# 2. Bei "has arrived" sofort flee - kein look, kein score, kein kick, kein Nachdenken.
+# 3. Keine Kaempfe auf der Main Street oder in bekannten Wachen-Transitraeumen.
+# 4. Vor jedem Kampf: look -> Wachennamen pruefen -> Exits lesen -> Fluchtweg festlegen.
+# 5. Exits sind bindend: nur explizit genannte Richtungen verwenden.
+# 6. Wasser > sichere Position > Hunger > Gold/Exp.
+# 7. Batch-Planung: immer 3-5 Schritte vorausdenken.
+# 8. Pet Shop nicht ueberbewerten: wenn kein klares Ziel sichtbar ist, sofort weiter.
+# 9. Aggressiver Modus nur mit HP-Puffer und sicherem Fluchtweg.
+# 10. kick nur dann nutzen, wenn der Kampf bereits sicher gestartet wurde und keine Wache im Raum ist.
+
+# === NAVIGATION / KARTENNUTZUNG ===
+
+# Ziel N1 - Exits als primaere Navigationsmatrix verwenden.
+# Jede look-Ausgabe hat Prioritaet vor Vermutungen.
+# Vorgehen pro Raum:
+# - Raumname lesen
+# - Exits lesen
+# - Mobs/Wachen lesen
+# - Erst dann bewegen oder kaempfen
+# Keine Bewegung in nicht gelistete Richtungen.
+score
+look
+
+# Ziel N2 - Batch-Route vorab planen.
+# Vor jeder groesseren Bewegung eine Mini-Route bilden:
+# - Beispiel Brunnen: look -> north -> look -> drink fountain
+# - Beispiel Farm: look -> west -> look -> west/east pendeln -> kill
+# Ziel: nicht pro Schritt neu improvisieren.
+
+# Ziel N3 - Pet Shop korrekt behandeln.
+# Wenn im Pet Shop nur der Pet Shop Boy sichtbar ist:
+# - KEIN weiteres langes look-Spam
+# - KEIN Hoffen auf implizite Tiere als Kampfziel
+# - Sofort north zur Main Street und dann ueber sichere Route weiter
+# Der Pet Shop ist damit nur ein kurzer Check, kein Grind-Ort.
+north
+look
+
+# === SICHERE BASIS-ROUTE ===
+
+# Ziel 1 - Start sauber verifizieren.
+# Direkt score + look. Hunger, Durst, HP und Exits pruefen.
+# Wenn Main Street: nicht kaempfen, nur Transit.
+score
+look
+
+# Ziel 2 - Brunnen priorisieren.
+# Sichere Standardpfade:
+# - Donation Room -> west -> south -> drink fountain
+# - Market Square -> north -> drink fountain
+# - Temple Square -> direkt drink fountain
+# - Common Square -> north -> Temple Square -> drink fountain
+drink fountain
+
+# Ziel 3 - Sichere Route ins Farmgebiet.
+# Bestaetigte Anker:
+# - Common Square -> west -> Poor Alley
+# - Common Square -> north -> Temple Square
+# - Eastern End Of Poor Alley (3024) = primaerer Farm-Anker
+# - 3012 / benachbarte Poor-Alley-Raeume = Sekundaer-Anker
+# Main Street meiden, ausser fuer kurzes Durchqueren mit look.
+west
+look
+
+# Ziel 4 - Anti-Pinning-Kampfcheck.
+# Vor JEDEM Kampf:
+# - look
+# - Wachen scannen
+# - Exits scannen
+# - Fluchtweg mental festlegen
+# - nur dann angreifen
+look
+
+# Ziel 5 - Sicherer Standard-Farm-Zyklus.
+# Standard-Reihenfolge:
+# 1) look
+# 2) kill fido
+# 3) get all corpse
+# 4) eat meat
+# 5) score alle 3-4 Zyklen
+kill fido
+get all corpse
+eat meat
+score
+
+# Ziel 6 - Wenn kein fido da ist.
+# Nur kurz in sicheren Nachbarraumen pendeln.
+# Kein Ausweichen auf Main Street oder Pet Shop als Farmersatz.
+east
+look
+west
+look
+
+# === OPTION: AGGRESSIVER LEVEL-MODUS ===
+
+# Ziel G1 - Bedingungen fuer aggressiveren Modus.
+# Aggressiver Modus ist NUR erlaubt wenn ALLES gilt:
+# - Raum ist wachfrei
+# - Exits sind klar
+# - Fluchtweg ist mental gesetzt
+# - HP-Puffer ist solide (nicht im roten Bereich, nicht kurz vor flee)
+# - Gegner ist nicht offensichtlich zu stark
+# Sonst sofort auf Standard-Modus zurueck.
+
+# Ziel G2 - Gegnerwahl fuer schnellere EXP.
+# Nicht nur stumpf nach dem schwaechsten Ziel gehen.
+# Erlaubt sind Gegner im "kontrollierbaren Mittelfeld", wenn:
+# - sie dich nicht sofort unter 20% HP druecken
+# - du sie mit kill + kick zuegig beenden kannst
+# - der Raum kein Wachen-Risiko hat
+# Bevorzugung bleibt trotzdem bei bekannten, sicheren Low-Risk-Zielen.
+
+# Ziel G3 - Kampfzyklus mit kick.
+# Neuer Kampfzyklus fuer schnelleren Level-Fortschritt:
+# 1) look
+# 2) kill <ziel>
+# 3) kick <ziel>
+# 4) kick <ziel> wiederholen solange sicher
+# 5) get all corpse
+# 6) eat meat
+# 7) score
+# Hinweis: Wenn der Gegner nur fido ist, weiterhin zunaechst kill fido nutzen; kick ist Beschleuniger, kein Ersatz.
+kill fido
+kick fido
+get all corpse
+eat meat
+score
+
+# Ziel G4 - Grenzen der Aggression.
+# Aggressiver Modus endet SOFORT wenn:
+# - "has arrived" erscheint
+# - Wache sichtbar wird
+# - HP rapide fallen
+# - Fluchtweg unklar wird
+# Dann sofort Standard-Notfallprotokoll:
+flee
+look
+
+# Ziel G5 - EXP pro Minute denken, nicht Heldentum.
+# Schnell leveln bedeutet:
+# - kuerzere Laufwege
+# - weniger Leerlauf im Pet Shop
+# - weniger look-Schleifen ohne Entscheidung
+# - kuerzere Kaempfe per kick
+# - nur Kaempfe, die sicher beendet oder sicher verlassen werden koennen
+
+# === NOTFALL / HINDERNIS-VERMEIDUNG ===
+
+# Ziel E1 - Wachen-Pinning weiter verhindern.
+# Main Street und bekannte Patrouillenraeume nicht als Kampfplatz verwenden.
+# Wenn Wache im Raum auftaucht: flee zuerst, Orientierung spaeter.
+flee
+look
+
+# Ziel E2 - Sackgassen nicht ausreizen.
+# Wenn Exits unguenstig oder ein Gate geschlossen ist:
+# - look + score
+# - nur gelistete Richtungen testen
+# - keine langen Experimente
+# - schnell zur bekannten Route Temple -> Poor Alley zurueck
+
+# Ziel E3 - Fortschritt sichern.
+# Sobald Wasser gesichert und mindestens 1-3 saubere Kaempfe erfolgt sind:
+# - score
+# - Lage kurz bewerten
+# - an sicherer Stelle quit
+quit
+
+# Optional /btw-Hinweise fuer spaetere Laeufe:
+# - Pet Shop ist eher ein falscher Lockruf als ein stabiler Farmspot.
+# - Eastern End Of Poor Alley (3024) bleibt der beste verifizierte Standard-Anker.
+# - 3012 ist sinnvoller als improvisierte Main-Street-Kaempfe.
+# - Exits sind die Navigationsmatrix, nicht nur Zusatzinfo.
+# - Batch-Planung spart Zeit und reduziert Schleifen.
+# - kick beschleunigt Kaempfe, ersetzt aber nicht die Sicherheitspruefung.
+# - Aggressiver leveln heisst nicht riskant leveln: Wachen-Regeln bleiben absolut.
+# - Bei Unsicherheit immer auf Standard-Modus zurueckschalten.
+
+
+================================================================================
+# END SOURCE: erfahrungen_durchlaeufe_v6.txt
+================================================================================
+
 
 ================================================================================
 # BEGIN SOURCE: erfahrung_durchlaeufe_v7.txt
@@ -796,6 +1024,7 @@ quit
 # - Nach API-Timeout: nicht sofort neuer Befehl, sondern warten.
 # - Hauptanker: Temple Square, Common Square, Eastern End of Poor Alley.
 # - Void-Trigger vermeiden: nach jedem Move auf Output warten vor nächstem Move.
+
 
 ================================================================================
 # END SOURCE: erfahrung_durchlaeufe_v7.txt

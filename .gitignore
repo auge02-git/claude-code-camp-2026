@@ -9,3 +9,5 @@
 *.log
 **/node_modukes/
 .mcp.json
+
+**/.logging_data/

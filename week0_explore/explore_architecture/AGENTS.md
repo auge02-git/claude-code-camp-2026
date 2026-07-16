@@ -1,51 +1,50 @@
 # AGENTS.md
 
-## Zweck dieses Repos
-- Multi-Projekt-Workspace fuer AI-Agent-Experimente und Infrastruktur-Setups (nicht ein einzelnes Produkt).
-- Schwerpunkte: `claudeCodeCamp/` (MCP + MUD), `copilotTests/` (Agent-Prompts/Personas), `l2-monitoring-stack/` (Observability).
+## Purpose of This Repository
+- Multi-project workspace for AI agent experiments and infrastructure setups (not a single product).
+- Focus areas: `claudeCodeCamp/` (MCP + MUD), `copilotTests/` (agent prompts/personas), `l2-monitoring-stack/` (observability).
 
-## Big Picture Architektur
-- `claudeCodeCamp/week0_explore/` bildet eine Pipeline aus mehreren Services:
-  - `infrastructure/`: startet tbaMUD/CircleMUD via Docker Compose (MUD-Server lokal).
-  - `circlemud-world-parser/`: Python/uv Parser fuer World-Files (`*.wld/*.mob/*.obj/...`) nach JSON.
-  - `preview/`: nutzt erzeugte JSON-Daten fuer Web-Visualisierung.
-  - `mud_manager/`: Ruby-basierter Telnet-Client/Command-Layer.
-  - `mud-mcp/`: Python FastMCP-Server, exponiert `mud_*` Tools fuer AI-Agenten.
-- Datenfluss (wichtig fuer Aenderungen): World-Files -> Parser -> JSON-Bundles -> Preview/Agent-Tools.
+## Big Picture Architecture
+- `claudeCodeCamp/week0_explore/` forms a pipeline of multiple services:
+  - `infrastructure/`: starts tbaMUD/CircleMUD via Docker Compose (local MUD server).
+  - `circlemud-world-parser/`: Python/uv parser for world files (`*.wld/*.mob/*.obj/...`) to JSON.
+  - `preview/`: uses generated JSON data for web visualization.
+  - `mud_manager/`: Ruby-based Telnet client/command layer.
+  - `mud-mcp/`: Python FastMCP server, exposes `mud_*` tools for AI agents.
+- Data flow (important for changes): World Files → Parser → JSON Bundles → Preview/Agent-Tools.
 
-## Service-Grenzen & Integrationen
-- MCP-Integration ist zentral: Root-`/.mcp.json` registriert MCP-Server fuer Agent-Tooling.
-- Laufzeitkopplung: `mud-mcp` erwartet laufende `infrastructure` (typisch `localhost:4000`).
+## Service Boundaries & Integrations
+- MCP integration is central: root-level `/.mcp.json` registers MCP servers for agent tooling.
+- Runtime coupling: `mud-mcp` expects running `infrastructure` (typically `localhost:4000`).
 
-## Konkrete Entwickler-Workflows
-- MUD-Infrastruktur starten:
+## Concrete Developer Workflows
+- Start MUD infrastructure:
 ```bash
 cd claudeCodeCamp/week0_explore/infrastructure
 docker compose up --build -d
 ```
-- Parser bauen/testen (laut Projektstruktur mit Make + uv):
+- Build/test parser (per project structure with Make + uv):
 ```bash
 cd claudeCodeCamp/week0_explore/circlemud-world-parser
 make test
 make lint
 make all
 ```
-- MCP-Server lokal starten:
+- Start MCP server locally:
 ```bash
 cd claudeCodeCamp/week0_explore/mud-mcp
 uv sync
 uv run python -m mud_mcp.server
 ```
 
-## Repo-spezifische Konventionen
-- Polyglot Toolchain: Python (`uv`), Node (`npm`), Ruby (`gem`), Docker Compose.
-- Mehrere `docker-compose*.yml` Varianten pro Teilprojekt fuer unterschiedliche Deploy-Szenarien.
-- Generierte Artefakte und Runtime-State liegen in projektlokalen Ordnern (z. B. Parser-Output / Preview-Daten) statt zentralem Build-Dir.
-- AI-Prompting/Personas sind als Dateien organisiert (kein proprietaeres Tooling erforderlich).
+## Repository-Specific Conventions
+- Polyglot toolchain: Python (`uv`), Node (`npm`), Ruby (`gem`), Docker Compose.
+- Multiple `docker-compose*.yml` variants per subproject for different deployment scenarios.
+- Generated artifacts and runtime state live in project-local folders (e.g., parser output/preview data) rather than a central build directory.
+- AI prompting/personas are organized as files (no proprietary tooling required).
 
-## Hinweise fuer Coding Agents
-- Vor Code-Aenderungen zuerst im betroffenen Teilprojekt arbeiten; es gibt keinen globalen Build-Entry-Point.
-- Bei MCP-bezogenen Aenderungen immer Abhaengigkeit zur laufenden MUD-Infrastruktur mitdenken.
-- Bei Parser-/Datenmodell-Aenderungen Downstream-Effekte auf `preview/` und MCP-Tool-Antworten pruefen.
-
+## Notes for Coding Agents
+- Before making code changes, start by working within the affected subproject; there is no global build entry point.
+- For MCP-related changes, always consider the dependency on the running MUD infrastructure.
+- For parser/data model changes, verify downstream effects on `preview/` and MCP tool responses.
 

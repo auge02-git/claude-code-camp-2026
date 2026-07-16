@@ -1,5 +1,6 @@
 # Windows Zone.Identifier files (WSL download metadata)
 *:Zone.Identifier
+.copilot/
 .DS_STORE
 ._*
 
@@ -8,6 +9,8 @@
 .env.local
 
 *.log
+*.lnk
+
 **/node_modukes/
 .mcp.json
 

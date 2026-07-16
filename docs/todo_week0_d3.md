@@ -222,3 +222,10 @@ create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-15_v10.
 
 ### loops erhöht und Anweisungen angepasst, Idee loops=500 was passiert?
 Andre.Wolff@MB-J3XNPGKM94 boukensha % uv run boukensha --llm-base-url http://localhost:1234 --model google/gemma-4-12b-qat --max-steps 50 --dsl ./journeys/mud-journeys-2026-07-15_v10.md
+
+#### Grund für Anpassung: Nicht alle geplanten Informationen wurden beim Agent-Init richtig verwendet.
+
+[week0_tests 044df22] AWO: update, journeys and agent descriptions for rerun v10.
+2 files changed, 11 insertions(+), 4 deletions(-)
+
+---------

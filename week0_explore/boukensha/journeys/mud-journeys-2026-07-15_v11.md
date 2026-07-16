@@ -6,11 +6,10 @@ Ziel: schnelleres Leveln (naechstes Level), mehr EXP pro Minute, weniger Sackgas
 
 ## Eingaben (vor Start lesen)
 1. `../../../docs/plans/week0_dummy_level-and-skills.md` (Leveling-Plan, Skill-Lernreihenfolge, Grundlagen)
-2. `journeys/erfahrungen_durchlaeufe_v*.txt` (Zusammenfassung Erkenntnisse, gelerntes, älteres)
-3. `journeys/erfahrung_durchlaeufe_v*.txt` (Zusammenfassung Erkenntnisse, gelerntes)
-4. `journeys/erfahrung_durchlaeufe_v7.txt` (Zusammenfassung Erkenntnisse, letztes)
-5. `../../logs/mud-session-2026-07-14_v2.log` (Karte / reale Bewegungshistorie)
-6. `../../logs/mud-journeys-2026-07-16_v2.log` (nur als optionale `/btw`-Auswege, nicht als Pflichtplan)
+2. `journeys/mud-journeys-2026-07-15_v9.md` (Grundregel und erste Erfahrungen)
+3. `journeys/erfahrung_durchlaeufe_v10.txt` (Zusammenfassung Erkenntnisse, letztes)
+4. `../../logs/mud-session-2026-07-15.log` (Karte / reale Bewegungshistorie)
+5. `../../logs/mud-journeys-2026-07-16_v3.log` (nur als optionale `/btw`-Auswege, nicht als Pflichtplan)
 
 ## Ausgabe-Vertrag
 - Jede Ausgabezeile = genau ein Agenten-Ziel (ein Schritt-Budget).

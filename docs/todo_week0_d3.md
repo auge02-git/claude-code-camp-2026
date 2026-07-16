@@ -261,3 +261,10 @@ create mode 100644 week0_explore/explore_architecture/02_agent_skills/.claude/sk
 create mode 100644 week0_explore/explore_architecture/02_agent_skills/.claude/skills/mud-play/references/commands.md
 create mode 100755 week0_explore/explore_architecture/02_agent_skills/.claude/skills/mud-play/scripts/mud_client.py
 create mode 100644 week0_explore/explore_architecture/02_agent_skills/EXPLORATION.md
+
+----------
+
+[main 20c373c] AWO: fix, write session logs map informations (v11).
+change week0_explore/boukensha/boukensha/agent.py
+3 files changed, 7 insertions(+), 1 deletion(-)
+

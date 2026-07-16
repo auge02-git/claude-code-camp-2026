@@ -167,6 +167,8 @@ create mode 100644 docs/description_patch_journeys_german.md
 
 ### Code konsolidieren um Major-Version für Abgabe zu erzeugen:
 
+### Manuelles hinzufügen zum main-Branch (eigenes Verzeichnis, kein merge sinnvoll!!)
+
 [main bd4cf33] AWO: update main as subscription-part on camp.
 53 files changed, 4486 insertions(+), 38 deletions(-)
 create mode 100644 docs/boukensha_running_instructions.md
@@ -204,3 +206,14 @@ create mode 100644 week0_explore/explore_architecture/AGENTS_PROMPTING_INSTRUCTI
 create mode 100644 week0_explore/explore_architecture/EXPLORATION.md
 create mode 100644 week0_explore/logs/Anleitung_patch_journeys.md
 create mode 100644 week0_explore/logs/short-agent-instruction-2026-07-15_2.md
+
+---------
+
+[week0_tests 92d5c9a] AWO: docs, fix structure to frame of bootcamp.
+9 files changed, 149 insertions(+), 3 deletions(-)
+create mode 100644 docs/0_preweek.md
+create mode 100644 docs/1_baseline.md
+create mode 100644 docs/2_capable.md
+create mode 100644 docs/README.md
+create mode 100644 logs/.PLAIN
+create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-15_v10.md

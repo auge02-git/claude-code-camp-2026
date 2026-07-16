@@ -1,0 +1,225 @@
+# Running Anthropic messages API on conversation with messages.
+# Erfahrungsbericht fuer den naechsten Boukensha-Lauf (dummy, Level 1)
+# Quelle: ../../logs/hand-agent-output-2026-07-15_8.log + mud-journeys-2026-07-15_v6.log + mud-journeys-2026-07-15.log
+# Stand: 2026-07-16
+# Ziel: Void vermeiden, sichere Navigation + Bank, neue POIs nutzen, schneller zu Level 2.
+# Jede Zeile = ein Agenten-Ziel (eigenes Schritt-Budget). Sicherheitsregeln aus dem System-Prompt beachten.
+
+# Kern-Erkenntnisse aus diesem Lauf:
+# - Der VOID tritt auf, wenn Navigation zu lange fehlschlaegt oder Agent zu lange inaktiv ist.
+# - Void ist ein Zuruecksetzen in einen Startzustand: HP/MV erhalten, aber Inventar kann verloren gehen.
+# - API-Timeouts treten auf, wenn zu viele Anfragen hintereinander ohne Output erfolgen.
+# - Die fest etablierte Route Common Square -> west -> Eastern End of Poor Alley ist sicher und reproduzierbar.
+# - Grubby Inn (sued von Eastern End of Poor Alley) ist ein bekannter, sicherer Ankerpunkt.
+# - Armory, Grunting Boar Inn, Guild of Swordsmen sind zusaetzliche Navigations-Anker.
+# - Practice Yard ist dort, wo man Fertigkeiten trainieren kann (nach Level-Up).
+# - Bank/ATM ermoeglicht balance, withdraw, deposit.
+# - Die Main Street ist ein hohes Wachen-Durchgangsgebiet und sollte minimiert werden.
+# - Zu viele aufeinanderfolgende Moves fuehren zu API-Timeouts.
+# - Ein Move pro Befehl ist sicher; zwei Moves hintereinander erhoehen Timeout-Risiko.
+
+# Neue Kern-Erkenntnis: VOID-ZUSTAND
+# - Der Void tritt auf nach ungueltige Navigationen oder langen Wartepausen.
+# - Im Void: Raumname/Exits fehlen, nur "You are hungry/thirsty" bleibt.
+# - Ausweg aus dem Void: score, look, dann einen sicheren Move ausfuehren (z.B. north).
+# - Nach Void muss die Position mit look neu bestimmt werden.
+# - Void-Trigger vermeiden: nicht zu schnell zu viele Moves, warten auf Output.
+
+# Neue Kern-Erkenntnis: BANK / ATM
+# - Bank ist verfuegbar in bekannten Raeumen (wahrscheinlich Temple Square / Market Square).
+# - Befehle: balance (saldo pruefen), withdraw <summe> (Geld abheben), deposit <summe> (Geld einzahlen).
+# - Nur nutzen, wenn sicher und Geldmanaagement noetig ist (spaeter, nach stabilem Farm).
+
+# Neue Kern-Erkenntnis: NEUE NAVIGATIONSPUNKTE
+# - Grubby Inn: sued von Eastern End of Poor Alley, sichere Alternative.
+# - Guild of Swordsmen: sued von Main Street, enthält Practice Yard / Trainingsraum.
+# - Armory: sùdlich von Main Street, eventuell Ausruestungsquelle (spaeter relevant).
+# - Grunting Boar Inn: oestlich vom Market Square, eventuell Ressource.
+# - Practice Yard: suedlich vom Bar of Swordsmen, fuer Skill-Training nach Level-Up.
+
+# Neue Kern-Erkenntnis: API-TIMEOUTS
+# - API-Timeouts treten auf bei zu schnellen aufeinanderfolgenden Anfragen ohne Output.
+# - Loeschen: nach jedem Move warten bis Output kommt, bevor nächster Move.
+# - Batch-Planung sollte "kurze Pausen" enthalten, nicht nur Kommandos hintereinander.
+
+# Harte Regeln (aktualisiert v7):
+# 1. Nie cityguard, Peacekeeper, knight, sorcerer, Mayor oder unbekannte aggressive Möbs angreifen.
+# 2. Bei "has arrived" sofort flee - kein look, kein score, kein kick, kein Nachdenken.
+# 3. Keine Kaempfe auf Main Street oder in bekannten Wachen-Transitraeumen.
+# 4. Nach jedem Move: warten bis Output kommt. NICHT sofort nächsten Move starten.
+# 5. Exits sind bindend: nur explizit genannte Richtungen verwenden.
+# 6. Wenn im Void: score -> look -> einen Move -> look um Position neu zu bestimmen.
+# 7. Wasser > sichere Position > Hunger > Gold/Exp.
+# 8. Batch-Planung: 3-5 Schritte mit Output-Wartezeiten, nicht ohne Pausen.
+# 9. Aggressiver Modus nur mit HP-Puffer und sicherem Fluchtweg.
+# 10. Nach Void sofort zur sicheren Route Temple -> Common -> Poor Alley zurueck.
+
+# === SICHERE NAVIGATIONS-ROUTEN (BEWIESENES NETZWERK) ===
+
+# Route A: Temple -> Brunnen
+# Temple Square (zentr.) -> drink fountain
+
+# Route B: Temple -> Wasser zu Farm
+# Temple Square -> south -> Market Square -> south -> Common Square -> west -> Eastern End of Poor Alley
+
+# Route C: Schnelle Farm-Route (Standard)
+# Common Square -> west -> Eastern End of Poor Alley (3024) oder Grubby Inn
+
+# Route D: Grubby Inn Anker
+# Eastern End of Poor Alley -> south -> Grubby Inn
+
+# Route E: Armory-Erkunden (spaeter)
+# Market Square -> south (Common Square) -> ... oder direkt von Main Street
+
+# === VOID-VERHINDERUNG ===
+
+# Ziel V1 - API-Timeouts vermeiden.
+# Nach JEDEM Befehl auf Output warten, bevor neuer Befehl kommt.
+# Nicht mehrere Befehle ohne Zwischenoutput absenden.
+# Wenn kein Output nach Move kommt: nächster Move dauert laenger, könnte Timeout verursachen.
+
+# Ziel V2 - Nach Void schnell wiederherstellen.
+# Void zeigt sich als: "You are hungry/thirsty" ohne Raumname/Exits.
+# Sofortige Reaktion:
+# 1) score
+# 2) look
+# 3) Ein Move (z.B. north)
+# 4) look
+# 5) Danach zur sicheren Route navigieren.
+
+# Ziel V3 - Sichere Ausstiegs-Chain bei Navigationsproblemen.
+# Wenn Position unklar: score + look
+# Wenn Void: score + look + ein Move + look
+# Wenn immer noch verloren: north -> look (nördliche Richtung ist zentral)
+# Sobald Raum klar: zur Temple Square oder Common Square navigieren.
+
+# === SICHERE BASIS-ROUTE V7 ===
+
+# Ziel 1 - Start sauber verifizieren.
+# score + look
+# Raumname, HP, Hunger, Durst, Exits pruefen.
+# Wenn Main Street: nicht kaempfen, nur Transit.
+score
+look
+
+# Ziel 2 - Brunnen priorisieren.
+# Sichere Standardpfade:
+# - Temple Square -> drink fountain (direkt)
+# - Market Square -> north -> drink fountain
+# - Common Square -> north -> Market Square -> north -> drink fountain
+drink fountain
+
+# Ziel 3 - Fest etablierte Route ins Farmgebiet.
+# BEWIESENE Route:
+# Common Square -> west -> Eastern End Of Poor Alley (3024)
+# Diese Route ist aus der Bewegungstabelle verifiziert und sicher.
+west
+look
+
+# Ziel 4 - Anti-Pinning-Kampfcheck VOR Kampf.
+# look ausfuehren.
+# Wachennamen scannen (cityguard, Peacekeeper, Knight, etc.)
+# Exits scannen.
+# Fluchtweg mental festlegen.
+# Nur dann angreifen.
+look
+
+# Ziel 5 - Standard-Farm-Zyklus (mit Output-Pausen).
+# 1) look
+# 2) kill fido
+# 3) get all corpse
+# 4) eat meat
+# 5) WARTE AUF OUTPUT
+# 6) alle 3-4 Zyklen score
+kill fido
+get all corpse
+eat meat
+score
+
+# Ziel 6 - Alternative: Grubby Inn für Sicherheit.
+# Wenn Eastern End of Poor Alley unsicher ist:
+# -> south -> Grubby Inn (sichere Alternative)
+# -> west (von Grubby Inn zurück zu Poor Alley oder Eastern End)
+south
+look
+
+# Ziel 7 - Wenn kein fido da ist.
+# Kurz zwischen Eastern End und Poor Alley oder Grubby Inn pendeln.
+# WICHTIG: nach jedem Move auf Output warten.
+east
+look
+
+# === OPTION: AGGRESSIVER LEVEL-MODUS V7 ===
+
+# Ziel G1 - Schneller leveln mit Void-Vermeidung.
+# Aggressiv bedeutet NICHT unhöflich zu Wachen.
+# Aggressiv bedeutet: schnellere Zyklen, mehr Kaempfe, aber mit Output-Wartezeiten.
+
+# Ziel G2 - Effiziente Batch (mit Pausen).
+# Beispiel:
+# look -> (warte) ->
+# kill fido -> (warte) ->
+# kick fido -> (warte) ->
+# get all corpse -> (warte) ->
+# eat meat -> (watte) ->
+# score
+# Alle 3-5 Schritte sind normal, mit Wartezeiten.
+
+# Ziel G3 - Kick nutzen fuer schnellere Kaempfe.
+# kill fido -> kick fido -> kick fido (wiederholen bis sieg)
+# Dies reduziert Kampfzeit und vermeidet Timeout bei einzelnem langem Kampf.
+kill fido
+kick fido
+get all corpse
+eat meat
+score
+
+# === BANK / ATM (SPAETER, WENN STABIL) ===
+
+# Ziel B1 - Bank Zugang (Zeitpunkt: nach stabiler Farm).
+# balance (saldo pruefen)
+# withdraw <summe> (Geld abheben, falls noetig fuer Kauf)
+# deposit <summe> (Geld einzahlen, falls Sicherung noetig)
+
+# Ziel B2 - Nur nutzen, wenn:
+# - Sicher (keine Wachen im Raum)
+# - Zeit haben (nicht in Kampf-Schleife)
+# - Konkreter Grund (Kauf oder Sicherung)
+
+# === NOTFALL / VOID-RECOVERY ===
+
+# Ziel E1 - Bei Void sofort reagieren.
+# Output: "You are hungry/thirsty" ohne Raumname
+# Sofort:
+# 1) score
+# 2) look
+# 3) north (oder andere sichere Richtung)
+# 4) look (um neue Position zu bestimmen)
+score
+look
+north
+look
+
+# Ziel E2 - Bei API-Timeout (kein Output nach Befehl).
+# Nicht panikieren.
+# Nächster Befehl dauert vermutlich laenger.
+# Weiterhin warten auf Output.
+# Wenn nach 5 Sekunden noch keine Output: Sitzung möglicherweise fehlgeschlagen.
+
+# Ziel E3 - Sicherungs-Checkpoints.
+# Alle 5-10 erfolgreiche Kaempfe: score + Lage bewerten.
+# Wenn stabiler Fortschritt: an sicherer Stelle quit.
+quit
+
+# Optional /btw-Hinweise fuer spaetere Laeufe:
+# - Void-Zustaende sind nicht permanent; Ausweg via score + look + ein Move.
+# - Nach Void zur sicheren Route Temple -> Common -> Poor Alley zurueck.
+# - Grubby Inn ist sichere Alternative zu Eastern End of Poor Alley.
+# - Exits sind aus Bewegungstabelle dokumentiert - nicht raten.
+# - Practice Yard (süd von Bar of Swordsmen) ist Training-Ort (nach Level Up).
+# - Bank/ATM kann spaeter genutzt werden, nicht kritisch fuer Level 1-2.
+# - Batch-Planung mit Pausen vermeidet API-Timeouts.
+# - Nach API-Timeout: nicht sofort neuer Befehl, sondern warten.
+# - Hauptanker: Temple Square, Common Square, Eastern End of Poor Alley.
+# - Void-Trigger vermeiden: nach jedem Move auf Output warten vor nächstem Move.
+

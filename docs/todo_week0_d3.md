@@ -123,3 +123,32 @@ create mode 100644 docs/boukensha_running_instructions.md
 3 files changed, 809 insertions(+), 1 deletion(-)
 create mode 100644 docs/plans/implementation_instructions_v2.md
 create mode 100644 docs/plans/umsetzung_v2.md
+
+[week0_tests d1c8fca] AWO: update, status and changes by pattern.
+
+----------
+## KI: nimm diese drei dateien und leite auf basis der erfahrungen_durchlaeufer_v6 eine version v7 ab.
+### Quelle:
+- erfahrung_durchlaeufe_v6.txt
+- mud-journeys-2026-07-15.log
+- mud-journeys-2026-07-15_v6.log
+- hand-agent-output-2026-07-15_8.log
+
+### Ziel:
+week0_explore/boukensha/journeys/erfahrung_durchlaeufe_v7.txt
+
+### Ergebnisse:
+erfahrung_durchlaeufe_v7.txt (225 Zeilen)
+├── Kern-Erkenntnisse (10 Punkte)
+├── Void-Zustand (neue Sektion)
+├── Bank/ATM (neue Sektion)
+├── Neue Navigationspunkte (neue Sektion)
+├── Harte Regeln (10 Regeln, erweitert)
+├── Sichere Navigations-Routen A–E
+├── Void-Verhinderung V1–V3
+├── Sichere Basis-Route (7 Ziele + G1–G3 aggressiver Modus)
+├── Bank/ATM Nutzung
+├── Notfall/Void-Recovery
+└── /btw-Hinweise
+
+### KI: Bitte das Vorgehen der Weiterentwicklung der journey anweisungen (letzter Block und vorherige Umsetzung als Anleitung.md im logs ordner abspeichern.

@@ -1,5 +1,6 @@
 # Windows Zone.Identifier files (WSL download metadata)
 *:Zone.Identifier
+.DS_STORE
 
 # Environment / secrets
 .env
@@ -8,3 +9,4 @@
 *.log
 **/node_modukes/
 .mcp.json
+*.txt

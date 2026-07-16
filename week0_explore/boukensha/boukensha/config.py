@@ -21,10 +21,15 @@ try:
 except ImportError:  # pragma: no cover - yaml ist harte Abhängigkeit, aber Stub-tolerant
     yaml = None
 
-# LLM-Modell laut Vorgaben: primär Haiku 4.5, Alternative Sonnet 4.6.
-# (Bewusst NICHT das "neueste/Default"-Modell.)
+# LLM-Modell: primär aus ``ANTHROPIC_LLM_MODEL``, sonst der dokumentierte
+# Haiku-Fallback. (Bewusst NICHT das "neueste/Default"-Modell.)
 DEFAULT_MODEL = "claude-haiku-4-5-20251001"
+DEFAULT_MODEL_FALLBACK = "claude-haiku-4-5-20251001"
 ALT_MODEL = "bedrock/eu.anthropic.claude-sonnet-4-6"
+
+def default_model() -> str:
+    """Gibt das Standardmodell zurück, bevorzugt aus ``ANTHROPIC_LLM_MODEL``."""
+    return os.environ.get("ANTHROPIC_LLM_MODEL", DEFAULT_MODEL_FALLBACK)
 
 
 def boukensha_dir() -> Path:
@@ -37,7 +42,7 @@ class Config:
     """Zusammengeführte Laufzeit-Konfiguration."""
 
     home: Path
-    model: str = DEFAULT_MODEL
+    model: str = field(default_factory=default_model)
     system_prompt: str = ""
     mud_host: str = "localhost"
     mud_port: int = 4000
@@ -74,7 +79,7 @@ class Config:
         llm_api_key = os.environ.get("BOUKENSHA_API_KEY") or str(
             llm.get("api_key", settings.get("llm_api_key", ""))
         ).strip() or None
-        model = str(settings.get("model", DEFAULT_MODEL))
+        model = str(settings.get("model", default_model()))
         model = os.environ.get("BOUKENSHA_LLM_MODEL", model)
         model = os.environ.get("ANTHROPIC_LLM_MODEL", model)
         return cls(

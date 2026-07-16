@@ -513,4 +513,14 @@ Wenn du willst, setze ich als nächsten Schritt noch dieselbe Prioritätslogik (
 
 Test mit SVA-OpenAPI-Server:
 
-uv run boukensha --api-key sk-*****--llm-base-url https://d2lrzcn8eyzwdw.cloudfront.net --model bedrock/eu.anthropic.claude-sonnet-4-6 --max-steps 10
+uv run boukensha --api-key sk-***** --llm-base-url https://d2lrzcn8eyzwdw.cloudfront.net --model bedrock/eu.anthropic.claude-sonnet-4-6 --max-steps 10
+uv run boukensha --llm-base-url https://d2lrzcn8eyzwdw.cloudfront.net --model bedrock/eu.anthropic.claude-sonnet-4-6 --max-steps 20 --api-key sk-***
+
+----------
+
+## MCP (gegen SVA-Gateway):
+Resume this session with:
+claude --resume 5d93cf37-a4b6-4495-857b-6e0dbb330714
+
+## Agent:
+boukensha % uv run boukensha --llm-base-url http://localhost:1234 --model google/gemma-4-12b-qat --max-steps 20 --dsl ../logs/mud-journeys-2026-07-14.log

@@ -1,0 +1,24 @@
+# MUD-Session-Log — Midgaard (tbaMUD)
+
+Bitte liesst die Dateien:
+- "journeys/trinken_essen_fido.txt"
+- "journeys/erfahrungen_durchlaeufe_v1.txt"
+- "journeys/erfahrung_durchlaeufe_v3.txt"
+- "journeys/erfahrung_durchlaeufe_v4.txt"
+- "journeys/erfahrung_durchlaeufe_v5.txt" ein und nutze die Erkenntnisse als Grundlage für dein Vorgehen. Diese sollen für die Planung genutzt werden.
+
+Zusätzlich wurden alle Schritte der vorherigen Sessionen zur Orientierung in der Datei:
+- "../../logs/mud-session-2026-07-15.log" gespeichert. Diese soll als Karte genutzt werden und es sollen zusätzlich weitere Räume erkundet werden.
+
+Alle Erkenntnisse und Überlegungen dazu sind in der Datei:
+- "hand-agent-output-2026-07-15_5.log" zusammengefasst. Diese sind keine Arbeitsanweisung sondern sollen mit "/btw" als Optionale Auswege genutzt werden.
+
+Bitte fuehre die naechsten Schritte aus und schreibe alle Erkenntnisse in die Ausgabe. Jede Zeile = ein Agenten-Ziel (eigenes Schritt-Budget). Sicherheitsregeln aus dem System-Prompt beachten.
+Ziel ist es mit deinen Ausgaben, bei einem erneuten Start, deutlich effektiver die gleiche und weitere Aufgabe umzusetzen.
+
+Im Punkt "Exits:" werde alle möglichen Navigationsschritte (Richtungen) aufgelistet, die von einem Raum aus möglich sind. Diese Richtungen können z.B. "north", "south", "east", "west", "up", "down" usw. sein. Sie geben an, in welche Richtung der Spieler sich bewegen kann, um in einen anderen Raum zu gelangen.
+
+Versuche den Weg zu verkuerzten und weitere EXP zu sammeln. Nutzte hierfuer die gemachten Erfahrung und bewege dich weiter. Gib am Ende eine Staus Informationen aus und sichere deinen Fortschritt im Spiel.
+
+Versuche deine Weg voraus zu planen und mögliche Hindernisse fruehzeitig zu umgehen.
+Ziel ist es das naechste Level zu erreichen und die EXP zu maximieren. Bitte berücksichtige bei der Auswahl der Gegner, dass du in zwischen Stärken sein muss und nutze kick für weitere Angriffe.

@@ -11,10 +11,36 @@ from __future__ import annotations
 import argparse
 import os
 import sys
+from datetime import datetime
+from pathlib import Path
 
 from .agent import Agent
 from .config import Config
+from .logger import latest_mud_session_log
 from .mud import MudManager
+
+# Terminal-Log-Verzeichnis: week0_explore/logs/ (gleicher Ordner wie mud-session-Logs).
+# parents[0]=boukensha/, parents[1]=week0_explore/boukensha/, parents[2]=week0_explore/
+_LOGS_DIR = Path(__file__).resolve().parents[2] / "logs"
+
+
+def _terminal_log_path() -> Path:
+    """Erzeugt einen datierten Pfad für das Terminal-Log.
+
+    Format: ``mud-journeys-YYYY-MM-DD.log``.  Existiert die Datei bereits,
+    wird eine laufende Versionsnummer angehängt (_v2, _v3, …).
+    """
+    _LOGS_DIR.mkdir(parents=True, exist_ok=True)
+    datum = datetime.now().strftime("%Y-%m-%d")
+    basis = _LOGS_DIR / f"mud-journeys-{datum}.log"
+    if not basis.exists():
+        return basis
+    version = 2
+    while True:
+        kandidat = _LOGS_DIR / f"mud-journeys-{datum}_v{version}.log"
+        if not kandidat.exists():
+            return kandidat
+        version += 1
 
 LOCAL_LLM_DEFAULT_URL = "http://127.0.0.1:1234"
 LOCAL_LLM_DEFAULT_MODEL = "qwen/qwen-3-5-9b"
@@ -54,6 +80,15 @@ def main(argv: list[str] | None = None) -> int:
         help="max. Werkzeug-Iterationen pro Ziel (Standard 5; höher für Navigation/Suche)",
     )
     args = parser.parse_args(argv if argv is not None else sys.argv[1:])
+
+    letztes_log = latest_mud_session_log()
+    if letztes_log is not None:
+        # Maschinenlesbar fuer Wrapper-Skripte und direkt sichtbar in der Shell.
+        print(f"BOUKENSHA_LAST_LOG={letztes_log}")
+        print(f"Letztes MUD-Log: {letztes_log}")
+    else:
+        print("BOUKENSHA_LAST_LOG=")
+        print("Letztes MUD-Log: (keins gefunden)")
 
     config = Config.load()
     if args.llm_base_url:
@@ -105,14 +140,25 @@ def main(argv: list[str] | None = None) -> int:
 
         agent = Agent(config=config, mud=mud, max_steps=args.max_steps)
 
-        if args.dsl:
-            from .run_dsl import run_dsl_file
+        log_pfad = _terminal_log_path()
+        print(f"Terminal-Log: {log_pfad}")
+        with log_pfad.open("w", encoding="utf-8") as log_datei:
+            # Kopfzeile mit Metadaten
+            log_datei.write(f"# Boukensha Terminal-Log\n")
+            log_datei.write(f"# Datum: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            log_datei.write(f"# Modell: {config.model}\n")
+            if args.dsl:
+                log_datei.write(f"# DSL: {args.dsl}\n")
+            log_datei.write("#\n\n")
 
-            run_dsl_file(agent, args.dsl)
-        else:
-            from .repl import repl
+            if args.dsl:
+                from .run_dsl import run_dsl_file
 
-            repl(agent)
+                run_dsl_file(agent, args.dsl, log_datei=log_datei)
+            else:
+                from .repl import repl
+
+                repl(agent, log_datei=log_datei)
     except KeyboardInterrupt:
         print("\nAbgebrochen.")
         return 130

@@ -8,7 +8,7 @@ Ziel: schnelleres Leveln (naechstes Level), mehr EXP pro Minute, weniger Sackgas
 1. `journeys/erfahrungen_durchlaeufe_v5.txt`
 2. `journeys/erfahrung_durchlaeufe_v6.txt`
 3. `../../logs/mud-session-2026-07-15.log` (Karte / reale Bewegungshistorie)
-4. `../../logs/hand-agent-output-2026-07-15_7.log` (nur als optionale `/btw`-Auswege, nicht als Pflichtplan)
+4. `../../logs/hand-agent-output-2026-07-15_8.log` (nur als optionale `/btw`-Auswege, nicht als Pflichtplan)
 
 ## Ausgabe-Vertrag
 - Jede Ausgabezeile = genau ein Agenten-Ziel (ein Schritt-Budget).

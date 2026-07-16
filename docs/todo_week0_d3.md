@@ -54,3 +54,48 @@ create mode 100644 week0_explore/boukensha/journeys/erfahrungen_durchlaeufe_v5.t
 ----------
 
 Andre.Wolff@MB-J3XNPGKM94 boukensha % uv run boukensha --llm-base-url http://localhost:1234 --model google/gemma-4-12b-qat --max-steps 30 --dsl ./journeys/mud-journeys-2026-07-15_v6.log
+
+---------
+
+[week0_tests a4801bb] AWO: add, more reports and docs to plugins and skills from video and data of next running.
+4 files changed, 219 insertions(+), 1 deletion(-)
+create mode 100644 docs/todo_week0_d3.md
+create mode 100644 week0_explore/explore_architecture/02_agent_skills/.claude/scripts/mud_player.py
+create mode 100644 week0_explore/explore_architecture/02_agent_skills/.claude/skills/mud-play/SKILL.md
+
+--------
+
+[week0_tests 5f120c9] AWO: optimized, better promting and lerning from before steps.
+6 files changed, 791 insertions(+)
+create mode 100644 week0_explore/boukensha/journeys/erfahrung_durchlaeufe_v3.md
+create mode 100644 week0_explore/boukensha/journeys/erfahrung_durchlaeufe_v4.txt
+create mode 100644 week0_explore/explore_architecture/02_agent_skills/.claude/scripts/boukensha_safe_farm.py
+create mode 100644 week0_explore/explore_architecture/02_agent_skills/.claude/skills/boukensha-safe-farm/SKILL.md
+create mode 100644 week0_explore/logs/short-agent-instruction-2026-07-15_2.md
+create mode 100644 week0_explore/logs/short-agent-instruction-2026-07-15_2.txt
+
+[week0_tests 37be942] AWO: fix, better promting by architecture 2 and runnings.
+2 files changed, 172 insertions(+)
+create mode 100644 week0_explore/boukensha/journeys/erfahrungen_durchlaeufe_v5.txt
+
+[week0_tests 40ad7b9] AWO: fix, logs output to file and using to create now-how-reports.
+7 files changed, 79 insertions(+), 13 deletions(-)
+
+[week0_tests c321261] AWO: fix, logs output to file and using to create now-how-reports and update journey v8.
+2 files changed, 422 insertions(+)
+create mode 100644 week0_explore/boukensha/journeys/erfahrung_durchlaeufe_v6.txt
+create mode 100644 week0_explore/boukensha/journeys/erfahrungen_durchlaeufe_v6.txt
+
+[week0_tests 6346f7c] AWO: add, new optimized journey v9 and compose duning for faster rambup on agent.
+8 files changed, 240 insertions(+)
+create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-15_v2.md
+create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-15_v3.md
+create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-15_v4.md
+create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-15_v5.md
+create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-15_v6.md
+create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-15_v7.md
+create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-15_v8.md
+create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-15_v9.md
+
+[week0_tests f5da7d0] AWO: add, new optimized journey v9 and compose duning for faster rampup on agent.
+

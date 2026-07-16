@@ -11,3 +11,4 @@
 .mcp.json
 
 **/.logging_data/
+/logs/**

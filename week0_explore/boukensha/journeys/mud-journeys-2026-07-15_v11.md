@@ -10,7 +10,7 @@ Ziel: schnelleres Leveln (naechstes Level), mehr EXP pro Minute, weniger Sackgas
 3. `journeys/mud-journeys-2026-07-15_v9.md` (Grundregel und Erfahrungen)
 3. `journeys/erfahrung_durchlaeufe_v10.txt` (Zusammenfassung Erkenntnisse, letztes)
 4. `../../logs/mud-session-2026-07-15.log` (Karte / reale Bewegungshistorie)
-5. `../../logs/mud-journeys-2026-07-16_v3.log`[erfahrung_durchlaeufe_v10.txt](erfahrung_durchlaeufe_v10.txt) (nur als optionale `/btw`-Auswege, nicht als Pflichtplan)
+5. `../../logs/mud-journeys-2026-07-16_v3.log` (nur als optionale Auswege, als subagents nutzen `/btw`, nicht als Pflichtplan)
 
 ## Ausgabe-Vertrag
 - Jede Ausgabezeile = genau ein Agenten-Ziel (ein Schritt-Budget).

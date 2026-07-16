@@ -245,3 +245,19 @@ cd **/claudeCodeCamp/week0_explore/explore_architecture/02_agent_skills
 Andre.Wolff@MB-J3XNPGKM94 02_agent_skills % claude
 KI: load skill mud-play
 
+----------
+
+[week0_tests 65f9968] AWO: update, alternative journeys (v11) and agent descriptions for better rerun.
+18 files changed, 2339 insertions(+), 321 deletions(-)
+create mode 100644 week0_explore/boukensha/journeys/erfahrung_durchlaeufe_v10_1.md
+create mode 100644 week0_explore/boukensha/references/commands.md
+create mode 100644 week0_explore/explore_architecture/01_plain_agents/.gitignore
+create mode 100644 week0_explore/explore_architecture/01_plain_agents/EXPLORATION.md
+create mode 100644 week0_explore/explore_architecture/01_plain_agents/data/player.md
+delete mode 100644 week0_explore/explore_architecture/01_plain_agents/data/players.md
+create mode 100644 week0_explore/explore_architecture/02_agent_skills/.claude/skills/mud-play/SKILL_old.md
+create mode 100644 week0_explore/explore_architecture/02_agent_skills/.claude/skills/mud-play/data/player.md
+create mode 100644 week0_explore/explore_architecture/02_agent_skills/.claude/skills/mud-play/data/world.md
+create mode 100644 week0_explore/explore_architecture/02_agent_skills/.claude/skills/mud-play/references/commands.md
+create mode 100755 week0_explore/explore_architecture/02_agent_skills/.claude/skills/mud-play/scripts/mud_client.py
+create mode 100644 week0_explore/explore_architecture/02_agent_skills/EXPLORATION.md

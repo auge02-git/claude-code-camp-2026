@@ -157,3 +157,50 @@ erfahrung_durchlaeufe_v7.txt (225 Zeilen)
 3 files changed, 579 insertions(+), 1 deletion(-)
 create mode 100644 week0_explore/boukensha/journeys/erfahrung_durchlaeufe_v7.txt
 create mode 100644 week0_explore/logs/Anleitung_patch_journeys.md
+
+[week0_tests d3ff681] AWO: add, journey evolution description to logs folder.
+3 files changed, 654 insertions(+), 1 deletion(-)
+create mode 100644 docs/description_patch_journeys_english.md
+create mode 100644 docs/description_patch_journeys_german.md
+
+---------
+
+### Code konsolidieren um Major-Version für Abgabe zu erzeugen:
+
+[main bd4cf33] AWO: update main as subscription-part on camp.
+53 files changed, 4486 insertions(+), 38 deletions(-)
+create mode 100644 docs/boukensha_running_instructions.md
+create mode 100644 docs/description_patch_journeys_english.md
+create mode 100644 docs/description_patch_journeys_german.md
+create mode 100644 docs/explore_architectures.md
+create mode 100644 docs/explore_extracts.md
+create mode 100644 docs/explore_extracts_german.md
+create mode 100644 docs/plans/implementation_instructions_v2.md
+create mode 100644 docs/plans/umsetzung_v2.md
+create mode 100644 docs/todo_week0_d3.md
+create mode 100644 logs/.PLAIN
+create mode 100644 week0_explore/boukensha/_test_agent_fix.py
+create mode 100644 week0_explore/boukensha/journeys/erfahrung_durchlaeufe_v3.md
+create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-15_v2.md
+create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-15_v3.md
+create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-15_v4.md
+create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-15_v5.md
+create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-15_v6.md
+create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-15_v7.md
+create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-15_v8.md
+create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-15_v9.md
+create mode 100644 week0_explore/explore_architecture/01_plain_agents/CLAUDE.md
+create mode 100644 week0_explore/explore_architecture/01_plain_agents/data/players.md
+create mode 100644 week0_explore/explore_architecture/01_plain_agents/data/world.md
+create mode 100644 week0_explore/explore_architecture/02_agent_skills/.claude/scheduled_tasks.lock
+create mode 100644 week0_explore/explore_architecture/02_agent_skills/.claude/scripts/boukensha_safe_farm.py
+create mode 100644 week0_explore/explore_architecture/02_agent_skills/.claude/scripts/mud_player.py
+create mode 100644 week0_explore/explore_architecture/02_agent_skills/.claude/skills/boukensha-safe-farm/SKILL.md
+create mode 100644 week0_explore/explore_architecture/02_agent_skills/.claude/skills/git-commit/SKILL.md
+create mode 100644 week0_explore/explore_architecture/02_agent_skills/.claude/skills/mud-play/SKILL.md
+create mode 100644 week0_explore/explore_architecture/AGENTS.md
+create mode 100644 week0_explore/explore_architecture/AGENTS_GERMAN.md
+create mode 100644 week0_explore/explore_architecture/AGENTS_PROMPTING_INSTRUCTIONS.md
+create mode 100644 week0_explore/explore_architecture/EXPLORATION.md
+create mode 100644 week0_explore/logs/Anleitung_patch_journeys.md
+create mode 100644 week0_explore/logs/short-agent-instruction-2026-07-15_2.md

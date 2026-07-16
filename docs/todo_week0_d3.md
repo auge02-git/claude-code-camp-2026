@@ -105,3 +105,8 @@ create mode 100644 week0_explore/explore_architecture/AGENTS.md
 create mode 100644 week0_explore/explore_architecture/AGENTS_GERMAN.md
 create mode 100644 week0_explore/explore_architecture/AGENTS_PROMPTING_INSTRUCTIONS.md
 create mode 100644 week0_explore/explore_architecture/EXPLORATION.md
+
+[week0_tests 4cb9abc] AWO: fix, documentations to frame of bootcamp as stub.
+update explore_extracs.md
+2 files changed, 164 insertions(+), 33 deletions(-)
+

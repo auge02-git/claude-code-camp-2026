@@ -18,7 +18,7 @@ from __future__ import annotations
 from .backends import ClaudeBackend
 from .config import Config
 from .context import Context
-from .logger import SessionLogger
+from .logger import SessionLogger, latest_mud_session_log
 from .mud import MudManager
 from .registry import ToolRegistry
 from .tools import build_default_tools
@@ -43,6 +43,11 @@ class Agent:
             api_key=config.llm_api_key,
         )
         self.logger = logger or SessionLogger()
+        letztes_mud_log = latest_mud_session_log()
+        self.logger.log(
+            "session",
+            latest_mud_session_log=(str(letztes_mud_log) if letztes_mud_log else None),
+        )
         self.context = Context(system_prompt=config.system_prompt)
         self.registry = ToolRegistry()
         for tool in build_default_tools():

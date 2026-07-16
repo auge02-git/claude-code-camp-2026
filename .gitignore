@@ -1,6 +1,7 @@
 # Windows Zone.Identifier files (WSL download metadata)
 *:Zone.Identifier
 .DS_STORE
+._*
 
 # Environment / secrets
 .env

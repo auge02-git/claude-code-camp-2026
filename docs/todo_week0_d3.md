@@ -114,3 +114,7 @@ update explore_extracs.md
 3 files changed, 167 insertions(+), 1 deletion(-)
 create mode 100644 docs/explore_extracts.md
 rename docs/{explore_extracs.md => explore_extracts_german.md} (100%)
+
+[week0_tests 7113fee] AWO: fix, documentations to frame of bootcamp as commit-datas.
+2 files changed, 291 insertions(+)
+create mode 100644 docs/boukensha_running_instructions.md

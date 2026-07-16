@@ -152,3 +152,8 @@ erfahrung_durchlaeufe_v7.txt (225 Zeilen)
 └── /btw-Hinweise
 
 ### KI: Bitte das Vorgehen der Weiterentwicklung der journey anweisungen (letzter Block und vorherige Umsetzung als Anleitung.md im logs ordner abspeichern.
+
+[week0_tests 0701806] AWO: add, journey evolution description to logs folder.
+3 files changed, 579 insertions(+), 1 deletion(-)
+create mode 100644 week0_explore/boukensha/journeys/erfahrung_durchlaeufe_v7.txt
+create mode 100644 week0_explore/logs/Anleitung_patch_journeys.md

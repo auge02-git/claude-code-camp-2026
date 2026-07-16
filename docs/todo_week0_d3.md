@@ -99,3 +99,9 @@ create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-15_v9.m
 
 [week0_tests f5da7d0] AWO: add, new optimized journey v9 and compose duning for faster rampup on agent.
 
+[week0_tests 830e568] AWO: fix, documentations to frame of bootcamp as stub.
+4 files changed, 551 insertions(+), 31 deletions(-)
+create mode 100644 week0_explore/explore_architecture/AGENTS.md
+create mode 100644 week0_explore/explore_architecture/AGENTS_GERMAN.md
+create mode 100644 week0_explore/explore_architecture/AGENTS_PROMPTING_INSTRUCTIONS.md
+create mode 100644 week0_explore/explore_architecture/EXPLORATION.md

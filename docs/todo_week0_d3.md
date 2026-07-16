@@ -118,3 +118,8 @@ rename docs/{explore_extracs.md => explore_extracts_german.md} (100%)
 [week0_tests 7113fee] AWO: fix, documentations to frame of bootcamp as commit-datas.
 2 files changed, 291 insertions(+)
 create mode 100644 docs/boukensha_running_instructions.md
+
+[week0_tests dcd058f] AWO: fix, documentations to frame of bootcamp as commit-datas.
+3 files changed, 809 insertions(+), 1 deletion(-)
+create mode 100644 docs/plans/implementation_instructions_v2.md
+create mode 100644 docs/plans/umsetzung_v2.md

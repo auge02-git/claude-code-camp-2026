@@ -4,7 +4,24 @@
 - Korrekte Endantwort nach Tool-Use
 """
 from pathlib import Path
-from unittest.mock import MagicMock
+import sys
+import types
+from unittest.mock import MagicMock, patch
+
+# Minimaler Import-Stub fuer mud_mcp, damit Unit-Tests ohne externe Abhaengigkeit laufen.
+if "mud_mcp.session" not in sys.modules:
+    mud_mcp_mod = types.ModuleType("mud_mcp")
+    mud_session_mod = types.ModuleType("mud_mcp.session")
+
+    class _DummyMudSession:
+        pass
+
+    mud_session_mod.DEFAULT_USERNAME = "test-user"
+    mud_session_mod.DEFAULT_PASSWORD = "test-pass"
+    mud_session_mod.MudSession = _DummyMudSession
+    mud_mcp_mod.session = mud_session_mod
+    sys.modules["mud_mcp"] = mud_mcp_mod
+    sys.modules["mud_mcp.session"] = mud_session_mod
 
 from boukensha.agent import Agent
 from boukensha.config import Config
@@ -92,8 +109,23 @@ def test_tool_use_dann_end_turn():
     print("PASS: test_tool_use_dann_end_turn")
 
 
+def test_init_loggt_latest_mud_session_log():
+    """Beim Start wird der Pfad zum letzten MUD-Session-Log als session-Event protokolliert."""
+    fake_logger = MagicMock()
+    fake_path = Path("/tmp/mud-session-2026-07-16.log")
+
+    with patch("boukensha.agent.latest_mud_session_log", return_value=fake_path):
+        Agent(config=_CFG, mud=MudManager(), backend=MagicMock(), logger=fake_logger)
+
+    fake_logger.log.assert_any_call(
+        "session", latest_mud_session_log=str(fake_path)
+    )
+    print("PASS: test_init_loggt_latest_mud_session_log")
+
+
 if __name__ == "__main__":
     test_no_mud_direkte_antwort()
     test_no_mud_kein_tool_loop()
     test_tool_use_dann_end_turn()
+    test_init_loggt_latest_mud_session_log()
     print("\n✓ Alle Tests bestanden!")

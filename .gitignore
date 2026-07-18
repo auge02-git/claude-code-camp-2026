@@ -1,13 +1,23 @@
 # Windows Zone.Identifier files (WSL download metadata)
 *:Zone.Identifier
+.copilot/
+.claude/
+**/.claude/**
 .DS_STORE
 ._*
+_docs/
 
 # Environment / secrets
 .env
 .env.local
 
 *.log
+*.lnk
+uv.lock
+
 **/node_modukes/
-.mcp.json
-*.txt
+/.mcp.json
+
+**/.logging_data/
+/logs/**
+**/logs/**

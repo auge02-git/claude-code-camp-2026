@@ -2,13 +2,15 @@
 
 ## Zweck
 Diese Datei strukturiert die Arbeitsanweisungen so, dass ein Agent sie deterministisch ausfuehren kann.
-Ziel: schnelleres Leveln (naechstes Level), mehr EXP pro Minute, weniger Sackgassen, sicherer Fortschritt.
+Ziel: schnelleres Leveln (naechstes Level), mehr EXP pro Minute, weniger Sackgassen, weiterer Fortschritt.
 
 ## Eingaben (vor Start lesen)
 1. `../../../docs/plans/week0_dummy_level-and-skills.md` (Leveling-Plan, Skill-Lernreihenfolge, Grundlagen)
-2. `journeys/erfahrung_durchlaeufe_v7.txt` (Zusammenfassung Erkenntnisse, gelerntes)
-3. `../../logs/mud-session-2026-07-15.log` (Karte / reale Bewegungshistorie)
-4. `../../logs/hand-agent-output-2026-07-15_8.log` (nur als optionale `/btw`-Auswege, nicht als Pflichtplan)
+2. `references/commands.md` (Funktionen und Befehle im Spiel)
+3. `journeys/erfahrung_durchlaeufe_v10.txt` (Zusammenfassung Erkenntnisse, letztes)
+4. `journeys/mud-journeys-2026-07-15_v1.log` (Karte / reale Bewegungshistorie)
+5. `../../logs/.logging_data/world.md` (alte Karte, Notloesung)
+6. `../../logs/mud-journeys-2026-07-16_v10.log` (nur als optionale Auswege, als subagents nutzen `/btw`, nicht als Pflichtplan)
 
 ## Ausgabe-Vertrag
 - Jede Ausgabezeile = genau ein Agenten-Ziel (ein Schritt-Budget).
@@ -21,7 +23,7 @@ Ziel: schnelleres Leveln (naechstes Level), mehr EXP pro Minute, weniger Sackgas
 2. Bei `has arrived` sofort `flee` (kein `look`, kein `score`, kein `kick` davor).
 3. Keine Kaempfe auf Main Street oder in offensichtlichen Patrouillen-Transitraeumen.
 4. Vor jedem Kampf: `look` -> Wachencheck -> Exits lesen -> Fluchtweg festlegen.
-5. Prioritaet: Wasser > sichere Position > Hunger > Gold/EXP.
+5. Prioritaet: Wasser > sichere Position > Hunger > Gold/EXP > Skills.
 6. Exits sind bindend. Keine unbestaetigten Richtungen raten.
 
 ## Navigationsanker (aus Log validiert)
@@ -84,5 +86,8 @@ Ziel: schnelleres Leveln (naechstes Level), mehr EXP pro Minute, weniger Sackgas
 
 ## Neustart
 - Ablauf erneut mit `/loop` starten.
+- Wenn es keine Optionen mehr gibt benutzte die Informationen aus `references/commands.md` um weiter Befehl und Aktionen zu erhalten und versuche deren Verwendung zu lernen und zu nutzen.
+- Wenn du in einer undefinierten Situation bist, lade die Daten `world.md` und versuche mit dem Informationen zu navigieren.
 - Jede neue Schleife soll kuerzer, sicherer und EXP-effizienter sein als die vorherige.
-
+- Toede weiter Gegner, um EXP zu sammeln und Level zu steigern, aber nur wenn es sicher ist. Nutze hierfuer `kick` und heile dich mit score nach dem Kampf.
+- Wenn du feststeckst, ermittele mit `look` wo du bist und speichere den Ort als Falle im Log und betritt diesen im naechten durchlauf nicht mehr.

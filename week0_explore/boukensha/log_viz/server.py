@@ -12,6 +12,7 @@ Start (nach ``pip install '.[logviz]'`` bzw. ``uv sync --extra logviz``)::
 from __future__ import annotations
 
 import json
+from datetime import datetime
 from pathlib import Path
 
 try:
@@ -31,13 +32,22 @@ def _logs_root() -> Path:
     return Path(os.environ.get("BOUKENSHA_DIR", str(Path.home() / ".boukensha"))) / "logs"
 
 
+def _format_atime(path: Path) -> str:
+    return datetime.fromtimestamp(path.stat().st_atime).strftime("%Y-%m-%d %H:%M:%S")
+
+
 @app.get("/", response_class=HTMLResponse)
 def index() -> str:
     """Listet die verfügbaren Sitzungen auf."""
     root = _logs_root()
     if not root.exists():
         return "<h1>Boukensha log_viz</h1><p>Noch keine Logs.</p>"
-    zeilen = [f'<li><a href="/session/{p.name}">{p.name}</a></li>' for p in sorted(root.iterdir())]
+    zeilen = [
+        f'<li><a href="/session/{p.name}">{p.name}</a> '
+        f'(datetime: {_format_atime(p)})</li>'
+        for p in sorted(root.iterdir())
+        if p.is_dir()
+    ]
     return "<h1>Sitzungen</h1><ul>" + "".join(zeilen) + "</ul>"
 
 

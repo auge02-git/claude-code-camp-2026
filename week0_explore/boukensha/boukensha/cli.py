@@ -4,6 +4,7 @@ Aufrufe:
 - ``boukensha``                → interaktive REPL
 - ``boukensha --dsl <datei>``  → skriptbaren Ablauf ausführen und danach weitere
   Prompts in der REPL eingeben (siehe run_dsl)
+- ``boukensha --prompt <text>`` → einzelne freie Prompts direkt ausführen (ohne REPL)
 - ``boukensha --no-connect``   → nicht automatisch zum MUD verbinden (Testlauf)
 """
 
@@ -53,6 +54,15 @@ def main(argv: list[str] | None = None) -> int:
         description="Boukensha — Abenteurer-Agent für den tbaMUD (Python-Baseline).",
     )
     parser.add_argument("--dsl", metavar="DATEI", help="skriptbaren Ablauf ausführen")
+    parser.add_argument(
+        "--prompt",
+        action="append",
+        metavar="TEXT",
+        help=(
+            "freien Prompt direkt ausführen; mehrfach nutzbar "
+            "(z. B. --prompt 'schau' --prompt 'geh norden')"
+        ),
+    )
     parser.add_argument("--no-connect", action="store_true", help="nicht zum MUD verbinden")
     parser.add_argument(
         "--local-llm",
@@ -150,6 +160,8 @@ def main(argv: list[str] | None = None) -> int:
             log_datei.write(f"# Modell: {config.model}\n")
             if args.dsl:
                 log_datei.write(f"# DSL: {args.dsl}\n")
+            if args.prompt:
+                log_datei.write(f"# Prompt-Anzahl: {len(args.prompt)}\n")
             log_datei.write("#\n\n")
 
             from .repl import repl
@@ -159,7 +171,18 @@ def main(argv: list[str] | None = None) -> int:
 
                 run_dsl_file(agent, args.dsl, log_datei=log_datei)
 
-            repl(agent, log_datei=log_datei)
+            if args.prompt:
+                for prompt in args.prompt:
+                    prompt_text = prompt.strip()
+                    if not prompt_text:
+                        continue
+                    print(f"\n» {prompt_text}")
+                    ausgabe = agent.step(prompt_text)
+                    print(ausgabe)
+                    log_datei.write(f"» {prompt_text}\n{ausgabe}\n\n")
+                    log_datei.flush()
+            else:
+                repl(agent, log_datei=log_datei)
     except KeyboardInterrupt:
         print("\nAbgebrochen.")
         return 130

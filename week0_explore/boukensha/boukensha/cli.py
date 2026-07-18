@@ -2,7 +2,8 @@
 
 Aufrufe:
 - ``boukensha``                → interaktive REPL
-- ``boukensha --dsl <datei>``  → skriptbaren Ablauf ausführen (siehe run_dsl)
+- ``boukensha --dsl <datei>``  → skriptbaren Ablauf ausführen und danach weitere
+  Prompts in der REPL eingeben (siehe run_dsl)
 - ``boukensha --no-connect``   → nicht automatisch zum MUD verbinden (Testlauf)
 """
 
@@ -151,14 +152,14 @@ def main(argv: list[str] | None = None) -> int:
                 log_datei.write(f"# DSL: {args.dsl}\n")
             log_datei.write("#\n\n")
 
+            from .repl import repl
+
             if args.dsl:
                 from .run_dsl import run_dsl_file
 
                 run_dsl_file(agent, args.dsl, log_datei=log_datei)
-            else:
-                from .repl import repl
 
-                repl(agent, log_datei=log_datei)
+            repl(agent, log_datei=log_datei)
     except KeyboardInterrupt:
         print("\nAbgebrochen.")
         return 130

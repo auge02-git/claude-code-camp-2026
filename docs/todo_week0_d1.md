@@ -514,7 +514,7 @@ Wenn du willst, setze ich als nächsten Schritt noch dieselbe Prioritätslogik (
 Test mit SVA-OpenAPI-Server:
 
 uv run boukensha --api-key sk-***** --llm-base-url https://d2lrzcn8eyzwdw.cloudfront.net --model bedrock/eu.anthropic.claude-sonnet-4-6 --max-steps 10
-uv run boukensha --llm-base-url https://d2lrzcn8eyzwdw.cloudfront.net --model bedrock/eu.anthropic.claude-sonnet-4-6 --max-steps 20 --api-key sk-***
+uv run boukensha --llm-base-url https://d2lrzcn8eyzwdw.cloudfront.net --model 3 --max-steps 20 --api-key sk-***
 
 ----------
 

@@ -264,11 +264,18 @@ create mode 100644 week0_explore/explore_architecture/02_agent_skills/EXPLORATIO
 
 ----------
 
-[main 20c373c] AWO: fix, write session logs map informations (v11).
+[main 20c373c] AWO: fix, write session logs map information (v11).
 change week0_explore/boukensha/boukensha/agent.py
 3 files changed, 7 insertions(+), 1 deletion(-)
 
-[week0_tests 59447fb] AWO: update, new journey wiht map informations and logging (16/v1).
+[week0_tests 59447fb] AWO: update, new journey whit map information and logging (16/v1).
 2 files changed, 100 insertions(+), 1 deletion(-)
 create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-16_v1.md
 
+----------
+
+[week0_tests d52dde2] AWO: update, new journey (16/v2) and cleanup code.
+4 files changed, 97 insertions(+)
+delete mode 100644 .boukensha/.keep
+create mode 120000 .boukensha/settings.yml
+create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-16_v2.md

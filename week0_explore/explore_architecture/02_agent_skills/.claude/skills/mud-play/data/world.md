@@ -310,6 +310,30 @@ Temple of Midgaard →n→ By The Temple Altar →n→ Behind The Temple Altar �
 Great Field #1 →n→ Great Field #2 (structure E, path W) →n→ Great Field #3
 (north blocked, dead-end).
 
+### A Brighter Hallway  _(w of Another Corner)_ — NEW 2026-07-17
+
+- **Exits:** e, w
+- **NPCs:** the little pet dragon (loose, too dangerous — SKIP)
+- **Notes:** e → Another Corner; w → The End Of The Passage.
+
+### The End Of The Passage  _(w of A Brighter Hallway)_ 🐣 **NEWBIE MONSTER SPAWN**
+
+- **Exits:** e, w
+- **NPCs:** up to 2× **the newbie monster** ("Kill him!") — ~140+ exp, 20 gold each.
+  Confirmed 2× spawn 2026-07-17.
+- **Notes:** w → An Open Field By The Great Field (exit out of zone). AVOID the little
+  pet dragon that roams through A Brighter Hallway to get here.
+- **Route from Nexus:** w (to Dirty Hallway) → e × 2 (Another Corner) → w → w
+
+  Wait — actually from Another Corner: w → A Brighter Hallway → w → End Of Passage.
+
+### An Open Field By The Great Field  _(w of The End Of The Passage)_ 🌾 **ZONE EXIT**
+
+- **Exits:** n (to Great Field), e (back to The End Of The Passage)
+- **Notes:** fresh air; west exit from the Newbie Zone. n leads into Great Field
+  (presumably a different area of the field grid — not yet confirmed which cell).
+  Discovered 2026-07-17.
+
 ## Unexplored leads
 
 - Great Field #2: the side path **west** (the eastern "strange structure" is

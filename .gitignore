@@ -3,7 +3,8 @@
 .copilot/
 .claude/
 **/.claude/**
-.DS_STORE
+**/.DS_STORE
+
 ._*
 _docs/
 

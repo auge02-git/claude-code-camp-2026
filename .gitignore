@@ -1,8 +1,11 @@
 # Windows Zone.Identifier files (WSL download metadata)
 *:Zone.Identifier
 .copilot/
+.claude/
+**/.claude/**
 .DS_STORE
 ._*
+_docs/
 
 # Environment / secrets
 .env
@@ -16,3 +19,4 @@
 
 **/.logging_data/
 /logs/**
+**/logs/**

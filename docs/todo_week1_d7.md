@@ -32,3 +32,7 @@ M       week0_explore/boukensha/boukensha/__pycache__/cli.cpython-313.pyc
 M       week0_explore/boukensha/boukensha/cli.py
 branch 'week1_baselines' set up to track 'origin/week1_baselines'.
 Switched to a new branch 'week1_baselines'
+
+[week1_baselines 03ffa49] AWO: patch, todo and branch to week1.
+3 files changed, 58 insertions(+), 1 deletion(-)
+create mode 100644 docs/todo_week1_d7.md

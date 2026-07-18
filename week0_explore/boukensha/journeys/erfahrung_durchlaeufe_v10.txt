@@ -775,7 +775,7 @@ north
 look
 
 # Ziel E2 - Bei API-Timeout (kein Output nach Befehl).
-# Nicht panikieren.
+# Nicht Panikirren.
 # Nächster Befehl dauert vermutlich laenger.
 # Weiterhin warten auf Output.
 # Wenn nach 5 Sekunden noch keine Output: Sitzung möglicherweise fehlgeschlagen.
@@ -800,3 +800,11 @@ quit
 ================================================================================
 # END SOURCE: erfahrung_durchlaeufe_v7.txt
 ================================================================================
+
+Ziel E4 - Abbruch bei blocked.
+# Wenn "[ Exits: None!]" befindest du dich in einer Sackgasse!
+# Dann speicher den Raum und deine Positionen und geht dort zukuenftig nicht mehr hin.
+# Beendet den Agent mit einer Fehlermeldung und Status-Informationen.
+score
+look
+quit

@@ -1,0 +1,159 @@
+# Running Anthropic messages API on conversation with messages.
+# Erfahrungsbericht fuer den naechsten Boukensha-Lauf (dummy, Level 1)
+# Quelle: ../../logs/hand-agent-output-2026-07-15_5.log
+# Stand: 2026-07-15
+# Ziel: Wachen-Pinning verhindern, Main Street meiden, sicherer Weg zum Temple Square.
+# Jede Zeile = ein Agenten-Ziel (eigenes Schritt-Budget). Sicherheitsregeln aus dem System-Prompt beachten.
+
+# Kern-Erkenntnisse aus diesem Lauf:
+# - Main Street ist eine aktive Wachen-Patrouillenstrecke: cityguard erscheint dort wiederholt.
+# - Wachen "nageln" (pinnen) den Charakter im Raum fest: nach Ankunft sind Bewegungen stark eingeschraenkt.
+# - Flucht (flee) hat funktioniert, kostet aber Zeit und verhindert jeden Fortschritt.
+# - Mob-Namen koennen im Output gedreht/gespiegelt erscheinen (z.B. "odif yltsaeb" = fido). Trotzdem als normales Ziel behandeln.
+# - Navigation Main Street -> Marktplatz -> Temple Square ist moeglich, aber riskant wegen Patrouillen.
+# - Batch-Planung (3-5 Schritte vorausdenken) hat sich als nuetzlich erwiesen.
+# - Exits konsequent auswerten vor jeder Bewegung - nur bestaetigte Richtungen nutzen.
+# - Jedes look in einem neuen Raum auf Wachennamen pruefen, bevor irgendeine Aktion folgt.
+
+# Neue Kern-Erkenntnis: WACHEN-PINNING
+# - Eine Wache "pinnt" den Charakter, wenn sie waehrend eines Kampfes oder einer Bewegung erscheint.
+# - Der Charakter kann danach keine normalen Bewegungen mehr ausfuehren.
+# - Einziger Ausweg: flee - aber der klappt nicht immer sofort und kostet HP.
+# - Praevention ist wichtiger als Reaktion: nie in Raeumen kaempfen, die Wachen passieren koennen.
+
+# Harte Regeln (aktualisiert v5):
+# 1. Nie cityguard, Peacekeeper, knight, sorcerer oder Mayor angreifen.
+# 2. Bei "has arrived" sofort und ohne Verzoegerung flee - kein look, kein score, kein kill davor.
+# 3. Keine Kaempfe auf der Main Street oder in Transitraeumen mit Wachenpfaden.
+# 4. Vor jedem Kampf den Raum auf Wachen-Vorkommen pruefen (look); erst dann angreifen.
+# 5. Fluchtweg (flee-Richtung) mental planen, BEVOR der Kampf beginnt.
+# 6. Exits sind bindend: nur dort gezeigte Richtungen verwenden.
+# 7. Tageszyklen-Meldungen sind Zeit-Info, keine Navigations-Erlaubnis.
+# 8. Wasser > sichere Position > Hunger > Gold/Exp.
+# 9. Batch-Planung: immer 3-5 Schritte vorausdenken, nicht nur Reaktion auf letzten Output.
+
+# === ANTI-PINNING-STRATEGIEN ===
+
+# Ziel A1 - Wachen-Zonen frueher erkennen und meiden.
+# Bekannte Gefahrenzonen (wiederholt Wachen-Spawns beobachtet):
+# - Main Street (stadteinwaerts und -auswarts): cityguard patrouilliert regelmaessig.
+# - Transitraeume zwischen Main Street und Marktplatz: unsichere Zwischenraeume.
+# - Naehe zum East Gate: Mayor taucht dort auf.
+# Sichere Farmzonen:
+# - Eastern End Of Poor Alley (3024): keine regulaere Wachen-Patrouille beobachtet.
+# - Poor Alley (3012 und benachbarte Raeume): geringeres Risiko.
+# Konsequenz: Main Street komplett meiden fuer Kampf; nur zum Durchqueren nutzen und dabei look ausfuehren.
+
+# Ziel A2 - Fluchtweg VOR dem Angriff festlegen.
+# Bevor kill fido ausgefuehrt wird:
+# - look ausfuehren und Exits lesen.
+# - Mentalen Fluchtweg festlegen (z.B. "wenn Wache kommt: east").
+# - Wenn kein sicherer Ausweg erkennbar: NICHT kaempfen, Raum wechseln.
+# Diese Vorbereitung verhindert das Feststecken wenn "has arrived" kommt.
+
+# Ziel A3 - Sofort-Reaktion auf "has arrived" (Wachen-Pinning-Verhinderung).
+# Sobald im Output "[Name] has arrived" erscheint:
+# - KEINE weitere Aktion ausser flee.
+# - Kein look, kein kill, kein score, kein wait.
+# - flee ausfuehren und dann look um neue Position zu pruefen.
+# - Danach erst Orientierung und weitere Planung.
+flee
+look
+
+# Ziel A4 - Nach erfolgter Flucht: Raum korrekt einordnen.
+# Nach flee befindet man sich in einem anderen Raum.
+# - look ausfuehren: Raumname, Exits, Mobs/Wachen pruefen.
+# - Wenn Wache AUCH im neuen Raum: nochmal flee.
+# - Wenn Raum sicher: score und Orientierung zur Route Temple -> Farm.
+# Nicht versuchen in denselben Raum zurueckzukehren, aus dem geflohen wurde (Wache koennte noch da sein).
+
+# Ziel A5 - Main Street-Umgehung zur Brunnen-Route.
+# Statt Main Street -> Marktplatz: direkt von bekannten sicheren Ankerpunkten navigieren.
+# Bevorzugte Brunnen-Route:
+# - Common Square -> north -> Temple Square -> drink fountain
+# - Market Square -> north -> Temple Square -> drink fountain
+# Vermeide absichtlichen Einstieg in Main Street fuer Erkundung waehrend fruehzeitiger Laeufe.
+
+# === STANDARD-ABLAUF (mit Anti-Pinning) ===
+
+# Ziel 1 - Start sauber verifizieren.
+# Fuehre direkt score und look aus. Exits lesen. Wachennamen pruefen.
+# Keine Bewegung vor klarer Positionsbestaetigung und Gefahrencheck.
+score
+look
+
+# Ziel 2 - Tempel/Brunnen priorisieren (sicherer Pfad).
+# Wenn du im Donation Room bist: west, dann south, dann drink fountain.
+# Wenn du im Market Square bist: north, dann drink fountain.
+# Wenn du schon auf Temple Square bist: direkt drink fountain.
+# Wenn du auf Main Street landest: Nicht kaempfen! Nur look + Richtung Temple/Market benutzen.
+drink fountain
+
+# Ziel 3 - Sichere Route ins Farmgebiet (Wachen-Zonen umgehen).
+# Nutze nur bestaetigte sichere Innenstadtrouten:
+# Common Square -> west -> Poor Alley
+# Common Square -> north -> Temple Square
+# Eastern End Of Poor Alley (3024) ist der primaere Farm-Anker (kaum Wachen).
+# Main Street meiden oder nur schnell durchqueren mit look.
+west
+look
+
+# Ziel 4 - Raumpruefung vor jedem Kampf (Anti-Pinning-Check).
+# look ausfuehren.
+# Wachennamen checken: cityguard, Peacekeeper, knight, sorcerer, Mayor.
+# Fluchtweg aus Exits bestimmen.
+# Nur wenn: KEIN Wachenname UND klarer Fluchtweg UND Einzelziel -> dann kill fido.
+look
+
+# Ziel 5 - Fido-Farm-Zyklus.
+# Standard-Reihenfolge:
+# 1) look + Wachen-Check
+# 2) kill fido (nur bei freiem Raum)
+# 3) get all corpse
+# 4) eat meat
+# 5) alle 3-4 Zyklen score
+kill fido
+get all corpse
+eat meat
+score
+
+# Ziel 6 - Wenn kein Fido da ist.
+# Kurz zwischen Eastern End Of Poor Alley und Poor Alley pendeln.
+# Keine Erkundung in Richtung Main Street oder East Gate.
+east
+look
+west
+look
+
+# Ziel 7 - Mob-Namens-Varianten (Spiegelung im Output).
+# Manchmal erscheinen Mob-Namen gespiegelt ("odif yltsaeb" statt "fido").
+# Das Ziel dennoch normal mit kill fido ansprechen - der kill-Befehl nutzt den echten internen Namen.
+# Wenn kill fido fehlschlaegt: look wiederholen und Mob-Beschreibung genau lesen.
+
+# Ziel 8 - Reaktion auf Blockaden und schlechte Navigation.
+# Wenn in Sackgasse (z.B. Outside East Gate):
+# - look + score zur Lagebestaetigung.
+# - Systematisch n/s/u/d testen.
+# - Mentale Route halten: Temple -> Farm -> quit.
+# - Geschlossene Tore nicht endlos wiederholen.
+
+# Ziel 9 - Batch-Planung verwenden.
+# Immer 3-5 Schritte vorausplanen statt nur auf letzten Output zu reagieren.
+# Beispiel Route: look -> (falls sicher) kill fido -> get all corpse -> eat meat -> score.
+# Wenn Wachen-Meldung kommt: Plan sofort verwerfen, flee ausfuehren.
+
+# Ziel 10 - Fortschritt sichern.
+# Sobald Wasser gesichert und mindestens ein sauberer Fido-Zyklus abgeschlossen:
+# Status ausgeben und an sicherer Stelle quit.
+quit
+
+# Optional /btw-Hinweise fuer spaetere Laeufe:
+# - Main Street ist aktive Patrouillenstrecke: nicht fuer Kampf nutzen.
+# - Eastern End Of Poor Alley (3024) ist vergleichsweise sicher.
+# - Mob-Namen koennen gespiegelt im Output erscheinen: trotzdem kill fido verwenden.
+# - flee sofort bei "has arrived" - keine Verzoegerung, kein Zögern.
+# - Fluchtweg mental festlegen, BEVOR ein Kampf beginnt.
+# - Batch-Planung verhindert reaktives "Zappeln" im Raum.
+# - Tageszyklen-Meldungen sind Zeit-Flavor-Text, keine Navigation.
+# - Weitere Exploration erst nach stabiler Wasser-/Hunger-/Farm-Routine.
+

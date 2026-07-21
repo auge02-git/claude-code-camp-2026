@@ -1,0 +1,802 @@
+# Konsolidierte Erfahrungssammlung v10 (dedupliziert)
+# Erstellt am: 2026-07-16
+# Quelle: Zusammenfuehrung aller Dateien passend zu erfahrung*_durchlaeufe_*.txt
+# Hinweis: Doppelte Informationen (identische Inhalte) wurden entfernt; Quelle ist nachrangig.
+
+
+================================================================================
+# BEGIN SOURCE: erfahrungen_durchlaeufe_v1.txt
+================================================================================
+
+# Running Anthropic messages API on conversation with messages.
+# Spiel-Lauf: trinken, essen, mehrere Fidos töten. Jede Zeile = ein Agenten-Ziel
+# (eigenes Schritt-Budget). Sicherheitsregeln aus dem System-Prompt beachten.
+
+# Erfahrungen:
+Gehe wenn noetig zurueck zum Tempel und starte von dort.
+Gedanke: Ich bin erfolgreich wieder satt geworden. Ich habe nun Erfahrungspunkte und Gold gesammelt. Da ich mich auf dem Common Square befinde und der Fido tot ist, werde ich schauen, ob noch andere Ziele in der Nähe sind oder ob ich einen weiteren Fido in der Poor Alley finden kann. Ich werde erst einmal den Raum scannen.*
+Du startest vermutlich im Temple Of Midgaard. Geh nach unten (down) zum Temple Square, wo der große Brunnen steht, und trinke daraus (drink fountain), bis du nicht mehr durstig bist. Bestaetige mit read_pending. Bewege dich Schritt fuer Schritt und pruefe nach jeder Bewegung mit look, wo du bist.
+Gedanke: Ich bin zurück auf dem Common Square. Da sich die Situation hier verändert hat (der vorherige Fido ist tot), werde ich schauen, ob noch andere Ziele vorhanden sind oder ob ich mich in die Poor Alley begeben muss.*
+Suche einen EINZELNEN, schwachen Fido in einem WACHFREIEN Raum (z. B. Eastern End of Poor Alley: vom Temple Square nach sued zum Market Square, weiter sued zum Common Square, dann west). Pruefe zuerst mit look, dass KEINE Wache (cityguard, Peacekeeper, knight, sorcerer) im Raum ist. Ist eine Wache da oder mehrere Fidos, geh in einen anderen Raum. Toete dann den einzelnen Fido (kill fido), lies mit read_pending die Kampfrunden. Kommt waehrend des Kampfs eine Wache ("has arrived"), sofort fliehen.
+Pluendere SOFORT die Leiche (loot_corpse) und iss danach das Fleisch (eat meat). Bestaetige jeweils mit read_pending. Fasse zum Schluss kurz auf Deutsch zusammen, was du erreicht hast (Wasser, Fleisch, Gold aus dem Fido).
+
+# Ziel 1 - Tempel: gehe zum Temel als Startpunkt.
+Gehe wenn noetig zurueck zum Tempel und starte von dort.
+
+# Ziel 2 — Wasser: zum Brunnen am Temple Square und trinken.
+Du startest vermutlich im Temple Of Midgaard. Geh nach unten (down) zum Temple Square, wo der große Brunnen steht, und trinke daraus (drink fountain), bis du nicht mehr durstig bist. Bestaetige mit read_pending. Bewege dich Schritt fuer Schritt und pruefe nach jeder Bewegung mit look, wo du bist.
+
+# Ziel 3 — Einen einzelnen Fido sicher toeten.
+Suche einen EINZELNEN, schwachen Fido in einem WACHFREIEN Raum (z. B. Eastern End of Poor Alley: vom Temple Square nach sued zum Market Square, weiter sued zum Common Square, dann west). Pruefe zuerst mit look, dass KEINE Wache (cityguard, Peacekeeper, knight, sorcerer) im Raum ist. Ist eine Wache da oder mehrere Fidos, geh in einen anderen Raum. Toete dann den einzelnen Fido (kill fido), lies mit read_pending die Kampfrunden. Kommt waehrend des Kampfs eine Wache ("has arrived"), sofort fliehen.
+
+# Ziel 4 — Pluendern und essen.
+Pluendere SOFORT die Leiche (loot_corpse) und iss danach das Fleisch (eat meat). Bestaetige jeweils mit read_pending. Fasse zum Schluss kurz auf Deutsch zusammen, was du erreicht hast (Wasser, Fleisch, Gold aus dem Fido).
+
+# Ziel 5 - Heile dich nach einem Kampf.
+Suche eine Option bei der du dich heilen kannst wenn es erforderlich ist und beginne danach mit dem dritten Ziel erneut.
+
+# Ziel 6 - Lerne vom Gildemeister kick
+Erkunde die Umgebung und fide den Gildenmeister
+Gehe zum Gildenmeister und lerne die Technik kick und wende diese beim Kampf gegen Fidos an. Wenn mehrere Fidos vorhanden sind, muss du auf den zweiten aufpassen, damit der Dir eine Beute nicht wegnimmt. Am besten du tötest diesen ebenso.
+
+# Ziel 7 - weitere Regel und Hinweise
+Nur in wachfreien Räumen kämpfen (z. B. Raum 3012 Main-Street-Ende). Fido-Kadaver sofort looten (`get all corpse`), sonst frisst ihn ein anderer Fido. Bei `flee` die Latenz einkalkulieren — früh fliehen, nicht erst bei niedrigen HP.
+
+# Ziel 8 - Level up und EXP sammeln.
+Nutze dein Umgebungswissen und suche nach Fido und töde diese um Gold, essen und Erfahrung zu sammeln. Wiederhole den letzten Schritt bis es keinen Sinn mehr ergibt, weil du keine leichten Gegner mehr findest.
+
+================================================================================
+# END SOURCE: erfahrungen_durchlaeufe_v1.txt
+================================================================================
+
+================================================================================
+# BEGIN SOURCE: erfahrung_durchlaeufe_v4.txt
+================================================================================
+
+# Running Anthropic messages API on conversation with messages.
+# Erfahrungsbericht fuer den naechsten Boukensha-Lauf (dummy, Level 1)
+# Quelle: ../../logs/hand-agent-output-2026-07-15_4.log
+# Stand: 2026-07-15
+# Ziel: Keine Osttor-Sackgasse mehr, schneller zum Brunnen, sicherer Fido-Fortschritt.
+# Jede Zeile = ein Agenten-Ziel (eigenes Schritt-Budget). Sicherheitsregeln aus dem System-Prompt beachten.
+
+# Kern-Erkenntnisse aus diesem Lauf:
+# - Das Osttor ist fuer den aktuellen Low-Level-Lauf eine Navigationsfalle.
+# - "Outside The East Gate Of Midgaard" ist kein sinnvoller Farm-Pfad, wenn das Gate geschlossen ist.
+# - Wenn bei Exits nur blockierte Richtungen auftauchen oder "The gate seems to be closed" kommt: NICHT weiter experimentieren.
+# - Aber: systematisch andere Richtungen testen (south/up/down), nicht sofort aufgeben.
+# - Bei Blockade Tageszyklen-Meldungen ("The day has begun") nicht als Bewegungs-Signal missinterpretieren.
+# - Kein langes Suchen nach versteckten Pfaden an Sackgassen; systematisches Testen, dann Rueckkehr zur sicheren Route.
+# - Fido-Farming bleibt auf sichere Innenstadtraeume fokussiert, vor allem Eastern End Of Poor Alley.
+# - Vor jedem Kampf erst look, dann Wachen checken, dann nur Einzelziel angreifen.
+# - Mentale Routenplanung auch bei Feststecken: klare Ziele halten (Stadtzentrum -> Temple -> Farm).
+# - Hunger ist ernst, aber Wasser und sichere Position haben weiterhin Prioritaet.
+
+# Harte Regeln:
+# 1. Nie cityguard, Peacekeeper, knight, sorcerer oder Mayor angreifen.
+# 2. Bei "has arrived" oder Wachenpraesenz sofort flee.
+# 3. Keine Kaempfe in Raeumen mit Wachen oder mehreren unklaren Zielen.
+# 4. Exits sind bindend: nur dort vermutete Richtungen testen, die der Raum wirklich anzeigt.
+# 5. Bei "gate seems to be closed": systematisch n/s/u/d testen, nicht aufgeben, aber auch nicht endlos raten.
+# 6. Tageszyklen-Meldungen ("The day has begun") sind reine Zeit-Info, keine Bewegungs-Erlaubnis.
+# 7. Wasser > sichere Position > Hunger > Gold/Exp.
+# 8. Mentale Routenplanung: selbst wenn blockiert, klare Ziele im Kopf halten (Temple -> Farm -> quit).
+
+# Ziel 1 - Start sauber verifizieren.
+# Fuehre direkt score und look aus. Pruefe Raumname, HP, Hunger und moegliche Gefahr. Keine Bewegung vor klarer Positionsbestaetigung.
+score
+look
+
+# Ziel 2 - Tempel/Brunnen priorisieren.
+# Wenn du im Donation Room bist: west, dann south, dann drink fountain.
+# Wenn du im Market Square bist: north, dann drink fountain.
+# Wenn du schon auf Temple Square bist: direkt drink fountain.
+# Wenn du einen anderen bekannten Zentralraum hast: erst ueber Common Square/Temple Square stabilisieren, nicht zum Osttor laufen.
+drink fountain
+
+# Ziel 3 - Osttor-Regel beachten.
+# Gehe NICHT absichtlich zum East Gate oder Outside The East Gate, solange du keinen verifizierten Nutzen hast.
+# Wenn du trotzdem dort landest und "The gate seems to be closed" siehst: sofort als Sackgasse markieren und nicht weiter erkunden.
+# Kein wiederholtes east/west-Spam an geschlossenen Toren.
+
+# Ziel 4 - Sichere Route ins Farmgebiet.
+# Nutze nur bestaetigte Innenstadtrouten:
+# Common Square -> west -> Poor Alley
+# Common Square -> north -> Temple Square
+# Eastern End Of Poor Alley (3024) ist der primaere Farm-Anker.
+# Bewege dich konservativ und pruefe nach unsicheren Schritten mit look.
+west
+look
+
+# Ziel 5 - Raumpruefung vor jedem Kampf.
+# Scanne den Raum mit look.
+# Nur wenn KEINE Wache da ist und idealerweise nur ein einzelner Fido sichtbar ist: angreifen.
+# Wenn zwei Fidos da sind, nur kaempfen, wenn die Lage trotzdem kontrollierbar und wachfrei ist; sonst Raum wechseln.
+look
+
+# Ziel 6 - Fido-Farm-Zyklus.
+# Standard-Reihenfolge:
+# 1) look
+# 2) kill fido
+# 3) get all corpse
+# 4) eat meat
+# 5) alle 3-4 Zyklen score
+# Ziel ist stabile Wiederholbarkeit, nicht heroische Kaempfe.
+kill fido
+get all corpse
+eat meat
+score
+
+# Ziel 7 - Wenn kein Fido da ist.
+# Nur kurz zwischen zwei benachbarten sicheren Raeumen pendeln und erneut look.
+# Bevorzugt rund um Eastern End Of Poor Alley / Poor Alley.
+# Keine langen Erkundungen ausserhalb der sicheren Route.
+east
+look
+west
+look
+
+# Ziel 8 - Reaktion auf Blockaden und schlechte Navigation.
+# Wenn du in einer Sackgasse landest (z.B. Outside East Gate mit geschlossenem Tor):
+# - Erste Reaktion: look + score zur Lagebestaetigung.
+# - Systematisch verfuegbare Exits testen (wenn w blockiert: n versuchen, dann s, dann u/d).
+# - Nicht blind raten, aber auch nicht zu schnell aufgeben.
+# - Wenn alle Richtungen blockiert: zur letzten sicheren Referenz zurueckkehren (z.B. Common Square).
+# - MENTAL die beste Route planen (z.B. City-Center -> Temple -> Poor Alley 3024), auch wenn gerade feststeckend.
+# - Ein geschlossener Gate-Raum ist kein Explorationsziel, aber ein systematischer Ausweg ist legitim.
+
+# Ziel 9 - Blockade: Systematisches Richtungs-Testen bei Dead-End.
+# Wenn west blockiert ist (z.B. "The gate seems to be closed"):
+# - Schritt 1: Look + Score zur Bestätigung der Position.
+# - Schritt 2: Systematisch andere Richtungen testen (north, south, up, down).
+# - Schritt 3: Beachte Tageszyklen-Meldungen (z.B. "The day has begun") - sie bestätigen nur Zeit, nicht Position.
+# - Schritt 4: Wenn south funktioniert: NEHMEN und weg von der Sackgasse.
+# - Schritt 5: Falls alle Richtungen blockiert: Nur noch look/score nutzen, warten ist letzte Option.
+
+# Ziel 10 - Mentale Routenplanung auch bei Feststecken.
+# Auch wenn du momentan blockiert bist:
+# - Klare Zielroute im Kopf halten: Stadtzentrum -> Temple Square -> Wasser -> Poor Alley 3024 -> Farm.
+# - Bei erfolgreicher Bewegung sofort diese Route abfahren, kein Zögern.
+# - Checkpoint setzen: quit beim Rezeptionisten, um Fortschritt zu sichern.
+
+# Ziel 11 - Reaktion auf Gefahr.
+# Bei Wache, "has arrived", Multi-Mob-Chaos oder sinkenden HP: frueh flee.
+# Danach look und nur in sicheren Raeumen neu ansetzen.
+flee
+look
+
+# Ziel 12 - Fortschritt sichern.
+# Sobald Wasser gesichert ist und mindestens ein oder mehrere saubere Fido-Zyklen gelungen sind:
+# Status ausgeben, Lage kurz zusammenfassen und an sicherer Stelle quit.
+quit
+
+# Optional /btw-Hinweise fuer spaetere Laeufe:
+# - Main Street ist fuer diesen Charakter unzuverlaessiger als Poor Alley.
+# - Wenn kill fido nicht sauber greift, zuerst nochmal look und Zielbeschreibung pruefen statt blind zu spammen.
+# - Nicht auf "vielleicht gibt es einen versteckten Pfad" setzen, wenn die Exits klar sind.
+# - Bei East Gate Dead-End: south ausprobieren, bevor aufgeben.
+# - Tageszyklen-Meldungen sind Zeit-Flavor-Text, nicht Navigation-Info.
+# - Weitere Exploration erst nach stabiler Wasser-/Hunger-/Farm-Routine.
+
+================================================================================
+# END SOURCE: erfahrung_durchlaeufe_v4.txt
+================================================================================
+
+================================================================================
+# BEGIN SOURCE: erfahrungen_durchlaeufe_v5.txt
+================================================================================
+
+# Running Anthropic messages API on conversation with messages.
+# Erfahrungsbericht fuer den naechsten Boukensha-Lauf (dummy, Level 1)
+# Quelle: ../../logs/hand-agent-output-2026-07-15_5.log
+# Stand: 2026-07-15
+# Ziel: Wachen-Pinning verhindern, Main Street meiden, sicherer Weg zum Temple Square.
+# Jede Zeile = ein Agenten-Ziel (eigenes Schritt-Budget). Sicherheitsregeln aus dem System-Prompt beachten.
+
+# Kern-Erkenntnisse aus diesem Lauf:
+# - Main Street ist eine aktive Wachen-Patrouillenstrecke: cityguard erscheint dort wiederholt.
+# - Wachen "nageln" (pinnen) den Charakter im Raum fest: nach Ankunft sind Bewegungen stark eingeschraenkt.
+# - Flucht (flee) hat funktioniert, kostet aber Zeit und verhindert jeden Fortschritt.
+# - Mob-Namen koennen im Output gedreht/gespiegelt erscheinen (z.B. "odif yltsaeb" = fido). Trotzdem als normales Ziel behandeln.
+# - Navigation Main Street -> Marktplatz -> Temple Square ist moeglich, aber riskant wegen Patrouillen.
+# - Batch-Planung (3-5 Schritte vorausdenken) hat sich als nuetzlich erwiesen.
+# - Exits konsequent auswerten vor jeder Bewegung - nur bestaetigte Richtungen nutzen.
+# - Jedes look in einem neuen Raum auf Wachennamen pruefen, bevor irgendeine Aktion folgt.
+
+# Neue Kern-Erkenntnis: WACHEN-PINNING
+# - Eine Wache "pinnt" den Charakter, wenn sie waehrend eines Kampfes oder einer Bewegung erscheint.
+# - Der Charakter kann danach keine normalen Bewegungen mehr ausfuehren.
+# - Einziger Ausweg: flee - aber der klappt nicht immer sofort und kostet HP.
+# - Praevention ist wichtiger als Reaktion: nie in Raeumen kaempfen, die Wachen passieren koennen.
+
+# Harte Regeln (aktualisiert v5):
+# 1. Nie cityguard, Peacekeeper, knight, sorcerer oder Mayor angreifen.
+# 2. Bei "has arrived" sofort und ohne Verzoegerung flee - kein look, kein score, kein kill davor.
+# 3. Keine Kaempfe auf der Main Street oder in Transitraeumen mit Wachenpfaden.
+# 4. Vor jedem Kampf den Raum auf Wachen-Vorkommen pruefen (look); erst dann angreifen.
+# 5. Fluchtweg (flee-Richtung) mental planen, BEVOR der Kampf beginnt.
+# 6. Exits sind bindend: nur dort gezeigte Richtungen verwenden.
+# 7. Tageszyklen-Meldungen sind Zeit-Info, keine Navigations-Erlaubnis.
+# 8. Wasser > sichere Position > Hunger > Gold/Exp.
+# 9. Batch-Planung: immer 3-5 Schritte vorausdenken, nicht nur Reaktion auf letzten Output.
+
+# === ANTI-PINNING-STRATEGIEN ===
+
+# Ziel A1 - Wachen-Zonen frueher erkennen und meiden.
+# Bekannte Gefahrenzonen (wiederholt Wachen-Spawns beobachtet):
+# - Main Street (stadteinwaerts und -auswarts): cityguard patrouilliert regelmaessig.
+# - Transitraeume zwischen Main Street und Marktplatz: unsichere Zwischenraeume.
+# - Naehe zum East Gate: Mayor taucht dort auf.
+# Sichere Farmzonen:
+# - Eastern End Of Poor Alley (3024): keine regulaere Wachen-Patrouille beobachtet.
+# - Poor Alley (3012 und benachbarte Raeume): geringeres Risiko.
+# Konsequenz: Main Street komplett meiden fuer Kampf; nur zum Durchqueren nutzen und dabei look ausfuehren.
+
+# Ziel A2 - Fluchtweg VOR dem Angriff festlegen.
+# Bevor kill fido ausgefuehrt wird:
+# - look ausfuehren und Exits lesen.
+# - Mentalen Fluchtweg festlegen (z.B. "wenn Wache kommt: east").
+# - Wenn kein sicherer Ausweg erkennbar: NICHT kaempfen, Raum wechseln.
+# Diese Vorbereitung verhindert das Feststecken wenn "has arrived" kommt.
+
+# Ziel A3 - Sofort-Reaktion auf "has arrived" (Wachen-Pinning-Verhinderung).
+# Sobald im Output "[Name] has arrived" erscheint:
+# - KEINE weitere Aktion ausser flee.
+# - Kein look, kein kill, kein score, kein wait.
+# - flee ausfuehren und dann look um neue Position zu pruefen.
+# - Danach erst Orientierung und weitere Planung.
+flee
+look
+
+# Ziel A4 - Nach erfolgter Flucht: Raum korrekt einordnen.
+# Nach flee befindet man sich in einem anderen Raum.
+# - look ausfuehren: Raumname, Exits, Mobs/Wachen pruefen.
+# - Wenn Wache AUCH im neuen Raum: nochmal flee.
+# - Wenn Raum sicher: score und Orientierung zur Route Temple -> Farm.
+# Nicht versuchen in denselben Raum zurueckzukehren, aus dem geflohen wurde (Wache koennte noch da sein).
+
+# Ziel A5 - Main Street-Umgehung zur Brunnen-Route.
+# Statt Main Street -> Marktplatz: direkt von bekannten sicheren Ankerpunkten navigieren.
+# Bevorzugte Brunnen-Route:
+# - Common Square -> north -> Temple Square -> drink fountain
+# - Market Square -> north -> Temple Square -> drink fountain
+# Vermeide absichtlichen Einstieg in Main Street fuer Erkundung waehrend fruehzeitiger Laeufe.
+
+# === STANDARD-ABLAUF (mit Anti-Pinning) ===
+
+# Ziel 1 - Start sauber verifizieren.
+# Fuehre direkt score und look aus. Exits lesen. Wachennamen pruefen.
+# Keine Bewegung vor klarer Positionsbestaetigung und Gefahrencheck.
+score
+look
+
+# Ziel 2 - Tempel/Brunnen priorisieren (sicherer Pfad).
+# Wenn du im Donation Room bist: west, dann south, dann drink fountain.
+# Wenn du im Market Square bist: north, dann drink fountain.
+# Wenn du schon auf Temple Square bist: direkt drink fountain.
+# Wenn du auf Main Street landest: Nicht kaempfen! Nur look + Richtung Temple/Market benutzen.
+drink fountain
+
+# Ziel 3 - Sichere Route ins Farmgebiet (Wachen-Zonen umgehen).
+# Nutze nur bestaetigte sichere Innenstadtrouten:
+# Common Square -> west -> Poor Alley
+# Common Square -> north -> Temple Square
+# Eastern End Of Poor Alley (3024) ist der primaere Farm-Anker (kaum Wachen).
+# Main Street meiden oder nur schnell durchqueren mit look.
+west
+look
+
+# Ziel 4 - Raumpruefung vor jedem Kampf (Anti-Pinning-Check).
+# look ausfuehren.
+# Wachennamen checken: cityguard, Peacekeeper, knight, sorcerer, Mayor.
+# Fluchtweg aus Exits bestimmen.
+# Nur wenn: KEIN Wachenname UND klarer Fluchtweg UND Einzelziel -> dann kill fido.
+look
+
+# Ziel 5 - Fido-Farm-Zyklus.
+# Standard-Reihenfolge:
+# 1) look + Wachen-Check
+# 2) kill fido (nur bei freiem Raum)
+# 3) get all corpse
+# 4) eat meat
+# 5) alle 3-4 Zyklen score
+kill fido
+get all corpse
+eat meat
+score
+
+# Ziel 6 - Wenn kein Fido da ist.
+# Kurz zwischen Eastern End Of Poor Alley und Poor Alley pendeln.
+# Keine Erkundung in Richtung Main Street oder East Gate.
+east
+look
+west
+look
+
+# Ziel 7 - Mob-Namens-Varianten (Spiegelung im Output).
+# Manchmal erscheinen Mob-Namen gespiegelt ("odif yltsaeb" statt "fido").
+# Das Ziel dennoch normal mit kill fido ansprechen - der kill-Befehl nutzt den echten internen Namen.
+# Wenn kill fido fehlschlaegt: look wiederholen und Mob-Beschreibung genau lesen.
+
+# Ziel 8 - Reaktion auf Blockaden und schlechte Navigation.
+# Wenn in Sackgasse (z.B. Outside East Gate):
+# - look + score zur Lagebestaetigung.
+# - Systematisch n/s/u/d testen.
+# - Mentale Route halten: Temple -> Farm -> quit.
+# - Geschlossene Tore nicht endlos wiederholen.
+
+# Ziel 9 - Batch-Planung verwenden.
+# Immer 3-5 Schritte vorausplanen statt nur auf letzten Output zu reagieren.
+# Beispiel Route: look -> (falls sicher) kill fido -> get all corpse -> eat meat -> score.
+# Wenn Wachen-Meldung kommt: Plan sofort verwerfen, flee ausfuehren.
+
+# Ziel 10 - Fortschritt sichern.
+# Sobald Wasser gesichert und mindestens ein sauberer Fido-Zyklus abgeschlossen:
+# Status ausgeben und an sicherer Stelle quit.
+quit
+
+# Optional /btw-Hinweise fuer spaetere Laeufe:
+# - Main Street ist aktive Patrouillenstrecke: nicht fuer Kampf nutzen.
+# - Eastern End Of Poor Alley (3024) ist vergleichsweise sicher.
+# - Mob-Namen koennen gespiegelt im Output erscheinen: trotzdem kill fido verwenden.
+# - flee sofort bei "has arrived" - keine Verzoegerung, kein Zögern.
+# - Fluchtweg mental festlegen, BEVOR ein Kampf beginnt.
+# - Batch-Planung verhindert reaktives "Zappeln" im Raum.
+# - Tageszyklen-Meldungen sind Zeit-Flavor-Text, keine Navigation.
+# - Weitere Exploration erst nach stabiler Wasser-/Hunger-/Farm-Routine.
+
+================================================================================
+# END SOURCE: erfahrungen_durchlaeufe_v5.txt
+================================================================================
+
+================================================================================
+# BEGIN SOURCE: erfahrung_durchlaeufe_v6.txt
+================================================================================
+
+# Running Anthropic messages API on conversation with messages.
+# Erfahrungsbericht fuer den naechsten Boukensha-Lauf (dummy, Level 1)
+# Quelle: ../../logs/hand-agent-output-2026-07-15_6.log
+# Stand: 2026-07-15
+# Ziel: Zuverlaessig Level 2 erreichen, Pet-Shop-Zeitverlust vermeiden, sichere Basis + optional aggressiver leveln.
+# Jede Zeile = ein Agenten-Ziel (eigenes Schritt-Budget). Sicherheitsregeln aus dem System-Prompt beachten.
+
+# Kern-Erkenntnisse aus diesem Lauf:
+# - Der Pet Shop ist kein verlaesslicher Start-Farmspot: viele Tiere, aber oft kein klar sichtbar angreifbarer fido.
+# - Wenn im Pet Shop kein einzelnes Ziel sichtbar ist, sofort abbrechen und zur bekannten Farm-Route wechseln.
+# - Exits sind nicht nur Orientierung, sondern die PRIMAERE Navigationsmatrix fuer jede Bewegung.
+# - look + Exits muessen vor JEDEM Raumwechsel ausgewertet werden.
+# - Batch-Planung (3-5 Schritte voraus) verhindert Schleifen und reaktives Zappeln.
+# - Die Hotspots 3024 / 3012 bleiben wertvoller als improvisierte Farmversuche in der Main Street oder im Pet Shop.
+# - Main Street bleibt wegen Wachen-Praesenz ein Transitraum, kein Kampfgebiet.
+# - Eine etwas aggressivere Strategie ist sinnvoll, aber nur in sicheren Raeumen und mit HP-Puffer.
+# - kick ist ein echter DPS-Booster und sollte nach kill aktiv genutzt werden, um Zeit pro Kampf zu reduzieren.
+# - Aggression darf NIE die Wachen-Regeln ueberschreiben: bei "has arrived" sofort flee.
+
+# Neue Kern-Erkenntnis: PET-SHOP-FALLE
+# - Der Pet Shop wirkt wie ein natuerlicher Fido-Ort, liefert aber oft keinen direkt nutzbaren Kampfstart.
+# - Wiederholtes look im Pet Shop ohne neue Ziele erzeugt nur Zeitverlust.
+# - Sobald klar ist, dass nur der Pet Shop Boy sichtbar ist: north und Route zu 3024/3012 planen.
+# - Der Pet Shop ist deshalb nur ein Pruefpunkt, kein Farm-Anker.
+
+# Neue Kern-Erkenntnis: AGGRESSIVER LEVEL-MODUS (OPTIONAL)
+# - Wenn HP stabil sind und der Raum sicher ist, darf offensiver gespielt werden.
+# - Nicht nur der allerschwaechste Mob ist erlaubt; Gegner muessen aber im kontrollierbaren Staerkebereich bleiben.
+# - kill + kick reduziert Kampfzeit und erhoeht EXP pro Minute.
+# - Aggressiver Modus gilt NUR in wachfreien Raeumen mit bekanntem Fluchtweg.
+
+# Harte Regeln (aktualisiert v6):
+# 1. Nie cityguard, Peacekeeper, knight, sorcerer oder Mayor angreifen.
+# 2. Bei "has arrived" sofort flee - kein look, kein score, kein kick, kein Nachdenken.
+# 3. Keine Kaempfe auf der Main Street oder in bekannten Wachen-Transitraeumen.
+# 4. Vor jedem Kampf: look -> Wachennamen pruefen -> Exits lesen -> Fluchtweg festlegen.
+# 5. Exits sind bindend: nur explizit genannte Richtungen verwenden.
+# 6. Wasser > sichere Position > Hunger > Gold/Exp.
+# 7. Batch-Planung: immer 3-5 Schritte vorausdenken.
+# 8. Pet Shop nicht ueberbewerten: wenn kein klares Ziel sichtbar ist, sofort weiter.
+# 9. Aggressiver Modus nur mit HP-Puffer und sicherem Fluchtweg.
+# 10. kick nur dann nutzen, wenn der Kampf bereits sicher gestartet wurde und keine Wache im Raum ist.
+
+# === NAVIGATION / KARTENNUTZUNG ===
+
+# Ziel N1 - Exits als primaere Navigationsmatrix verwenden.
+# Jede look-Ausgabe hat Prioritaet vor Vermutungen.
+# Vorgehen pro Raum:
+# - Raumname lesen
+# - Exits lesen
+# - Mobs/Wachen lesen
+# - Erst dann bewegen oder kaempfen
+# Keine Bewegung in nicht gelistete Richtungen.
+score
+look
+
+# Ziel N2 - Batch-Route vorab planen.
+# Vor jeder groesseren Bewegung eine Mini-Route bilden:
+# - Beispiel Brunnen: look -> north -> look -> drink fountain
+# - Beispiel Farm: look -> west -> look -> west/east pendeln -> kill
+# Ziel: nicht pro Schritt neu improvisieren.
+
+# Ziel N3 - Pet Shop korrekt behandeln.
+# Wenn im Pet Shop nur der Pet Shop Boy sichtbar ist:
+# - KEIN weiteres langes look-Spam
+# - KEIN Hoffen auf implizite Tiere als Kampfziel
+# - Sofort north zur Main Street und dann ueber sichere Route weiter
+# Der Pet Shop ist damit nur ein kurzer Check, kein Grind-Ort.
+north
+look
+
+# === SICHERE BASIS-ROUTE ===
+
+# Ziel 1 - Start sauber verifizieren.
+# Direkt score + look. Hunger, Durst, HP und Exits pruefen.
+# Wenn Main Street: nicht kaempfen, nur Transit.
+score
+look
+
+# Ziel 2 - Brunnen priorisieren.
+# Sichere Standardpfade:
+# - Donation Room -> west -> south -> drink fountain
+# - Market Square -> north -> drink fountain
+# - Temple Square -> direkt drink fountain
+# - Common Square -> north -> Temple Square -> drink fountain
+drink fountain
+
+# Ziel 3 - Sichere Route ins Farmgebiet.
+# Bestaetigte Anker:
+# - Common Square -> west -> Poor Alley
+# - Common Square -> north -> Temple Square
+# - Eastern End Of Poor Alley (3024) = primaerer Farm-Anker
+# - 3012 / benachbarte Poor-Alley-Raeume = Sekundaer-Anker
+# Main Street meiden, ausser fuer kurzes Durchqueren mit look.
+west
+look
+
+# Ziel 4 - Anti-Pinning-Kampfcheck.
+# Vor JEDEM Kampf:
+# - look
+# - Wachen scannen
+# - Exits scannen
+# - Fluchtweg mental festlegen
+# - nur dann angreifen
+look
+
+# Ziel 5 - Sicherer Standard-Farm-Zyklus.
+# Standard-Reihenfolge:
+# 1) look
+# 2) kill fido
+# 3) get all corpse
+# 4) eat meat
+# 5) score alle 3-4 Zyklen
+kill fido
+get all corpse
+eat meat
+score
+
+# Ziel 6 - Wenn kein fido da ist.
+# Nur kurz in sicheren Nachbarraumen pendeln.
+# Kein Ausweichen auf Main Street oder Pet Shop als Farmersatz.
+east
+look
+west
+look
+
+# === OPTION: AGGRESSIVER LEVEL-MODUS ===
+
+# Ziel G1 - Bedingungen fuer aggressiveren Modus.
+# Aggressiver Modus ist NUR erlaubt wenn ALLES gilt:
+# - Raum ist wachfrei
+# - Exits sind klar
+# - Fluchtweg ist mental gesetzt
+# - HP-Puffer ist solide (nicht im roten Bereich, nicht kurz vor flee)
+# - Gegner ist nicht offensichtlich zu stark
+# Sonst sofort auf Standard-Modus zurueck.
+
+# Ziel G2 - Gegnerwahl fuer schnellere EXP.
+# Nicht nur stumpf nach dem schwaechsten Ziel gehen.
+# Erlaubt sind Gegner im "kontrollierbaren Mittelfeld", wenn:
+# - sie dich nicht sofort unter 20% HP druecken
+# - du sie mit kill + kick zuegig beenden kannst
+# - der Raum kein Wachen-Risiko hat
+# Bevorzugung bleibt trotzdem bei bekannten, sicheren Low-Risk-Zielen.
+
+# Ziel G3 - Kampfzyklus mit kick.
+# Neuer Kampfzyklus fuer schnelleren Level-Fortschritt:
+# 1) look
+# 2) kill <ziel>
+# 3) kick <ziel>
+# 4) kick <ziel> wiederholen solange sicher
+# 5) get all corpse
+# 6) eat meat
+# 7) score
+# Hinweis: Wenn der Gegner nur fido ist, weiterhin zunaechst kill fido nutzen; kick ist Beschleuniger, kein Ersatz.
+kill fido
+kick fido
+get all corpse
+eat meat
+score
+
+# Ziel G4 - Grenzen der Aggression.
+# Aggressiver Modus endet SOFORT wenn:
+# - "has arrived" erscheint
+# - Wache sichtbar wird
+# - HP rapide fallen
+# - Fluchtweg unklar wird
+# Dann sofort Standard-Notfallprotokoll:
+flee
+look
+
+# Ziel G5 - EXP pro Minute denken, nicht Heldentum.
+# Schnell leveln bedeutet:
+# - kuerzere Laufwege
+# - weniger Leerlauf im Pet Shop
+# - weniger look-Schleifen ohne Entscheidung
+# - kuerzere Kaempfe per kick
+# - nur Kaempfe, die sicher beendet oder sicher verlassen werden koennen
+
+# === NOTFALL / HINDERNIS-VERMEIDUNG ===
+
+# Ziel E1 - Wachen-Pinning weiter verhindern.
+# Main Street und bekannte Patrouillenraeume nicht als Kampfplatz verwenden.
+# Wenn Wache im Raum auftaucht: flee zuerst, Orientierung spaeter.
+flee
+look
+
+# Ziel E2 - Sackgassen nicht ausreizen.
+# Wenn Exits unguenstig oder ein Gate geschlossen ist:
+# - look + score
+# - nur gelistete Richtungen testen
+# - keine langen Experimente
+# - schnell zur bekannten Route Temple -> Poor Alley zurueck
+
+# Ziel E3 - Fortschritt sichern.
+# Sobald Wasser gesichert und mindestens 1-3 saubere Kaempfe erfolgt sind:
+# - score
+# - Lage kurz bewerten
+# - an sicherer Stelle quit
+quit
+
+# Optional /btw-Hinweise fuer spaetere Laeufe:
+# - Pet Shop ist eher ein falscher Lockruf als ein stabiler Farmspot.
+# - Eastern End Of Poor Alley (3024) bleibt der beste verifizierte Standard-Anker.
+# - 3012 ist sinnvoller als improvisierte Main-Street-Kaempfe.
+# - Exits sind die Navigationsmatrix, nicht nur Zusatzinfo.
+# - Batch-Planung spart Zeit und reduziert Schleifen.
+# - kick beschleunigt Kaempfe, ersetzt aber nicht die Sicherheitspruefung.
+# - Aggressiver leveln heisst nicht riskant leveln: Wachen-Regeln bleiben absolut.
+# - Bei Unsicherheit immer auf Standard-Modus zurueckschalten.
+
+================================================================================
+# END SOURCE: erfahrung_durchlaeufe_v6.txt
+================================================================================
+
+================================================================================
+# BEGIN SOURCE: erfahrung_durchlaeufe_v7.txt
+================================================================================
+
+# Running Anthropic messages API on conversation with messages.
+# Erfahrungsbericht fuer den naechsten Boukensha-Lauf (dummy, Level 1)
+# Quelle: ../../logs/hand-agent-output-2026-07-15_8.log + mud-journeys-2026-07-15_v6.log + mud-journeys-2026-07-15.log
+# Stand: 2026-07-16
+# Ziel: Void vermeiden, sichere Navigation + Bank, neue POIs nutzen, schneller zu Level 2.
+# Jede Zeile = ein Agenten-Ziel (eigenes Schritt-Budget). Sicherheitsregeln aus dem System-Prompt beachten.
+
+# Kern-Erkenntnisse aus diesem Lauf:
+# - Der VOID tritt auf, wenn Navigation zu lange fehlschlaegt oder Agent zu lange inaktiv ist.
+# - Void ist ein Zuruecksetzen in einen Startzustand: HP/MV erhalten, aber Inventar kann verloren gehen.
+# - API-Timeouts treten auf, wenn zu viele Anfragen hintereinander ohne Output erfolgen.
+# - Die fest etablierte Route Common Square -> west -> Eastern End of Poor Alley ist sicher und reproduzierbar.
+# - Grubby Inn (sued von Eastern End of Poor Alley) ist ein bekannter, sicherer Ankerpunkt.
+# - Armory, Grunting Boar Inn, Guild of Swordsmen sind zusaetzliche Navigations-Anker.
+# - Practice Yard ist dort, wo man Fertigkeiten trainieren kann (nach Level-Up).
+# - Bank/ATM ermoeglicht balance, withdraw, deposit.
+# - Die Main Street ist ein hohes Wachen-Durchgangsgebiet und sollte minimiert werden.
+# - Zu viele aufeinanderfolgende Moves fuehren zu API-Timeouts.
+# - Ein Move pro Befehl ist sicher; zwei Moves hintereinander erhoehen Timeout-Risiko.
+
+# Neue Kern-Erkenntnis: VOID-ZUSTAND
+# - Der Void tritt auf nach ungueltige Navigationen oder langen Wartepausen.
+# - Im Void: Raumname/Exits fehlen, nur "You are hungry/thirsty" bleibt.
+# - Ausweg aus dem Void: score, look, dann einen sicheren Move ausfuehren (z.B. north).
+# - Nach Void muss die Position mit look neu bestimmt werden.
+# - Void-Trigger vermeiden: nicht zu schnell zu viele Moves, warten auf Output.
+
+# Neue Kern-Erkenntnis: BANK / ATM
+# - Bank ist verfuegbar in bekannten Raeumen (wahrscheinlich Temple Square / Market Square).
+# - Befehle: balance (saldo pruefen), withdraw <summe> (Geld abheben), deposit <summe> (Geld einzahlen).
+# - Nur nutzen, wenn sicher und Geldmanaagement noetig ist (spaeter, nach stabilem Farm).
+
+# Neue Kern-Erkenntnis: NEUE NAVIGATIONSPUNKTE
+# - Grubby Inn: sued von Eastern End of Poor Alley, sichere Alternative.
+# - Guild of Swordsmen: sued von Main Street, enthält Practice Yard / Trainingsraum.
+# - Armory: sùdlich von Main Street, eventuell Ausruestungsquelle (spaeter relevant).
+# - Grunting Boar Inn: oestlich vom Market Square, eventuell Ressource.
+# - Practice Yard: suedlich vom Bar of Swordsmen, fuer Skill-Training nach Level-Up.
+
+# Neue Kern-Erkenntnis: API-TIMEOUTS
+# - API-Timeouts treten auf bei zu schnellen aufeinanderfolgenden Anfragen ohne Output.
+# - Loeschen: nach jedem Move warten bis Output kommt, bevor nächster Move.
+# - Batch-Planung sollte "kurze Pausen" enthalten, nicht nur Kommandos hintereinander.
+
+# Harte Regeln (aktualisiert v7):
+# 1. Nie cityguard, Peacekeeper, knight, sorcerer, Mayor oder unbekannte aggressive Möbs angreifen.
+# 2. Bei "has arrived" sofort flee - kein look, kein score, kein kick, kein Nachdenken.
+# 3. Keine Kaempfe auf Main Street oder in bekannten Wachen-Transitraeumen.
+# 4. Nach jedem Move: warten bis Output kommt. NICHT sofort nächsten Move starten.
+# 5. Exits sind bindend: nur explizit genannte Richtungen verwenden.
+# 6. Wenn im Void: score -> look -> einen Move -> look um Position neu zu bestimmen.
+# 7. Wasser > sichere Position > Hunger > Gold/Exp.
+# 8. Batch-Planung: 3-5 Schritte mit Output-Wartezeiten, nicht ohne Pausen.
+# 9. Aggressiver Modus nur mit HP-Puffer und sicherem Fluchtweg.
+# 10. Nach Void sofort zur sicheren Route Temple -> Common -> Poor Alley zurueck.
+
+# === SICHERE NAVIGATIONS-ROUTEN (BEWIESENES NETZWERK) ===
+
+# Route A: Temple -> Brunnen
+# Temple Square (zentr.) -> drink fountain
+
+# Route B: Temple -> Wasser zu Farm
+# Temple Square -> south -> Market Square -> south -> Common Square -> west -> Eastern End of Poor Alley
+
+# Route C: Schnelle Farm-Route (Standard)
+# Common Square -> west -> Eastern End of Poor Alley (3024) oder Grubby Inn
+
+# Route D: Grubby Inn Anker
+# Eastern End of Poor Alley -> south -> Grubby Inn
+
+# Route E: Armory-Erkunden (spaeter)
+# Market Square -> south (Common Square) -> ... oder direkt von Main Street
+
+# === VOID-VERHINDERUNG ===
+
+# Ziel V1 - API-Timeouts vermeiden.
+# Nach JEDEM Befehl auf Output warten, bevor neuer Befehl kommt.
+# Nicht mehrere Befehle ohne Zwischenoutput absenden.
+# Wenn kein Output nach Move kommt: nächster Move dauert laenger, könnte Timeout verursachen.
+
+# Ziel V2 - Nach Void schnell wiederherstellen.
+# Void zeigt sich als: "You are hungry/thirsty" ohne Raumname/Exits.
+# Sofortige Reaktion:
+# 1) score
+# 2) look
+# 3) Ein Move (z.B. north)
+# 4) look
+# 5) Danach zur sicheren Route navigieren.
+
+# Ziel V3 - Sichere Ausstiegs-Chain bei Navigationsproblemen.
+# Wenn Position unklar: score + look
+# Wenn Void: score + look + ein Move + look
+# Wenn immer noch verloren: north -> look (nördliche Richtung ist zentral)
+# Sobald Raum klar: zur Temple Square oder Common Square navigieren.
+
+# === SICHERE BASIS-ROUTE V7 ===
+
+# Ziel 1 - Start sauber verifizieren.
+# score + look
+# Raumname, HP, Hunger, Durst, Exits pruefen.
+# Wenn Main Street: nicht kaempfen, nur Transit.
+score
+look
+
+# Ziel 2 - Brunnen priorisieren.
+# Sichere Standardpfade:
+# - Temple Square -> drink fountain (direkt)
+# - Market Square -> north -> drink fountain
+# - Common Square -> north -> Market Square -> north -> drink fountain
+drink fountain
+
+# Ziel 3 - Fest etablierte Route ins Farmgebiet.
+# BEWIESENE Route:
+# Common Square -> west -> Eastern End Of Poor Alley (3024)
+# Diese Route ist aus der Bewegungstabelle verifiziert und sicher.
+west
+look
+
+# Ziel 4 - Anti-Pinning-Kampfcheck VOR Kampf.
+# look ausfuehren.
+# Wachennamen scannen (cityguard, Peacekeeper, Knight, etc.)
+# Exits scannen.
+# Fluchtweg mental festlegen.
+# Nur dann angreifen.
+look
+
+# Ziel 5 - Standard-Farm-Zyklus (mit Output-Pausen).
+# 1) look
+# 2) kill fido
+# 3) get all corpse
+# 4) eat meat
+# 5) WARTE AUF OUTPUT
+# 6) alle 3-4 Zyklen score
+kill fido
+get all corpse
+eat meat
+score
+
+# Ziel 6 - Alternative: Grubby Inn für Sicherheit.
+# Wenn Eastern End of Poor Alley unsicher ist:
+# -> south -> Grubby Inn (sichere Alternative)
+# -> west (von Grubby Inn zurück zu Poor Alley oder Eastern End)
+south
+look
+
+# Ziel 7 - Wenn kein fido da ist.
+# Kurz zwischen Eastern End und Poor Alley oder Grubby Inn pendeln.
+# WICHTIG: nach jedem Move auf Output warten.
+east
+look
+
+# === OPTION: AGGRESSIVER LEVEL-MODUS V7 ===
+
+# Ziel G1 - Schneller leveln mit Void-Vermeidung.
+# Aggressiv bedeutet NICHT unhöflich zu Wachen.
+# Aggressiv bedeutet: schnellere Zyklen, mehr Kaempfe, aber mit Output-Wartezeiten.
+
+# Ziel G2 - Effiziente Batch (mit Pausen).
+# Beispiel:
+# look -> (warte) ->
+# kill fido -> (warte) ->
+# kick fido -> (warte) ->
+# get all corpse -> (warte) ->
+# eat meat -> (watte) ->
+# score
+# Alle 3-5 Schritte sind normal, mit Wartezeiten.
+
+# Ziel G3 - Kick nutzen fuer schnellere Kaempfe.
+# kill fido -> kick fido -> kick fido (wiederholen bis sieg)
+# Dies reduziert Kampfzeit und vermeidet Timeout bei einzelnem langem Kampf.
+kill fido
+kick fido
+get all corpse
+eat meat
+score
+
+# === BANK / ATM (SPAETER, WENN STABIL) ===
+
+# Ziel B1 - Bank Zugang (Zeitpunkt: nach stabiler Farm).
+# balance (saldo pruefen)
+# withdraw <summe> (Geld abheben, falls noetig fuer Kauf)
+# deposit <summe> (Geld einzahlen, falls Sicherung noetig)
+
+# Ziel B2 - Nur nutzen, wenn:
+# - Sicher (keine Wachen im Raum)
+# - Zeit haben (nicht in Kampf-Schleife)
+# - Konkreter Grund (Kauf oder Sicherung)
+
+# === NOTFALL / VOID-RECOVERY ===
+
+# Ziel E1 - Bei Void sofort reagieren.
+# Output: "You are hungry/thirsty" ohne Raumname
+# Sofort:
+# 1) score
+# 2) look
+# 3) north (oder andere sichere Richtung)
+# 4) look (um neue Position zu bestimmen)
+score
+look
+north
+look
+
+# Ziel E2 - Bei API-Timeout (kein Output nach Befehl).
+# Nicht panikieren.
+# Nächster Befehl dauert vermutlich laenger.
+# Weiterhin warten auf Output.
+# Wenn nach 5 Sekunden noch keine Output: Sitzung möglicherweise fehlgeschlagen.
+
+# Ziel E3 - Sicherungs-Checkpoints.
+# Alle 5-10 erfolgreiche Kaempfe: score + Lage bewerten.
+# Wenn stabiler Fortschritt: an sicherer Stelle quit.
+quit
+
+# Optional /btw-Hinweise fuer spaetere Laeufe:
+# - Void-Zustaende sind nicht permanent; Ausweg via score + look + ein Move.
+# - Nach Void zur sicheren Route Temple -> Common -> Poor Alley zurueck.
+# - Grubby Inn ist sichere Alternative zu Eastern End of Poor Alley.
+# - Exits sind aus Bewegungstabelle dokumentiert - nicht raten.
+# - Practice Yard (süd von Bar of Swordsmen) ist Training-Ort (nach Level Up).
+# - Bank/ATM kann spaeter genutzt werden, nicht kritisch fuer Level 1-2.
+# - Batch-Planung mit Pausen vermeidet API-Timeouts.
+# - Nach API-Timeout: nicht sofort neuer Befehl, sondern warten.
+# - Hauptanker: Temple Square, Common Square, Eastern End of Poor Alley.
+# - Void-Trigger vermeiden: nach jedem Move auf Output warten vor nächstem Move.
+
+================================================================================
+# END SOURCE: erfahrung_durchlaeufe_v7.txt
+================================================================================

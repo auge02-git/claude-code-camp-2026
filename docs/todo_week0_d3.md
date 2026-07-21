@@ -279,3 +279,19 @@ create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-16_v1.m
 delete mode 100644 .boukensha/.keep
 create mode 120000 .boukensha/settings.yml
 create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-16_v2.md
+
+---------
+
+Yes, it's already built in. The key is the --session-dir flag (or $MUD_SESSION_DIR env var) — each session lives in its own directory with its own socket, log, and FIFO. Two subagents just need different dirs:
+
+# Agent 1 — dummy
+MUD_SESSION_DIR=/tmp/mud-session-dummy python3 scripts/mud.py start                                                                                                                                                                   
+MUD_SESSION_DIR=/tmp/mud-session-dummy python3 scripts/mud.py login dummy helloworld
+
+# Agent 2 — smarty
+MUD_SESSION_DIR=/tmp/mud-session-smarty python3 scripts/mud.py start                                                                                                                                                                  
+MUD_SESSION_DIR=/tmp/mud-session-smarty python3 scripts/mud.py login smarty goodbymoon
+
+The play-mud agent skill also documents this (play-mud.md:168): "All commands accept --session-dir DIR (or $MUD_SESSION_DIR) if you want more than one independent session."
+So two subagents launched in parallel, each with a different MUD_SESSION_DIR, would drive dummy and smarty completely independently with no interference.
+

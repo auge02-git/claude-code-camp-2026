@@ -6,11 +6,10 @@ Ziel: schnelleres Leveln (naechstes Level), mehr EXP pro Minute, weniger Sackgas
 
 ## Eingaben (vor Start lesen)
 1. `../../../docs/plans/week0_dummy_level-and-skills.md` (Leveling-Plan, Skill-Lernreihenfolge, Grundlagen)
-2. `references/commands.md` (Funktionen und Befehle im Spiel)
-3. `journeys/erfahrung_durchlaeufe_v10.txt` (Zusammenfassung Erkenntnisse, letztes)
-4. `journeys/mud-journeys-2026-07-15_v1.log` (Karte / reale Bewegungshistorie)
-5. `../../logs/.logging_data/world.md` (alte Karte, Notloesung)
-6. `../../logs/mud-journeys-2026-07-19_v2.log` (nur als optionale Auswege, als subagents nutzen `/btw`, nicht als Pflichtplan)
+2. `journeys/erfahrung_durchlaeufe_v10.txt` (Zusammenfassung Erkenntnisse, letztes)
+3. `journeys/mud-journeys-2026-07-15_v1.log` (Karte / reale Bewegungshistorie)
+4. `../../logs/.logging_data/world.md` (alte Karte, Notloesung)
+5. `../../logs/mud-journeys-2026-07-20_v2.log` (nur als optionale Auswege, als subagents nutzen `/btw`, nicht als Pflichtplan)
 
 ## Ausgabe-Vertrag
 - Jede Ausgabezeile = genau ein Agenten-Ziel (ein Schritt-Budget).
@@ -86,7 +85,7 @@ Ziel: schnelleres Leveln (naechstes Level), mehr EXP pro Minute, weniger Sackgas
 
 ## Neustart
 - Ablauf erneut mit `/loop` starten.
-- Wenn es keine Optionen mehr gibt benutzte die Informationen aus `references/commands.md` um weiter Befehl und Aktionen zu erhalten und versuche deren Verwendung zu lernen und zu nutzen.
+- Wenn es keine Optionen mehr gibt benutzte die Informationen aus `commands` um weiter Befehl und Aktionen zu erhalten und versuche deren Verwendung zu lernen und zu nutzen.
 - Wenn du in einer undefinierten Situation bist, lade die Daten `world.md` und versuche mit dem Informationen zu navigieren.
 - Jede neue Schleife soll kuerzer, sicherer und EXP-effizienter sein als die vorherige.
 - Toede weiter Gegner, um EXP zu sammeln und Level zu steigern, aber nur wenn es sicher ist. Nutze hierfuer `kick` und heile dich mit score nach dem Kampf.

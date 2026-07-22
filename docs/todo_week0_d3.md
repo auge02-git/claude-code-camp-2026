@@ -295,3 +295,18 @@ MUD_SESSION_DIR=/tmp/mud-session-smarty python3 scripts/mud.py login smarty good
 The play-mud agent skill also documents this (play-mud.md:168): "All commands accept --session-dir DIR (or $MUD_SESSION_DIR) if you want more than one independent session."
 So two subagents launched in parallel, each with a different MUD_SESSION_DIR, would drive dummy and smarty completely independently with no interference.
 
+---------
+
+[week1_baselines dcabd4c] AWO: added, 2 sections to week0 as appentions.
+14 files changed, 1646 insertions(+), 3 deletions(-)
+create mode 100644 week0_explore/boukensha/journeys/mud-journeys-2026-07-20_v1.md
+create mode 100644 week0_explore/explore_architecture/03a_subagent_sdk/data/player.md
+create mode 100644 week0_explore/explore_architecture/03a_subagent_sdk/data/world.md
+create mode 100644 week0_explore/explore_architecture/03a_subagent_sdk/scripts/mud.py
+create mode 100644 week0_explore/explore_architecture/03b_sub_agents_sdk/PLAN.md
+create mode 100644 week0_explore/explore_architecture/03b_sub_agents_sdk/agents/play-mud.md
+create mode 100644 week0_explore/explore_architecture/03b_sub_agents_sdk/data/player.md
+create mode 100644 week0_explore/explore_architecture/03b_sub_agents_sdk/data/world.md
+create mode 100644 week0_explore/explore_architecture/03b_sub_agents_sdk/requirements.txt
+create mode 100644 week0_explore/explore_architecture/03b_sub_agents_sdk/scripts/mud.py
+create mode 100755 week0_explore/explore_architecture/03b_sub_agents_sdk/scripts/run_agent.py

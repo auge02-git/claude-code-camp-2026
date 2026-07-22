@@ -1,0 +1,16 @@
+README.md
+pyproject.toml
+boukensha/__init__.py
+boukensha/config.py
+boukensha/context.py
+boukensha/message.py
+boukensha/py.typed
+boukensha/tool.py
+boukensha/tasks/__init__.py
+boukensha/tasks/base.py
+boukensha/tasks/player.py
+boukensha_struct_skeleton.egg-info/PKG-INFO
+boukensha_struct_skeleton.egg-info/SOURCES.txt
+boukensha_struct_skeleton.egg-info/dependency_links.txt
+boukensha_struct_skeleton.egg-info/requires.txt
+boukensha_struct_skeleton.egg-info/top_level.txt

@@ -61,7 +61,7 @@ the `setup` callback; then the loop takes over. Built-in commands (not sent to t
 ## Running it
 
 ```
-bin/08_the_repl_loop_python   # from week1_baseline/
+bin/python/08_the_repl_loop.sh   # from week1_baseline/
 ```
 
 Prints a banner, then a `boukensha> ` prompt. Try `list the files in .` then `read README.md`.

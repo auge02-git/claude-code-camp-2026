@@ -1,70 +1,97 @@
-# 07 · The Run DSL (Python port)
+# 07 · Run DSL (Python-Port)
 
-Python 3 port of [`ruby/07_the_run_dsl`](../../ruby/07_the_run_dsl/README.md). Same design — see
-the Ruby README for the full considerations. This document covers the Python-specific
-implementation and how it differs from the Ruby source.
+Schritt 7 kapselt die bisher manuelle Verdrahtung hinter einer einzigen API:
+`boukensha.run(...)`.
 
-Every earlier step wired a `Context`, `Registry`, backend, `PromptBuilder`, `Client`, `Logger`,
-and `Agent` by hand. Step 7 hides all of that behind a single call — `boukensha.run(...)` — plus a
-tiny tool-declaration DSL.
+## Ziel
+
+Statt `Context`, `Registry`, Backend, `PromptBuilder`, `Client`, `Logger` und `Agent`
+bei jedem Aufruf selbst zu bauen, beschreibt der Aufrufer nur noch:
+
+- die Aufgabe (`task`)
+- optionale Overrides (`system`, `model`, `backend`, `max_output_tokens`)
+- ein kleines `setup(dsl)` fuer Tools
+
+## Neue Bausteine
+
+- `boukensha/run_dsl.py`
+- top-level `boukensha.run(...)`
+- Logger-Erweiterungen:
+  - `turn(n)`
+  - `subscribe(callback)`
+
+## Python-DSL statt Ruby-Block
+
+Ruby nutzt `instance_eval`. In Python wird die DSL explizit ueber ein Setup-Callable genutzt:
 
 ```python
 import boukensha
 
+
 def setup(t):
-    @t.tool("read_file", description="Read a file",
-            parameters={"path": {"type": "string", "description": "File path"}})
+    @t.tool(
+        "read_file",
+        description="Read a file",
+        parameters={"path": {"type": "string", "description": "File path"}},
+    )
     def read_file(path: str) -> str:
-        return open(path).read()
+        return open(path, encoding="utf-8").read()
 
-result = boukensha.run(task="Summarise README.md", setup=setup)
+
+result = boukensha.run(
+    task="Read README.md and summarise it.",
+    setup=setup,
+)
 ```
 
-## New file (vs. step 6)
+`RunDSL` exponiert absichtlich nur `tool(...)`.
 
-| File | Purpose |
-|---|---|
-| `boukensha/run_dsl.py` | `RunDSL` — the object handed to `setup`, exposing only `tool` |
+## Was `boukensha.run(...)` macht
 
-## `boukensha.run(...)`
+- laedt `Config`
+- liest Defaults aus `tasks.player`
+- erstellt `Context`, `Registry`, Backend, `PromptBuilder`, `Client`, `Logger`, `Agent`
+- fuehrt optional `setup(dsl)` aus
+- startet den Agent
+- schliesst den Logger sicher wieder
 
-| Option | Default | Description |
-|---|---|---|
-| `task` | *(required)* | The user message handed to the agent |
-| `system` | task's `system_prompt` | System prompt |
-| `model` | task's `model` | Model name |
-| `backend` | task's `provider` | `anthropic` / `openai` / `gemini` / `mammouth` / `ollama` / `ollama_cloud` |
-| `api_key` | matching `*_API_KEY` env var | API key (not needed for `ollama`) |
-| `ollama_host` | `http://localhost:11434` | Ollama base URL |
-| `log` | `None` | JSONL path override (default `.boukensha/sessions/<id>.jsonl`) |
-| `max_output_tokens` | task's `max_output_tokens` | Per-reply output cap |
-| `setup` | `None` | Callable receiving a `RunDSL` to declare tools |
+## Logger in Schritt 7
 
-`run` loads config, resolves the defaults from the `player` task settings, builds every primitive,
-opens a `Logger` whose `session_start` snapshot records `task`/`model`/`provider`/`max_iterations`/
-`max_output_tokens`, runs the agent, and closes the logger in a `finally` (Ruby's `ensure`).
+Die Log-Ausgabe bleibt `log_viz`-kompatibel.
+Neu hinzugekommen:
 
-## The key difference from Ruby — `instance_eval` → `setup(dsl)`
+- `turn`-Event
+- Subscriber-Callbacks via `Logger.subscribe(...)`
 
-Ruby's DSL uses `RunDSL.new(registry).instance_eval(&block)`, which rebinds `self` inside the block
-so a bare `tool "..."` resolves against the `RunDSL`. Python has no `instance_eval`; the faithful,
-idiomatic equivalent is a **`setup` callable that receives the `RunDSL` explicitly**. `RunDSL.tool`
-mirrors `Registry.tool` (a decorator factory), so tools are declared with the same `@t.tool(...)`
-decorator used elsewhere in the port, and the DSL surface stays intentionally small (only `tool`).
+Subscriber erhalten das **urspruengliche Event ohne Log-Enveloping**, also ohne `ts` und `session`.
 
-## Other changes carried over from Ruby
+## Setup
 
-- `Logger` gains `turn(n)` and `subscribe(callback)`; `_write_log` now invokes each subscriber with
-  the original event (matching Ruby, i.e. without the `session_id`/`at` envelope). These are
-  infrastructure for the later REPL/TUI steps.
-- `LoopError` is re-added to `errors.py`.
-- `config.py` / `context.py` need no change (the Ruby edits there were cosmetic).
-
-## Running it
-
-```
-bin/07_the_run_dsl_python   # from week1_baseline/
+```zsh
+cd week1_baseline/python/07_the_run_dsl
+uv sync
 ```
 
-Prints only the header and the final response; the full trace lands in
-`.boukensha/sessions/*.jsonl`. Run `bin/07_the_run_dsl_ruby` for the byte-comparable Ruby run.
+## Tests
+
+```zsh
+cd week1_baseline
+uv run python -m unittest discover -s python/07_the_run_dsl/tests -v
+```
+
+## Schritt ausfuehren
+
+```zsh
+cd week1_baseline/python/07_the_run_dsl
+BOUKENSHA_DIR=../../.boukensha uv run python -m boukensha
+```
+
+## Relevante Dateien
+
+- `python/07_the_run_dsl/boukensha/run_dsl.py`
+- `python/07_the_run_dsl/boukensha/__init__.py`
+- `python/07_the_run_dsl/boukensha/logger.py`
+- `python/07_the_run_dsl/boukensha/cli.py`
+- `python/07_the_run_dsl/tests/test_run_api.py`
+- `python/07_the_run_dsl/tests/test_logger_subscribe.py`
+- `python/07_the_run_dsl/tests/test_run_step7.py`

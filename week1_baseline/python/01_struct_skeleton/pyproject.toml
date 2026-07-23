@@ -1,0 +1,13 @@
+ [project]
+name = "boukensha-step-01-struct-skeleton"
+version = "0.1.0"
+description = "Python-Port fuer Boukensha Woche 1 Schritt 01 (Struct Skeleton)."
+requires-python = ">=3.11"
+dependencies = [
+  "python-dotenv>=1.0",
+  "PyYAML>=6.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+

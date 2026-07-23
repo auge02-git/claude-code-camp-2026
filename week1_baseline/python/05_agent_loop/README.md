@@ -1,99 +1,90 @@
-# 05 · The Agent Loop (Python port)
+# 05 · Agent Loop (Python-Port)
 
-Python 3 port of [`ruby/05_agent_loop`](../../ruby/05_agent_loop/README.md). Same design — see
-the Ruby README for the full considerations. This document covers the Python-specific
-implementation and how it differs from the Ruby source.
+Python-3-Port von `ruby/05_agent_loop`: In diesem Schritt bekommt Boukensha die erste
+vollstaendige agentische Schleife.
 
-This is the step where the agent actually does work. Everything before it — the structs, the
-registry, the prompt builder, the client — was setup. `Agent` drives the loop: call the model,
-dispatch any tool calls it makes, feed the results back, and repeat until the model stops asking
-for tools (or the iteration limit is reached).
+## Ziel von Schritt 05
 
-```
-send messages to API
-        ↓
-stop_reason == "tool_use"?
-    yes → extract tool calls
-        → dispatch each tool via Registry
-        → inject results as tool_result messages
-        → go back to top
-    no  → return final text response
-```
+`Agent` verbindet jetzt:
 
-## New file (vs. step 4)
+- `PromptBuilder` (Payload bauen)
+- `Client` (API-Call)
+- `Registry` (Tool-Dispatch)
+- `Context` (Nachrichtenhistorie)
 
-| File | Purpose |
-|---|---|
-| `boukensha/agent.py` | `Agent` — runs the loop, dispatches tools, and knows when to stop |
+Der Agent kann mehrfach mit dem Modell interagieren, Tool-Calls ausfuehren und danach
+mit den Tool-Ergebnissen weiterdenken.
 
-`boukensha/errors.py` gains `LoopError` alongside the existing errors.
+## Neue Komponenten
 
-## `boukensha.agent.Agent`
+- `boukensha/agent.py`
+- `LoopError` in `boukensha/errors.py` (wie Ruby vorhanden)
+- Erweiterungen in:
+  - `prompt_builder.py` (`parse_response`, `tools`-Override)
+  - `client.py` (`tools`-Override in `call`)
+  - `tasks/base.py` (`max_iterations`, `max_output_tokens`)
+  - Backends (`parse_response`, assistant-content Rekonstruktion)
 
-| Method | Description |
-|---|---|
-| `Agent(*, context, registry, builder, client, task_settings=None, max_iterations=None, max_output_tokens=None)` | Wires the loop's collaborators; resolves limits from `task_settings` (or explicit overrides) |
-| `run()` | Starts the loop and returns the final text response when the agent is done |
+## Agent-Ablauf
 
-The iteration and output-token limits come from `tasks.player.max_iterations` /
-`max_output_tokens` in `settings.yaml` (resolved via `Player.max_iterations` /
-`max_output_tokens`), falling back to `Agent.MAX_ITERATIONS` (25) and the model default.
-Reaching the limit is a *trigger*, not a hard cap: the loop makes exactly one final,
-tools-disabled "wind-down" call so the agent ends its turn in character rather than raising.
-If that call fails, `Agent` returns a deterministic fallback message.
+`Agent.run(user_input)`:
 
-## Every backend speaks the same normalized shape
+1. User-Nachricht in `Context` schreiben
+2. API aufrufen
+3. Antwort normalisieren (`parse_response`)
+4. Bei `tool_use`:
+   - Assistant-Block in Context speichern
+   - Tools dispatchen
+   - Tool-Ergebnisse als `tool_result` speichern
+   - naechste Iteration
+5. Bei `end_turn`: Text extrahieren und zurueckgeben
 
-Six providers means six different response formats. Rather than teach the loop about each, every
-backend implements `parse_response`, converting its raw response into one common shape that
-`PromptBuilder.parse_response` delegates to:
+### Iterationslimit und Wind-Down
 
-```python
-{
-    "stop_reason": "tool_use" | "end_turn",
-    "content": [
-        {"type": "text", "text": "..."},
-        {"type": "tool_use", "id": "...", "name": "...", "input": {...}},
-    ],
-}
+- `max_iterations` wird aus Task-Settings gelesen (Default: `25`)
+- Wenn Limit erreicht ist:
+  - ein finaler Wrap-Up-Call mit `tools: []`
+  - kurze Abschlussantwort statt abruptem Abbruch
+  - Fallback-Text bei API-Fehler
+
+## Setup
+
+```zsh
+cd week1_baseline/python/05_agent_loop
+uv sync
 ```
 
-`Agent` only ever sees this shape — it never inspects a raw provider response, which keeps
-`run()` down to a single `if parsed["stop_reason"] == "tool_use"` branch.
+## Tests
 
-The conversion also runs in reverse. When the conversation history is replayed on the next
-request, `OpenAI`, `Mammouth`, `Ollama`, `OllamaCloud`, and `Gemini` each rebuild a
-provider-specific assistant message from the normalized `content` blocks via a private
-`_assistant_message` / `_assistant_parts` method — the inverse of `parse_response`. Anthropic's
-`content` array doubles as both the normalized shape and the wire format, so it needs no extra
-conversion.
-
-**Tool call IDs aren't universal.** Anthropic, OpenAI, and Mammouth assign every tool call a
-unique `id`, echoed back in the `tool_result`. Ollama, Ollama Cloud, and Gemini don't assign
-call ids at all — those backends reuse the tool's `name` as its `id` and match the `tool_result`
-back to the call by name.
-
-## What's different from the Ruby source
-
-- **`Message.content` is widened** from `str` to `str | list[dict]`. The agent stores an
-  assistant turn as the raw list of content blocks the model returned; `Context.add_message`
-  accepts the same widened type.
-- The `Client.call` / `PromptBuilder.to_api_payload` / backend `to_payload` methods all gain a
-  `tools=None` keyword. The wind-down call passes `tools=[]` to disable tool use for the final
-  turn; every other call leaves it `None`, so the backend uses its own `to_tools(context.tools)`.
-- `OpenAI` and `Mammouth` gain a `json` import to (de)serialize tool-call `arguments`, which the
-  OpenAI-compatible wire format carries as a JSON string.
-- The Ruby `config.rb` change in this step was cosmetic (endless-method syntax); the Python
-  `config.py` is unchanged. The Ruby source also drops its `mammouth` backend at this step —
-  the Python port keeps it, giving it the same `parse_response` / `_assistant_message` treatment
-  as the other OpenAI-compatible backends.
-
-## Running it
-
-```
-bin/05_agent_loop_python   # from week1_baseline/
+```zsh
+cd week1_baseline
+uv run python -m unittest discover -s python/05_agent_loop/tests -v
 ```
 
-Sends real HTTP requests to whatever `provider`/`model` is configured in
-`.boukensha/settings.yaml` and prints the per-iteration trace followed by the final response.
-Run `bin/05_agent_loop_ruby` for the byte-comparable Ruby output.
+Enthaelt:
+
+- `tests/test_agent.py` (Tool-Flow, Wrap-Up, Fallback)
+- `tests/test_tasks.py` (Task-Settings Resolver)
+- `tests/test_run_step5.py` (CLI-Smoke-Test mit gemocktem Agent)
+
+## Ausfuehrung
+
+```zsh
+cd week1_baseline/python/05_agent_loop
+BOUKENSHA_DIR=../../.boukensha uv run python -m boukensha
+```
+
+## Provider-Hinweis
+
+- `lmstudio` funktioniert lokal ohne API-Key
+- `anthropic`, `openai`, `gemini`, `ollama_cloud` benoetigen passende API-Keys
+- `ollama` benoetigt lokalen Ollama-Server
+
+## Relevante Dateien
+
+- `python/05_agent_loop/boukensha/agent.py`
+- `python/05_agent_loop/boukensha/client.py`
+- `python/05_agent_loop/boukensha/prompt_builder.py`
+- `python/05_agent_loop/boukensha/tasks/base.py`
+- `python/05_agent_loop/boukensha/cli.py`
+- `python/05_agent_loop/tests/test_agent.py`

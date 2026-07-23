@@ -135,12 +135,12 @@ venv active:
 python 02_the_registry/examples/example.py
 ```
 
-Expected output (values from your `.boukensha/`):
+## Erwartete Ausgabe
 
 ```
-=== BOUKENSHA Step 2: Tool Registry ===
+=== Boukensha Schritt 2: Tool Registry ===
 
-Config:  #<Boukensha.Config dir=/home/andrew/Sites/Claude-Code-Camp/.boukensha tasks=player>
+Config:  #<Boukensha.Config dir=/Users/.../.../.boukensha tasks=player>
 Context: #<Context task=player turns=0 tools=2>
 Tools:
   #<Tool name=move description=Move the player in a direction (north, so params=['direction']>

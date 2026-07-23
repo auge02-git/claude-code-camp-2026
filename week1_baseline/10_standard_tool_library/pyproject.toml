@@ -1,0 +1,15 @@
+[project]
+name = "boukensha"
+version = "0.9.0"
+description = "Python-Port fuer Boukensha Woche 1 Schritt 09 (Global Executable)."
+requires-python = ">=3.11"
+dependencies = [
+  "python-dotenv>=1.0",
+  "PyYAML>=6.0",
+]
+
+[project.scripts]
+boukensha = "boukensha_loader:load_and_start_repl"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

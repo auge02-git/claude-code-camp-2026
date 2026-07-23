@@ -1,65 +1,65 @@
-# 09 · Global Executable (Python port)
+# 09 · Globale Executable (Python-Port)
 
-Python 3 port of [`ruby/09_global_executable`](../../ruby/09_global_executable/README.md). Same
-design — see the Ruby README for the full considerations. This document covers the Python-specific
-implementation.
+Python-3-Port von [`ruby/09_global_executable`](../../ruby/09_global_executable/README.md). Gleiches
+Design — die vollständigen Überlegungen stehen im Ruby-README. Dieses Dokument behandelt die
+Python-spezifische Implementierung.
 
-This step packages BOUKENSHA as a **global `boukensha` command**. The library itself is unchanged
-(a version bump + a couple of small reverts); what's new is a *loader* that resolves which step
-folder to run and boots the REPL.
+Dieser Schritt verpackt BOUKENSHA als **globalen `boukensha`-Befehl**. Die Bibliothek selbst bleibt
+unverändert (ein Versions-Bump und ein paar kleine Rücknahmen); neu ist ein *Loader*, der den
+auszuführenden Schritt-Ordner auflöst und die REPL startet.
 
-## What this step adds
+## Was dieser Schritt hinzufügt
 
-| File | Purpose |
+| Datei | Zweck |
 |---|---|
-| `bin/boukensha` | The executable — makes the loader importable and hands off to it |
-| `boukensha_loader.py` | Standalone module: resolves *which step* to load, then starts the REPL |
-| `pyproject.toml` `[project.scripts]` | `pip install .` → `boukensha` on `$PATH` (the pip analog of the gem) |
+| `bin/boukensha` | Die ausführbare Datei — macht den Loader importierbar und übergibt an ihn |
+| `boukensha_loader.py` | Eigenständiges Modul: löst auf, *welchen Schritt* geladen wird, und startet die REPL |
+| `pyproject.toml` `[project.scripts]` | `pip install .` → `boukensha` auf `$PATH` (das pip-Äquivalent des Gems) |
 
-The loader is a **top-level module, deliberately outside the `boukensha/` package** — mirroring
-Ruby's `lib/boukensha_loader.rb` sitting outside `lib/boukensha/` — so it can import a *different*
-step's `boukensha` package by name.
+Der Loader ist ein **Top-Level-Modul, bewusst außerhalb des `boukensha/`-Pakets** — spiegelt
+Rubys `lib/boukensha_loader.rb` wider, das außerhalb von `lib/boukensha/` liegt — sodass er
+das `boukensha`-Paket eines *anderen* Schritts namentlich importieren kann.
 
-## How a step is chosen
+## Wie ein Schritt ausgewählt wird
 
-The loader resolves in this order:
+Der Loader löst in dieser Reihenfolge auf:
 
-| Priority | Source | Example |
+| Priorität | Quelle | Beispiel |
 |---|---|---|
-| 1 | `BOUKENSHA_PATH` env var | `BOUKENSHA_PATH=~/…/python/07_the_run_dsl boukensha` |
-| 2 | `~/.boukensharc` file | `echo ~/…/python/08_the_repl_loop > ~/.boukensharc` |
-| 3 | Bundled default | just run `boukensha` (this step's own package) |
+| 1 | Umgebungsvariable `BOUKENSHA_PATH` | `BOUKENSHA_PATH=~/…/python/07_the_run_dsl boukensha` |
+| 2 | Datei `~/.boukensharc` | `echo ~/…/python/08_the_repl_loop > ~/.boukensharc` |
+| 3 | Eingebetteter Standard | einfach `boukensha` ausführen (eigenes Paket dieses Schritts) |
 
-`BOUKENSHA_PATH` must point to a step folder that contains a `boukensha/__init__.py`. **"Loading a
-step"** in Python = insert that directory onto `sys.path`, then `import boukensha`.
+`BOUKENSHA_PATH` muss auf einen Schritt-Ordner zeigen, der eine `boukensha/__init__.py` enthält.
+**„Einen Schritt laden"** bedeutet in Python: dieses Verzeichnis in `sys.path` einfügen und dann
+`import boukensha` ausführen.
 
-The config directory (`settings.yaml`, `.env`, `system.md`) is separate — controlled by
-`BOUKENSHA_DIR` (default `~/.boukensha`).
+Das Konfigurationsverzeichnis (`settings.yaml`, `.env`, `system.md`) ist davon getrennt — gesteuert
+durch `BOUKENSHA_DIR` (Standard: `~/.boukensha`).
 
-## Running
+## Ausführen
 
 ```bash
-bin/09_global_executable_python                     # from week1_baseline/ — bundled default
-BOUKENSHA_DEBUG=1 bin/09_global_executable_python   # prints "[boukensha] loading from: …"
+bin/09_global_executable_python                     # von week1_baseline/ — eingebetteter Standard
+BOUKENSHA_DEBUG=1 bin/09_global_executable_python   # gibt "[boukensha] loading from: …" aus
 ```
 
-Or install it so `boukensha` works from anywhere:
+Oder installieren, damit `boukensha` von überall funktioniert:
 
 ```bash
 cd week1_baseline/python/09_global_executable
-pip install .        # exposes the `boukensha` console script
-boukensha            # runs the bundled step's REPL
-BOUKENSHA_PATH=$PWD/../07_the_run_dsl boukensha   # run step 7 instead
+pip install .        # macht das `boukensha`-Console-Script verfügbar
+boukensha            # führt die REPL des eingebetteten Schritts aus
+BOUKENSHA_PATH=$PWD/../07_the_run_dsl boukensha   # stattdessen Schritt 7 ausführen
 ```
 
-A step older than the REPL (before step 7) has no `repl`, so the loader aborts with guidance to
-point `BOUKENSHA_PATH` at step 7 or later.
+Ein Schritt, der älter als die REPL ist (vor Schritt 7), hat kein `repl` — der Loader bricht dann
+mit einem Hinweis ab, `BOUKENSHA_PATH` auf Schritt 7 oder neuer zu zeigen.
 
-## Changes from step 8
+## Änderungen gegenüber Schritt 8
 
 - `VERSION` → `0.9.0`.
-- `Config._resolve_dir` reverts to `BOUKENSHA_DIR` || `~/.boukensha` (drops the step-8 cwd lookup).
-- `Client` no longer special-cases HTTP 401.
-- The REPL banner is simplified: no API-key/dir-exists checks; plain `config` / `provider` /
-  `model` lines.
-- No `examples/` — the entry point is now `bin/boukensha`.
+- `Config._resolve_dir` kehrt zu `BOUKENSHA_DIR` || `~/.boukensha` zurück (entfernt die cwd-Suche aus Schritt 8).
+- `Client` behandelt HTTP 401 nicht mehr als Sonderfall.
+- Das REPL-Banner wurde vereinfacht: keine API-Key-/Verzeichnis-Prüfungen; nur noch einfache `config`- / `provider`- / `model`-Zeilen.
+- Kein `examples/`-Ordner — der Einstiegspunkt ist jetzt `bin/boukensha`.

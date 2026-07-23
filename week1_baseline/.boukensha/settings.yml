@@ -1,16 +1,17 @@
 # Boukensha — Laufzeit-Einstellungen (Agent-Home ~/.boukensha)
-#
 
 tasks:
   player:
     provider: lmstudio
     model: google/gemma-4-12b-qat
+
     prompt_override:
       system: false
-# model: claude-sonnet-4-6
-# model: google/gemma-4-12b-qat
-#   provider: svaCloud
-#   model: bedrock/eu.anthropic.claude-sonnet-4-6
+    # model: claude-sonnet-4-6
+    # model: claude-sonnet-4-6
+    # model: google/gemma-4-12b-qat
+    #   provider: svaCloud
+    #   model: bedrock/eu.anthropic.claude-sonnet-4-6
 
 # MUD-Server (tbaMUD im Docker-Container "circlemud").
 mud:

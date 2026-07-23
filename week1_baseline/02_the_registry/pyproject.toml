@@ -1,0 +1,13 @@
+[project]
+name = "boukensha-step-02-tool-registry"
+version = "0.1.0"
+description = "Python-Port fuer Boukensha Woche 1 Schritt 02 (Tool Registry)."
+requires-python = ">=3.11"
+dependencies = [
+  "python-dotenv>=1.0",
+  "PyYAML>=6.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+

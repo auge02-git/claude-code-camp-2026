@@ -6,53 +6,8 @@ mkdir -p python/08_the_repl_loop
 cp -R python/07_the_run_dsl/boukensha python/08_the_repl_loop/
 cp -R python/07_the_run_dsl/prompts python/08_the_repl_loop/
 cp python/07_the_run_dsl/pyproject.toml python/08_the_repl_loop/pyproject.toml
-cp python/07_the_run_dsl/boukensha/logger.py python/08_the_repl_loop/boukensha/logger.py
 
 uv run python -m unittest discover -s python/08_the_repl_loop/tests -v
-
-from __future__ import annotations
-
-from pathlib import Path
-
-from .config import Config
-
-
-def run_step8(config_dir: Path | None = None) -> int:
-    import boukensha
-
-    config = Config(directory=config_dir)
-
-    print("=== BOUKENSHA Step 8: The REPL Loop ===")
-    print()
-    print(f"Config: {config}")
-    print()
-
-    base_dir = Path(__file__).resolve().parents[1]
-
-    def setup(t) -> None:
-        @t.tool(
-            "read_file",
-            description="Read the contents of a file from disk",
-            parameters={"path": {"type": "string", "description": "The file path to read"}},
-        )
-        def read_file(path: str) -> str:
-            return Path(base_dir / path).read_text(encoding="utf-8")
-
-        @t.tool(
-            "list_directory",
-            description="List the files in a directory",
-            parameters={"path": {"type": "string", "description": "The directory path to list"}},
-        )
-        def list_directory(path: str) -> str:
-            return ", ".join(
-                p.name for p in (base_dir / path).iterdir() if not p.name.startswith(".")
-            )
-
-    return boukensha.repl(setup=setup, config_dir=config_dir)
-
-
-def main() -> None:
-    raise SystemExit(run_step8())
 
 ### Tests:
 
@@ -78,8 +33,86 @@ Ran 3 tests in 0.009s
 
 FAILED (errors=1)
 
--------
+class Logger:
+    """Schreibt strukturierte JSONL-Events im log_viz-kompatiblen Format."""
 
-test_turn_and_subscribe_emit_original_event ... ok
-test_run_wires_setup_and_writes_snapshot_log ... ok
-test_run_step7_with_mocked_dsl_run ... ok
+    def __init__(
+        self,
+        *,
+        session_id: str | None = None,
+        dir: Path | None = None,
+        log: Path | None = None,
+        snapshot: dict[str, Any] | None = None,
+    ) -> None:
+        self.session_id = session_id or self._new_session_id()
+        self.root_dir = dir or self._default_logs_dir()
+        self.session_dir = self.root_dir / self.session_id
+        self.session_dir.mkdir(parents=True, exist_ok=True)
+        self._subscribers = []
+
+        self.path = log or (self.session_dir / "events.jsonl")
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        self._fh = self.path.open("a", encoding="utf-8")
+
+        event: dict[str, Any] = {}
+        if snapshot is not None:
+            event["snapshot"] = snapshot
+        self._write("session_start", event)
+
+    def close(self) -> None:
+        if not self._fh.closed:
+            self._fh.close()
+
+    def subscribe(self, callback) -> None:
+        self._subscribers.append(callback)
+
+    def turn(self, n: int) -> None:
+        self._write("turn", {"n": n})
+
+    def iteration(self, n: int, max: int) -> None:  # noqa: A002
+        self._write("iteration", {"n": n, "max": max})
+
+    def prompt(self, messages: list[Any], tools: dict[str, Any]) -> None:
+        self._write(
+            "prompt",
+            {
+                "message_count": len(messages),
+                "messages": [m.role for m in messages],
+                "tool_count": len(tools),
+                "tools": list(tools.keys()),
+            },
+        )
+
+    # ... existing code ...
+
+    def turn_end(self, *, reason: str, iterations: int, tokens: dict[str, Any]) -> None:
+        self._write(
+            "turn_end",
+            {
+                "reason": reason,
+                "iterations": iterations,
+                "tokens": tokens,
+            },
+        )
+
+    def _write(self, typ: str, payload: dict[str, Any]) -> None:
+        subscriber_event = {
+            "typ": typ,
+            **payload,
+        }
+
+        for callback in self._subscribers:
+            callback(subscriber_event)
+
+        event = {
+            "ts": datetime.now(timezone.utc).isoformat(),
+            "session": self.session_id,
+            **subscriber_event,
+        }
+        self._fh.write(json.dumps(event, ensure_ascii=False) + "\n")
+        self._fh.flush()
+
+    @staticmethod
+    def _default_logs_dir() -> Path:
+        root = Path(os.environ.get("BOUKENSHA_DIR", str(Path.home() / ".boukensha")))
+        return root / "logs"

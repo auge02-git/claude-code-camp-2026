@@ -1,7 +1,7 @@
 [project]
-name = "boukensha-step-07-run-dsl"
-version = "0.1.0"
-description = "Python-Port fuer Boukensha Woche 1 Schritt 07 (Run DSL)."
+name = "boukensha-step-08-repl-loop"
+version = "0.8.0"
+description = "Python-Port fuer Boukensha Woche 1 Schritt 08 (REPL Loop)."
 requires-python = ">=3.11"
 dependencies = [
   "python-dotenv>=1.0",

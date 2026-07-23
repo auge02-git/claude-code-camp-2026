@@ -5,7 +5,7 @@ import os
 from datetime import datetime, timezone
 from pathlib import Path
 from secrets import token_hex
-from typing import Any
+from typing import Any, Callable
 
 
 class Logger:
@@ -27,15 +27,22 @@ class Logger:
         self.path = log or (self.session_dir / "events.jsonl")
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self._fh = self.path.open("a", encoding="utf-8")
+        self._subscribers: list[Callable[[dict[str, Any]], None]] = []
 
         event: dict[str, Any] = {}
         if snapshot is not None:
             event["snapshot"] = snapshot
         self._write("session_start", event)
 
+    def subscribe(self, callback: Callable[[dict[str, Any]], None]) -> None:
+        self._subscribers.append(callback)
+
     def close(self) -> None:
         if not self._fh.closed:
             self._fh.close()
+
+    def turn(self, n: int) -> None:
+        self._write("turn", {"n": n})
 
     def iteration(self, n: int, max: int) -> None:  # noqa: A002
         self._write("iteration", {"n": n, "max": max})
@@ -113,11 +120,13 @@ class Logger:
         )
 
     def _write(self, typ: str, payload: dict[str, Any]) -> None:
+        raw = {"typ": typ, **payload}
+        for cb in self._subscribers:
+            cb(raw)
         event = {
             "ts": datetime.now(timezone.utc).isoformat(),
             "session": self.session_id,
-            "typ": typ,
-            **payload,
+            **raw,
         }
         self._fh.write(json.dumps(event, ensure_ascii=False) + "\n")
         self._fh.flush()

@@ -55,6 +55,7 @@ class Agent:
                 continue
 
             text = self._extract_text(parsed["content"])
+            self._context.add_message("assistant", text)
             tokens = self._logger.response(
                 text=text,
                 usage=self._extract_usage(response),
@@ -93,6 +94,7 @@ class Agent:
             parsed = self._builder.parse_response(response)
             text = self._extract_text(parsed["content"]).strip()
             final = text if text else self._fallback_message(reason)
+            self._context.add_message("assistant", final)
             tokens = self._logger.response(
                 text=final,
                 usage=self._extract_usage(response),
@@ -104,6 +106,7 @@ class Agent:
             return final
         except ApiError:
             final = self._fallback_message(reason)
+            self._context.add_message("assistant", final)
             self._logger.response(
                 text=final,
                 usage={},

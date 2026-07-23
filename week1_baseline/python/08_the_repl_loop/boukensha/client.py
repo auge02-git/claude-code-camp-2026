@@ -54,6 +54,10 @@ class Client:
             raise ApiError("API request failed before receiving a response")
 
         if not (200 <= last_status < 300):
+            if last_status == 401:
+                raise ApiError(
+                    f"authentication failed (401) — check your API key: {last_body}"
+                )
             suffix = "" if attempt == 1 else "s"
             raise ApiError(
                 f"API request failed after {attempt} attempt{suffix} ({last_status}): {last_body}"
